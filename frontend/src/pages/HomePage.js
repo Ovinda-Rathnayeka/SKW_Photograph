@@ -3,7 +3,7 @@ import backgroundImage from "../components/images/background.jpg";
 import box from "../components/images/box.jpg";
 import owner from "../components/images/owner.jpg";
 import owner_background from "../components/images/owner_background.jpg";
-import service1 from "../components/images/service1.jpg"; // Replace with actual image paths
+import service1 from "../components/images/service1.jpg";
 import service2 from "../components/images/service2.jpg";
 import service3 from "../components/images/service3.jpg";
 import service4 from "../components/images/service4.jpg";
