@@ -1,11 +1,11 @@
 import React from "react";
-import image from "./images/Screenshot 2025-02-14 192651.png";
+import logo from "./images/logo.png";
 
 const Navbar = () => {
   return (
     <nav className="flex justify-between items-center p-4 bg-[#0a181f]">
       <div className="flex items-center">
-        <img src={image} alt="SKW Photography" className="h-12" />
+        <img src={logo} alt="SKW Photography" className="h-12" />
       </div>
       <div className="hidden md:flex space-x-8">
         <a
