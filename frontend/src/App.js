@@ -8,9 +8,9 @@ function App() {
     <Router>
       <Navbar />
       <Routes>
-        <Route path="/" element={<HomePage />} /> {/* ✅ Use Route */}
-        <Route path="/packages" element={<PackagePage />} />{" "}
-        {/* ✅ Use Route */}
+        <Route path="/Home" element={<HomePage />} />
+        <Route path="/" element={<HomePage />} />
+        <Route path="/packages" element={<PackagePage />} />
       </Routes>
     </Router>
   );

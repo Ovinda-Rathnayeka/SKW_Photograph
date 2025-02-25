@@ -9,12 +9,12 @@ const Navbar = () => {
         <img src={logo} alt="SKW Photography" className="h-12" />
       </div>
       <div className="hidden md:flex space-x-8">
-        <a
-          href="#home"
+        <Link
+          to="/Home"
           className="text-[#8f8888] font-bold hover:text-[#747c7c]"
         >
           Home
-        </a>
+        </Link>
         <a
           href="#about"
           className="text-[#8f8888] font-bold hover:text-[#747c7c]"

@@ -44,7 +44,7 @@ const PackagePage = () => {
           return (
             <div key={category} className="container mx-auto px-4 mb-12">
               {/* Category Title */}
-              <h3 className="text-2xl font-semibold text-yellow-400 mb-5 border-b border-gray-700 pb-1">
+              <h3 className="text-2xl font-semibold text-red-500 mb-5 border-b border-gray-700 pb-1">
                 {category} Packages
               </h3>
 
