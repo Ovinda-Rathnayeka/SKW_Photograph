@@ -22,6 +22,8 @@ import videoThumbnail3 from "../components/images/vedios3.jpg";
 import videoThumbnail4 from "../components/images/vedios4.jpg";
 import logo from "../components/images/logo.png";
 
+
+
 const HomePage = () => {
   return (
     <div className="relative w-full h-screen font-['Poppins']">

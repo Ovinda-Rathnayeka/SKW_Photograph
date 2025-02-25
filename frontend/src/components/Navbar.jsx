@@ -1,5 +1,6 @@
 import React from "react";
 import logo from "./images/logo.png";
+import { Link } from "react-router-dom";
 
 const Navbar = () => {
   return (
@@ -26,12 +27,12 @@ const Navbar = () => {
         >
           Video Gallery
         </a>
-        <a
-          href="#packages"
+        <Link
+          to="/packages"
           className="text-[#8f8888] font-bold hover:text-[#747c7c]"
         >
           Packages
-        </a>
+        </Link>
         <a
           href="#store"
           className="text-[#8f8888] font-bold hover:text-[#747c7c]"
