@@ -3,14 +3,23 @@ import cors from "cors";
 import dotenv from "dotenv";
 import mongoose from "mongoose";
 import packageRoutes from "./Routes/PackageRoutes.js";
+import Auth from "./Routes/AuthRoutes.js";
+import Customer from "./Routes/CustomerRoutes.js";
 
 const app = express();
 dotenv.config();
 
-app.use(cors());
+app.use(
+  cors({
+    origin: "http://localhost:3000",
+    credentials: true,
+  })
+);
 app.use(express.json());
 
-app.use("/api", packageRoutes);
+app.use("/package", packageRoutes);
+app.use("/auth", Auth);
+app.use("/customer", Customer);
 
 //MongoDB Connection
 mongoose

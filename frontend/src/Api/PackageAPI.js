@@ -2,7 +2,7 @@ import axios from "axios";
 
 // ✅ Create an axios instance with the base URL for the API
 const api = axios.create({
-  baseURL: "http://localhost:5000/api", // Adjust to match your backend API URL
+  baseURL: "http://localhost:5000/package", // Adjust to match your backend API URL
 });
 
 // ================== 📸 PHOTO PACKAGE API FUNCTIONS ================== //
