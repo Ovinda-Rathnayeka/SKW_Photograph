@@ -1,8 +1,22 @@
 import jwt from "jsonwebtoken";
 import bcrypt from "bcryptjs";
+import dotenv from "dotenv";
 import Customer from "../Models/CustomerModel.js";
+import cookieParser from "cookie-parser";
+import express from "express";
 
-// Signup (Register Customer)
+// Load environment variables
+dotenv.config();
+
+// ✅ Secure JWT Secret
+const jwtSecret = process.env.JWT_SECRET;
+
+// ✅ Express App Setup
+const app = express();
+app.use(express.json());
+app.use(cookieParser()); // Ensure cookies can be parsed
+
+// ✅ Signup (Register Customer)
 const signup = async (req, res) => {
   try {
     const { name, nic, phone, email, password } = req.body;
@@ -24,20 +38,19 @@ const signup = async (req, res) => {
       email,
       password: hashedPassword,
     });
+
     await newCustomer.save();
 
-    res
-      .status(201)
-      .json({
-        message: "Customer registered successfully",
-        customer: newCustomer,
-      });
+    res.status(201).json({
+      message: "Customer registered successfully",
+      customer: newCustomer,
+    });
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
 };
 
-// Login
+// ✅ Login (Authenticate user & generate token)
 const login = async (req, res) => {
   try {
     const { email, password } = req.body;
@@ -55,15 +68,14 @@ const login = async (req, res) => {
     }
 
     // Generate JWT token
-    const token = jwt.sign({ id: customer._id }, "your_jwt_secret", {
+    const token = jwt.sign({ id: customer._id }, jwtSecret, {
       expiresIn: "1h",
     });
 
-    // Store customerId in cookie
-    res.cookie("customerId", customer._id, {
+    res.cookie("authToken", token, {
       httpOnly: true,
-      secure: true,
-      sameSite: "strict",
+      secure: process.env.NODE_ENV === "production",
+      sameSite: "Lax",
       maxAge: 3600000, // 1 hour
     });
 
@@ -73,32 +85,48 @@ const login = async (req, res) => {
   }
 };
 
-// Logout (Clear Cookie)
+// ✅ Logout (Clear Cookie)
 const logout = (req, res) => {
-  res.clearCookie("customerId");
+  res.clearCookie("authToken");
   res.status(200).json({ message: "Logout successful" });
 };
 
-// Verify Token (middleware)
+// ✅ Verify Token (Middleware)
 const verifyToken = (req, res, next) => {
-  const token =
-    req.cookies.customerId || req.headers["authorization"]?.split(" ")[1];
-
-  if (!token) {
-    return res
-      .status(403)
-      .json({ message: "Token is required for authentication" });
-  }
-
   try {
+    const token =
+      req.cookies?.authToken || req.headers["authorization"]?.split(" ")[1];
+
+    if (!token) {
+      return res
+        .status(403)
+        .json({ message: "Token is required for authentication" });
+    }
+
     // Verify the token
-    const decoded = jwt.verify(token, "your_jwt_secret");
-    req.customerId = decoded.id; // Attach customer ID to request for further use
+    const decoded = jwt.verify(token, jwtSecret);
+    req.customerId = decoded.id; // Attach customer ID to request
     next();
   } catch (error) {
     return res.status(401).json({ message: "Invalid or expired token" });
   }
 };
 
-// Export functions
-export { signup, login, logout, verifyToken };
+// ✅ Get Profile (Retrieve logged-in user's details)
+const getProfile = async (req, res) => {
+  try {
+    const customer = await Customer.findById(req.customerId).select(
+      "-password"
+    ); // Exclude password
+    if (!customer) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    res.status(200).json(customer);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+};
+
+// ✅ Export functions
+export { signup, login, logout, verifyToken, getProfile };

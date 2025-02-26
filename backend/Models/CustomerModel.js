@@ -1,14 +1,6 @@
 import mongoose from "mongoose";
 
 const customerSchema = new mongoose.Schema({
-  customerId: {
-    type: String,
-    unique: true,
-    required: true,
-    default: function () {
-      return "CUST-" + Math.floor(100000 + Math.random() * 900000);
-    },
-  },
   name: { type: String, required: true },
   email: { type: String, required: true, unique: true },
   password: { type: String, required: true },

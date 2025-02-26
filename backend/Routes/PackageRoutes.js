@@ -3,10 +3,10 @@ import PackageController from "../Controllers/PackageController.js";
 
 const router = express.Router();
 
-router.post("/packages", PackageController.createPackage);
-router.get("/packages", PackageController.getAllPackages);
-router.get("/packages/:id", PackageController.getPackageById);
-router.put("/packages/:id", PackageController.updatePackageById);
-router.delete("/packages/:id", PackageController.deletePackageById);
+router.post("/", PackageController.createPackage);
+router.get("/", PackageController.getAllPackages);
+router.get("/:id", PackageController.getPackageById);
+router.put("/:id", PackageController.updatePackageById);
+router.delete("/:id", PackageController.deletePackageById);
 
 export default router;
