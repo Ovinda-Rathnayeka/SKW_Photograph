@@ -11,7 +11,5 @@ const customerSchema = new mongoose.Schema({
   active: { type: Boolean, default: true },
 });
 
-// No need for the pre-save hook anymore
-
 const Customer = mongoose.model("Customer", customerSchema);
 export default Customer;

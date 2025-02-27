@@ -9,9 +9,9 @@ import {
 
 const router = express.Router();
 
-router.post("/signup", signup); // Register new customer
-router.post("/login", login); // Authenticate user
-router.post("/logout", logout); // Logout user
-router.get("/me", verifyToken, getProfile); // Fetch logged-in user's details
+router.post("/signup", signup);
+router.post("/login", login);
+router.post("/logout", logout);
+router.get("/me", verifyToken, getProfile);
 
 export default router;

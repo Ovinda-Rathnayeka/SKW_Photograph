@@ -5,32 +5,25 @@ import Customer from "../Models/CustomerModel.js";
 import cookieParser from "cookie-parser";
 import express from "express";
 
-// Load environment variables
 dotenv.config();
 
-// ✅ Secure JWT Secret
 const jwtSecret = process.env.JWT_SECRET;
 
-// ✅ Express App Setup
 const app = express();
 app.use(express.json());
-app.use(cookieParser()); // Ensure cookies can be parsed
+app.use(cookieParser());
 
-// ✅ Signup (Register Customer)
 const signup = async (req, res) => {
   try {
     const { name, nic, phone, email, password } = req.body;
 
-    // Check if email already exists
     const existingCustomer = await Customer.findOne({ email });
     if (existingCustomer) {
       return res.status(400).json({ message: "Email already in use" });
     }
 
-    // Hash password
     const hashedPassword = await bcrypt.hash(password, 10);
 
-    // Create new customer
     const newCustomer = new Customer({
       name,
       nic,
@@ -50,24 +43,20 @@ const signup = async (req, res) => {
   }
 };
 
-// ✅ Login (Authenticate user & generate token)
 const login = async (req, res) => {
   try {
     const { email, password } = req.body;
 
-    // Find customer by email
     const customer = await Customer.findOne({ email });
     if (!customer) {
       return res.status(404).json({ message: "Customer not found" });
     }
 
-    // Compare passwords
     const isPasswordValid = await bcrypt.compare(password, customer.password);
     if (!isPasswordValid) {
       return res.status(400).json({ message: "Invalid credentials" });
     }
 
-    // Generate JWT token
     const token = jwt.sign({ id: customer._id }, jwtSecret, {
       expiresIn: "1h",
     });
@@ -76,7 +65,7 @@ const login = async (req, res) => {
       httpOnly: true,
       secure: process.env.NODE_ENV === "production",
       sameSite: "Lax",
-      maxAge: 3600000, // 1 hour
+      maxAge: 3600000,
     });
 
     res.status(200).json({ message: "Login successful", token, customer });
@@ -85,13 +74,11 @@ const login = async (req, res) => {
   }
 };
 
-// ✅ Logout (Clear Cookie)
 const logout = (req, res) => {
   res.clearCookie("authToken");
   res.status(200).json({ message: "Logout successful" });
 };
 
-// ✅ Verify Token (Middleware)
 const verifyToken = (req, res, next) => {
   try {
     const token =
@@ -103,21 +90,19 @@ const verifyToken = (req, res, next) => {
         .json({ message: "Token is required for authentication" });
     }
 
-    // Verify the token
     const decoded = jwt.verify(token, jwtSecret);
-    req.customerId = decoded.id; // Attach customer ID to request
+    req.customerId = decoded.id;
     next();
   } catch (error) {
     return res.status(401).json({ message: "Invalid or expired token" });
   }
 };
 
-// ✅ Get Profile (Retrieve logged-in user's details)
 const getProfile = async (req, res) => {
   try {
     const customer = await Customer.findById(req.customerId).select(
       "-password"
-    ); // Exclude password
+    );
     if (!customer) {
       return res.status(404).json({ message: "User not found" });
     }
@@ -128,5 +113,4 @@ const getProfile = async (req, res) => {
   }
 };
 
-// ✅ Export functions
 export { signup, login, logout, verifyToken, getProfile };

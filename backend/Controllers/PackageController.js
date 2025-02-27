@@ -1,10 +1,8 @@
 import mongoose from "mongoose";
-import PhotoPackage from "../Models/PackageModel.js"; // Ensure correct path
+import PhotoPackage from "../Models/PackageModel.js";
 
-// ✅ Function to validate MongoDB ObjectID
 const isValidObjectId = (id) => mongoose.Types.ObjectId.isValid(id);
 
-// ✅ CREATE A NEW PHOTO PACKAGE
 const createPackage = async (req, res) => {
   try {
     const newPackage = new PhotoPackage(req.body);
@@ -16,14 +14,12 @@ const createPackage = async (req, res) => {
   }
 };
 
-// ✅ GET ALL PHOTO PACKAGES
 export const getAllPackages = async (req, res) => {
   try {
     const packages = await PhotoPackage.find();
 
-    
     const formattedPackages = packages.map((pkg) => ({
-      _id: pkg._id, 
+      _id: pkg._id,
       packageName: pkg.packageName,
       category: pkg.category,
       price: pkg.price,
@@ -46,7 +42,6 @@ export const getAllPackages = async (req, res) => {
   }
 };
 
-// ✅ GET PHOTO PACKAGE BY ID (Validate ObjectID)
 const getPackageById = async (req, res) => {
   const { id } = req.params;
 
@@ -66,7 +61,6 @@ const getPackageById = async (req, res) => {
   }
 };
 
-// ✅ UPDATE PHOTO PACKAGE BY ID (Validate ObjectID)
 const updatePackageById = async (req, res) => {
   const { id } = req.params;
 
@@ -88,7 +82,6 @@ const updatePackageById = async (req, res) => {
   }
 };
 
-// ✅ DELETE PHOTO PACKAGE BY ID (Validate ObjectID)
 const deletePackageById = async (req, res) => {
   const { id } = req.params;
 

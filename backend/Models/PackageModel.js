@@ -20,7 +20,6 @@ const PhotoPackageSchema = new mongoose.Schema({
   updatedAt: { type: Date, default: Date.now },
 });
 
-// Automatically update `updatedAt` before saving
 PhotoPackageSchema.pre("save", function (next) {
   this.updatedAt = Date.now();
   next();

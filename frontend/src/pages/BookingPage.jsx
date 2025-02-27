@@ -12,7 +12,7 @@ const BookingPage = ({ selectedPackage, onClose }) => {
   const [date, setDate] = useState("");
   const [time, setTime] = useState("");
 
-  // Add-on options
+  
   const additions = [
     { id: 1, name: "Professional Makeup", price: 50 },
     { id: 2, name: "Luxury Dress Rental", price: 80 },
@@ -66,7 +66,7 @@ const BookingPage = ({ selectedPackage, onClose }) => {
     try {
       const result = await createBooking(bookingData);
       alert("Booking Confirmed! ID: " + result._id);
-      onClose(); // Close the booking modal
+      onClose(); 
     } catch (error) {
       alert("Failed to create booking: " + error.message);
     } finally {
@@ -105,9 +105,9 @@ const BookingPage = ({ selectedPackage, onClose }) => {
           </div>
         </div>
 
-        {/* Customer & Package Details */}
+        
         <div className="grid grid-cols-2 gap-4">
-          {/* Customer Details */}
+          
           <div className="bg-[#2A3A45] p-4 rounded-lg">
             <h3 className="text-md font-semibold text-gray-300">🧑‍💼 Customer Info</h3>
             {loading ? (

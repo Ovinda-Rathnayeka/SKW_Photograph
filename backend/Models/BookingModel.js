@@ -32,7 +32,7 @@ const bookingSchema = new mongoose.Schema(
     },
     additionalNotes: {
       type: String,
-      trim: true, // Removes extra spaces
+      trim: true,
     },
   },
   {
@@ -40,7 +40,6 @@ const bookingSchema = new mongoose.Schema(
   }
 );
 
-// ✅ Ensure `updatedAt` updates on modifications
 bookingSchema.pre("findOneAndUpdate", function (next) {
   this.set({ updatedAt: Date.now() });
   next();

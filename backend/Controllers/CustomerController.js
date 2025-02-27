@@ -1,18 +1,16 @@
-import bcrypt from "bcryptjs"; // Import bcrypt
+import bcrypt from "bcryptjs";
 import Customer from "../Models/CustomerModel.js";
 
-// Create (Insert) Customer
 const createCustomer = async (req, res) => {
   try {
     const { name, email, password, phone, nic, address } = req.body;
 
-    // Hash password before saving it
-    const hashedPassword = await bcrypt.hash(password, 10); // 10 is the salt rounds
+    const hashedPassword = await bcrypt.hash(password, 10);
 
     const newCustomer = new Customer({
       name,
       email,
-      password: hashedPassword, // Store hashed password
+      password: hashedPassword,
       phone,
       nic,
       address,
@@ -29,7 +27,6 @@ const createCustomer = async (req, res) => {
   }
 };
 
-// Get All Customers
 const getAllCustomers = async (req, res) => {
   try {
     const customers = await Customer.find();
@@ -39,7 +36,6 @@ const getAllCustomers = async (req, res) => {
   }
 };
 
-// Get Customer by ID
 const getCustomerById = async (req, res) => {
   try {
     const { id } = req.params;
@@ -55,15 +51,13 @@ const getCustomerById = async (req, res) => {
   }
 };
 
-// Update Customer
 const updateCustomer = async (req, res) => {
   try {
     const { id } = req.params;
     const { password } = req.body;
 
-    // If password is being updated, hash it before saving
     if (password) {
-      req.body.password = await bcrypt.hash(password, 10); // Hash new password
+      req.body.password = await bcrypt.hash(password, 10);
     }
 
     const updatedCustomer = await Customer.findByIdAndUpdate(id, req.body, {
@@ -83,7 +77,6 @@ const updateCustomer = async (req, res) => {
   }
 };
 
-// Delete Customer (Soft Delete)
 const deleteCustomer = async (req, res) => {
   try {
     const { id } = req.params;
@@ -106,7 +99,6 @@ const deleteCustomer = async (req, res) => {
   }
 };
 
-// Export all functions
 export {
   createCustomer,
   getAllCustomers,
