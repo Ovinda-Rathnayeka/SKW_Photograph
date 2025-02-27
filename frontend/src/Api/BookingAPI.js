@@ -1,14 +1,14 @@
 import axios from "axios";
-import mongoose from "mongoose"; // Ensure ObjectId validation
+import mongoose from "mongoose"; 
 
 const api = axios.create({
   baseURL: "http://localhost:5000/booking",
 });
 
-// ✅ Function to check if an ID is a valid MongoDB ObjectId
+
 const isValidObjectId = (id) => mongoose.Types.ObjectId.isValid(id);
 
-// ✅ CREATE NEW BOOKING
+
 export const createBooking = async (bookingData) => {
   try {
     console.log("📦 Creating booking with data:", bookingData);
@@ -28,7 +28,7 @@ export const createBooking = async (bookingData) => {
   }
 };
 
-// ✅ FETCH ALL BOOKINGS
+
 export const fetchAllBookings = async () => {
   try {
     console.log("📦 Fetching all bookings...");
@@ -41,7 +41,7 @@ export const fetchAllBookings = async () => {
   }
 };
 
-// ✅ FETCH BOOKING BY ID (Ensuring it's a valid ObjectId)
+
 export const fetchBookingById = async (bookingId) => {
   if (!isValidObjectId(bookingId)) {
     console.error("❌ Invalid booking ID format:", bookingId);
@@ -68,7 +68,7 @@ export const fetchBookingById = async (bookingId) => {
   }
 };
 
-// ✅ UPDATE BOOKING (Ensuring valid ObjectId)
+
 export const updateBooking = async (bookingId, updatedData) => {
   if (!isValidObjectId(bookingId)) {
     console.error("❌ Invalid booking ID format:", bookingId);
@@ -93,7 +93,6 @@ export const updateBooking = async (bookingId, updatedData) => {
   }
 };
 
-// ✅ DELETE BOOKING (Ensuring valid ObjectId)
 export const deleteBooking = async (bookingId) => {
   if (!isValidObjectId(bookingId)) {
     console.error("❌ Invalid booking ID format:", bookingId);

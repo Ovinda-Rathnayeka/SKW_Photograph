@@ -51,12 +51,12 @@ const BookingPage = ({ selectedPackage, onClose }) => {
     <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 p-4 z-50">
       <div className="bg-[#1B242C] p-6 rounded-lg shadow-lg w-[95%] max-w-[900px] text-white flex flex-col">
         
-        {/* Header */}
+        
         <h2 className="text-xl font-bold text-red-500 mb-4 text-center flex items-center justify-center">
           📸 Confirm Your Booking
         </h2>
 
-        {/* Date & Time Selection */}
+        
         <div className="grid grid-cols-2 gap-4 mb-4">
           <div>
             <label className="text-yellow-400">📅 Date:</label>
@@ -87,7 +87,7 @@ const BookingPage = ({ selectedPackage, onClose }) => {
             )}
           </div>
 
-          {/* Package Details */}
+          
           <div className="bg-[#2A3A45] p-4 rounded-lg">
             <h3 className="text-md font-semibold text-yellow-400">{selectedPackage.packageName}</h3>
             <p className="text-xs text-gray-300">{selectedPackage.description}</p>
@@ -103,7 +103,7 @@ const BookingPage = ({ selectedPackage, onClose }) => {
 
         </div>
 
-        {/* Additional Add-ons */}
+        
         <div className="bg-[#2A3A45] p-4 rounded-lg mt-4">
           <h3 className="text-md font-semibold text-yellow-400">✨ Add-ons</h3>
           <div className="grid grid-cols-4 gap-2 mt-2 text-sm">
@@ -116,12 +116,12 @@ const BookingPage = ({ selectedPackage, onClose }) => {
             ))}
           </div>
 
-          {/* Total Price */}
+          
           <div className="mt-4 text-lg font-bold text-gray-300 text-center">
             💰 Total Price: <span className="text-green-400">${totalPrice}</span>
           </div>
 
-          {/* Buttons */}
+          
           <div className="flex justify-between mt-4">
             <button className="bg-gray-600 text-white px-4 py-2 rounded-md hover:bg-gray-700" onClick={onClose}>
               Cancel

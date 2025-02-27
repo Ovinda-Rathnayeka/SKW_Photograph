@@ -1,4 +1,6 @@
-import React from "react";
+import React, { useEffect } from "react";
+import { motion, useAnimation, AnimatePresence } from "framer-motion";
+import { useInView } from "react-intersection-observer";
 import backgroundImage from "../components/images/background.jpg";
 import box from "../components/images/box.jpg";
 import owner from "../components/images/owner.jpg";
@@ -22,107 +24,268 @@ import videoThumbnail3 from "../components/images/vedios3.jpg";
 import videoThumbnail4 from "../components/images/vedios4.jpg";
 import logo from "../components/images/logo.png";
 
+// Animation variants
+const fadeIn = {
+  hidden: { opacity: 0 },
+  visible: { opacity: 1, transition: { duration: 0.6 } }
+};
 
+const fadeInUp = {
+  hidden: { opacity: 0, y: 50 },
+  visible: { opacity: 1, y: 0, transition: { duration: 0.6 } }
+};
+
+const staggerContainer = {
+  hidden: { opacity: 0 },
+  visible: {
+    opacity: 1,
+    transition: {
+      staggerChildren: 0.1
+    }
+  }
+};
+
+const photoAnimation = {
+  initial: { scale: 1 },
+  hover: { 
+    scale: 1.05, 
+    boxShadow: "0px 10px 30px rgba(0, 0, 0, 0.2)",
+    transition: { duration: 0.3 }
+  }
+};
+
+const headerTextAnimation = {
+  hidden: { opacity: 0, x: -50 },
+  visible: { 
+    opacity: 1, 
+    x: 0,
+    transition: { 
+      duration: 0.8, 
+      delay: 0.2 
+    } 
+  }
+};
+
+const SectionAnimation = ({ children }) => {
+  const controls = useAnimation();
+  const [ref, inView] = useInView({
+    triggerOnce: true,
+    threshold: 0.2
+  });
+
+  useEffect(() => {
+    if (inView) {
+      controls.start("visible");
+    }
+  }, [controls, inView]);
+
+  return (
+    <motion.div
+      ref={ref}
+      initial="hidden"
+      animate={controls}
+      variants={fadeIn}
+    >
+      {children}
+    </motion.div>
+  );
+};
 
 const HomePage = () => {
+  // Initialize smooth scrolling
+  useEffect(() => {
+    // Add smooth scrolling behavior
+    document.documentElement.style.scrollBehavior = "smooth";
+    
+    return () => {
+      document.documentElement.style.scrollBehavior = "auto";
+    };
+  }, []);
+
   return (
-    <div className="relative w-full h-screen font-['Poppins']">
-      {/* Background Image */}
-      <div
-        className="absolute inset-0 bg-cover bg-center bg-no-repeat"
-        style={{ backgroundImage: `url(${backgroundImage})` }}
-      >
-        <div className="absolute inset-0 bg-black/50"></div>{" "}
-        {/* Dark overlay */}
-      </div>
+    <div className="relative w-full font-['Poppins'] overflow-hidden">
+      {/* Hero Section with Parallax Effect */}
+      <div className="relative w-full h-screen overflow-hidden">
+        <motion.div
+          className="absolute inset-0 bg-cover bg-center bg-no-repeat"
+          style={{ backgroundImage: `url(${backgroundImage})` }}
+          initial={{ scale: 1.1 }}
+          animate={{ scale: 1 }}
+          transition={{ duration: 1.5 }}
+        >
+          <div className="absolute inset-0 bg-black/50"></div>
+        </motion.div>
 
-      {/* Text Section */}
-      <div className="relative z-10 flex flex-col items-start justify-center h-full px-10 md:px-20">
-        <h1 className="text-4xl md:text-6xl font-bold leading-tight text-transparent bg-clip-text bg-gradient-to-r from-orange-400 to-red-500">
-          Bringing your <br />
-          moments to <br />
-          life, <span className="text-white">one click</span> <br />
-          at a time
-        </h1>
+        {/* Text Section */}
+        <div className="relative z-10 flex flex-col items-start justify-center h-full px-10 md:px-20">
+          <motion.h1 
+            className="text-4xl md:text-6xl font-bold leading-tight text-transparent bg-clip-text bg-gradient-to-r from-orange-400 to-red-500"
+            variants={headerTextAnimation}
+            initial="hidden"
+            animate="visible"
+          >
+            Bringing your <br />
+            moments to <br />
+            life, <span className="text-white">one click</span> <br />
+            at a time
+          </motion.h1>
 
-        {/* Enquiry Button */}
-        <button className="mt-5 px-6 py-3 bg-orange-500 text-white font-semibold rounded-lg shadow-lg hover:bg-orange-600 transition-all duration-300 transform hover:scale-105">
-          ENQUIRY NOW →
-        </button>
-      </div>
+          {/* Enquiry Button */}
+          <motion.button 
+            className="mt-5 px-6 py-3 bg-orange-500 text-white font-semibold rounded-lg shadow-lg hover:bg-orange-600 transition-all duration-300 transform hover:scale-105"
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.8, duration: 0.5 }}
+            whileHover={{ scale: 1.1 }}
+            whileTap={{ scale: 0.95 }}
+          >
+            ENQUIRY NOW →
+          </motion.button>
+        </div>
 
-      {/* Small Box Image - Rotated & Positioned */}
-      <div className="absolute right-20 md:right-40 top-1/2 transform -translate-y-1/2 rotate-6 w-72 md:w-96 shadow-lg">
+        {/* Small Box Image - Rotated & Positioned with Animation */}
+        <motion.div 
+          className="absolute right-20 md:right-40 top-1/3 transform -translate-y-1/2 rotate-6 w-72 md:w-96 shadow-lg"
+          initial={{ opacity: 0, y: 100, rotate: 0 }}
+          animate={{ opacity: 1, y: 0, rotate: 6 }}
+          transition={{ delay: 0.3, duration: 0.8 }}
+          whileHover={{ rotate: 0, transition: { duration: 0.5 } }}
+        >
         <img src={box} alt="Small Box" className="rounded-lg shadow-2xl" />
+        </motion.div>
+
+        {/* Scroll Down Indicator */}
+        <motion.div 
+          className="absolute bottom-10 left-1/2 transform -translate-x-1/2 text-white flex flex-col items-center"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ delay: 1.2 }}
+        >
+          <span className="text-sm mb-2">Scroll Down</span>
+          <motion.div 
+            className="w-1 h-10 bg-orange-500 rounded-full"
+            animate={{ 
+              y: [0, 10, 0],
+              opacity: [1, 0.6, 1]
+            }}
+            transition={{ 
+              duration: 1.5, 
+              repeat: Infinity,
+              repeatType: "loop" 
+            }}
+          />
+        </motion.div>
       </div>
 
       {/* Who We Are Section */}
-      <div
-        className="relative w-full min-h-screen flex flex-col md:flex-row items-center justify-center px-10 md:px-20 py-20"
-        style={{
-          backgroundImage: `url(${owner_background})`,
-          backgroundSize: "cover, contain",
-          backgroundPosition: "center, top",
-          backgroundBlendMode: "multiply",
-          backgroundRepeat: "no-repeat",
-        }}
+  <SectionAnimation>
+    <div
+      className="relative w-full min-h-screen flex flex-col md:flex-row items-center justify-center px-10 md:px-20 py-20"
+      style={{
+        backgroundImage: `url(${owner_background})`,
+        backgroundSize: "cover",
+        backgroundPosition: "center",
+        backgroundBlendMode: "multiply",
+        backgroundRepeat: "no-repeat",
+      }}
+      id="about"
+    >
+      {/* Dark Overlay */}
+      <div className="absolute inset-0 bg-black/50"></div>
+
+      {/* Left Side: Photographer's Image */}
+      <motion.div 
+        className="relative w-full md:w-1/3 z-10 flex justify-center md:justify-end"
+        variants={fadeInUp}
+        initial="hidden"
+        whileInView="visible"
+        viewport={{ once: true }}
       >
-        {/* Dark Overlay */}
-        <div className="absolute inset-0 bg-black/40"></div>
+        <motion.img
+          src={owner}
+          alt="Photographer"
+          className="w-64 md:w-80 rounded-lg shadow-lg border-4 border-orange-500"
+          whileHover={{ 
+            scale: 1.05,
+            boxShadow: "0px 20px 30px rgba(0, 0, 0, 0.3)"
+          }}
+          transition={{ duration: 0.3 }}
+        />
+      </motion.div>
 
-        {/* Left Side: Person Image */}
-        <div className="relative w-full md:w-1/3 z-10 flex justify-center md:justify-end">
-          <img
-            src={owner}
-            alt="Photographer"
-            className="w-64 md:w-80 rounded-lg shadow-lg"
-          />
-        </div>
+      {/* Right Side: Text Section */}
+      <div className="relative w-full md:w-2/3 z-10 flex flex-col items-center md:items-start md:pl-10">
+        {/* Title */}
+        <motion.h2 
+          className="text-4xl md:text-5xl font-bold text-center md:text-left mt-[-100px]"
+          variants={fadeInUp}
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true }}
+      >
+          <span className="text-orange-400">Who</span>{" "}
+          <span className="text-white">We Are</span>{" "}
+          <span className="text-orange-500">?</span>
+        </motion.h2>
 
-        {/* Right Side: Text Section with Curved Box */}
-        <div className="relative w-full md:w-2/3 z-10 flex flex-col items-start md:pl-10">
-          {/* Title */}
-          <h2 className="text-4xl md:text-5xl font-bold">
-            <span className="text-orange-400">Who</span>{" "}
-            <span className="text-white">We Are</span>{" "}
-            <span className="text-orange-500">?</span>
-          </h2>
 
-          {/* Curved Text Box */}
-          <div className="relative mt-5 p-8 md:p-10 bg-green-200 text-gray-900 max-w-2xl custom-shape shadow-lg">
-            <p className="text-lg leading-relaxed">
-              At, we are dedicated to capturing life's most precious moments
-              with a creative and professional touch. Founded by Shahela
-              Kahadawala, our studio specializes in photography and videography
-              services, ensuring that every event is beautifully documented.
-              <br />
-              <br />
-              We also offer photo and video editing, photo framing, album
-              design, as well as camera and light rentals for all your creative
-              needs. With years of experience, we’re passionate about providing
-              high-quality work that preserves your memories for a lifetime.
-              Trust us to deliver exceptional results tailored to your unique
-              story.
-            </p>
-          </div>
-        </div>
-      </div>
-      {/* 🔥 Our Services Section */}
+      {/* Curved Text Box */}
+      <motion.div 
+        className="relative mt-5 p-8 md:p-10 bg-green-200 text-gray-900 max-w-2xl custom-shape shadow-lg"
+        variants={fadeInUp}
+        initial="hidden"
+        whileInView="visible"
+        viewport={{ once: true }}
+        transition={{ delay: 0.2 }}
+      >
+        <p className="text-lg leading-relaxed">
+          We are dedicated to capturing life's most precious moments with a 
+          creative and professional touch. Founded by Shahela Kahadawala, our 
+          studio specializes in photography and videography services, ensuring 
+          that every event is beautifully documented.
+          <br />
+          <br />
+          We also offer photo and video editing, photo framing, album design, 
+          as well as camera and light rentals for all your creative needs. With 
+          years of experience, we're passionate about providing high-quality 
+          work that preserves your memories for a lifetime. Trust us to deliver 
+          exceptional results tailored to your unique story.
+        </p>
+      </motion.div>
+    </div>
+  </div>
+  </SectionAnimation>
+
+
+      {/* Our Services Section */}
       <div
         className="relative w-full min-h-screen text-white py-20 px-10 md:px-20 bg-cover bg-center bg-no-repeat"
-        style={{ backgroundImage: `url(${dot})` }} // Replace with your actual image variable
+        style={{ backgroundImage: `url(${dot})` }}
+        id="services"
       >
         {/* Dark Overlay for Better Text Visibility */}
         <div className="absolute inset-0 bg-black/50"></div>
 
         {/* Content Container */}
         <div className="relative z-10">
-          <h2 className="text-center text-4xl md:text-5xl font-bold mb-10">
+          <motion.h2 
+            className="text-center text-4xl md:text-5xl font-bold mb-10"
+            variants={fadeInUp}
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true }}
+          >
             Our <span className="text-orange-500">Services</span>
-          </h2>
+          </motion.h2>
 
           {/* Services Grid */}
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+          <motion.div 
+            className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6"
+            variants={staggerContainer}
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true }}
+          >
             {[
               {
                 img: service1,
@@ -165,91 +328,169 @@ const HomePage = () => {
                 desc: "Advanced technology for high-quality video recording.",
               },
             ].map((service, index) => (
-              <div
+              <motion.div
                 key={index}
                 className="bg-[#131313] p-5 rounded-lg shadow-lg overflow-hidden relative group cursor-pointer"
-                initial={{ opacity: 0, y: 30 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.6, delay: index * 0.1 }}
-                viewport={{ once: true }}
+                variants={fadeInUp}
+                whileHover={{ 
+                  y: -10,
+                  boxShadow: "0px 20px 30px rgba(0, 0, 0, 0.3)"
+                }}
+                transition={{ duration: 0.3 }}
               >
-                <img
-                  src={service.img}
-                  alt={service.title}
-                  className="w-full h-40 object-cover rounded-lg mb-4 transition-transform duration-500 group-hover:scale-110"
-                />
+                <motion.div className="overflow-hidden rounded-lg mb-4">
+                  <motion.img
+                    src={service.img}
+                    alt={service.title}
+                    className="w-full h-40 object-cover"
+                    whileHover={{ 
+                      scale: 1.1,
+                      transition: { duration: 0.5 }
+                    }}
+                  />
+                </motion.div>
                 <h3 className="text-lg font-semibold">{service.title}</h3>
                 <p className="text-sm text-gray-400">{service.desc}</p>
-              </div>
+                <motion.div 
+                  className="absolute bottom-0 left-0 w-full h-1 bg-orange-500"
+                  initial={{ width: 0 }}
+                  whileHover={{ width: "100%" }}
+                  transition={{ duration: 0.3 }}
+                />
+              </motion.div>
             ))}
-          </div>
+          </motion.div>
         </div>
       </div>
-      {/* 🖼️ Latest Work Gallery Section */}
-      <div className="relative w-full min-h-[600px] flex flex-col items-center justify-center py-20 px-10 md:px-20 bg-[#0a0a0a]">
+
+      {/* Latest Work Gallery Section */}
+      <div 
+        className="relative w-full min-h-[600px] flex flex-col items-center justify-center py-20 px-10 md:px-20 bg-[#0a0a0a]"
+        id="gallery"
+      >
         {/* Background Image */}
         <div
           className="absolute inset-0 bg-cover bg-center opacity-50 rounded-lg"
-          style={{ backgroundImage: `url(${dot})` }} // Background image
+          style={{ backgroundImage: `url(${dot})` }}
         ></div>
 
-        {/* Section Heading (Remains in Place) */}
-        <h2 className="relative text-center text-4xl md:text-5xl font-bold text-white mb-16 -mt-10 z-20">
+        {/* Section Heading */}
+        <motion.h2 
+          className="relative text-center text-4xl md:text-5xl font-bold text-white mb-16 -mt-10 z-20"
+          variants={fadeInUp}
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true }}
+        >
           Latest Work <span className="text-orange-500">Gallery</span>
-        </h2>
+        </motion.h2>
 
-        {/* 🔽 Moved Entire Image Group Down 🔽 */}
+        {/* Images Group with Animation */}
         <div className="relative w-full max-w-6xl mx-auto mt-20">
-          {" "}
-          {/* Increased margin-top to push down */}
           {/* Background Horizontal Image */}
-          <div className="w-full h-100 md:h-80 bg-gray-800 rounded-lg overflow-hidden shadow-xl">
-            <img
+          <motion.div 
+            className="w-full h-100 md:h-80 bg-gray-800 rounded-lg overflow-hidden shadow-xl"
+            variants={fadeInUp}
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true }}
+          >
+            <motion.img
               src={background3}
               alt="Background Gallery"
               className="w-full h-full object-cover"
+              initial={{ scale: 1.1 }}
+              whileInView={{ scale: 1 }}
+              transition={{ duration: 1.5 }}
+              viewport={{ once: true }}
             />
-          </div>
-          {/* Floating Images (Moved Down) */}
+          </motion.div>
+          
+          {/* Floating Images */}
           <div className="absolute top-[-15%] left-1/2 transform -translate-x-1/2 flex gap-6 z-10">
             {/* Left Image */}
-            <div className="w-40 md:w-52 h-52 bg-gray-800 rounded-lg overflow-hidden shadow-lg transform hover:scale-110 transition-all duration-300">
+            <motion.div 
+              className="w-40 md:w-52 h-52 bg-gray-800 rounded-lg overflow-hidden shadow-lg"
+              variants={photoAnimation}
+              initial="initial"
+              whileHover="hover"
+              whileInView={{ 
+                opacity: [0, 1],
+                y: [50, 0],
+                rotate: [-5, 0]
+              }}
+              transition={{ duration: 0.5 }}
+              viewport={{ once: true }}
+            >
               <img
                 src={image1}
                 alt="Gallery 1"
                 className="w-full h-full object-cover"
               />
-            </div>
+            </motion.div>
 
             {/* Center Image (Bigger & Even Higher) */}
-            <div className="w-48 md:w-60 h-60 bg-gray-800 rounded-lg overflow-hidden shadow-xl transform hover:scale-110 transition-all duration-300">
+            <motion.div 
+              className="w-48 md:w-60 h-60 bg-gray-800 rounded-lg overflow-hidden shadow-xl"
+              variants={photoAnimation}
+              initial="initial"
+              whileHover="hover"
+              whileInView={{ 
+                opacity: [0, 1],
+                y: [50, 0]
+              }}
+              transition={{ duration: 0.5, delay: 0.1 }}
+              viewport={{ once: true }}
+            >
               <img
                 src={image2}
                 alt="Gallery 2"
                 className="w-full h-full object-cover"
               />
-            </div>
+            </motion.div>
 
             {/* Right Image */}
-            <div className="w-40 md:w-52 h-52 bg-gray-800 rounded-lg overflow-hidden shadow-lg transform hover:scale-110 transition-all duration-300">
+            <motion.div 
+              className="w-40 md:w-52 h-52 bg-gray-800 rounded-lg overflow-hidden shadow-lg"
+              variants={photoAnimation}
+              initial="initial"
+              whileHover="hover"
+              whileInView={{ 
+                opacity: [0, 1],
+                y: [50, 0],
+                rotate: [5, 0]
+              }}
+              transition={{ duration: 0.5, delay: 0.2 }}
+              viewport={{ once: true }}
+            >
               <img
                 src={image3}
                 alt="Gallery 3"
                 className="w-full h-full object-cover"
               />
-            </div>
+            </motion.div>
           </div>
         </div>
 
-        {/* 🟠 View All Button */}
-        <button className="relative mt-8 px-6 py-3 bg-orange-500 text-white font-semibold rounded-full shadow-lg hover:bg-orange-600 transition-all duration-300 transform hover:scale-105 z-10">
+        {/* View All Button */}
+        <motion.button 
+          className="relative mt-8 px-6 py-3 bg-orange-500 text-white font-semibold rounded-full shadow-lg hover:bg-orange-600 transition-all duration-300 z-10"
+          whileHover={{ scale: 1.1 }}
+          whileTap={{ scale: 0.95 }}
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.3 }}
+          viewport={{ once: true }}
+        >
           View All
-        </button>
+        </motion.button>
       </div>
-      {/* 🔴 Video Section with Background Image */}
+
+      {/* Video Section with Background Image */}
       <div
         className="relative w-full flex flex-col items-center justify-center py-20 px-6 md:px-12 bg-cover bg-center"
-        style={{ backgroundImage: `url(${dot})` }} // Replace with your image path
+        style={{ backgroundImage: `url(${dot})` }}
+        id="videos"
       >
         {/* Dark Overlay */}
         <div className="absolute inset-0 bg-black opacity-50"></div>
@@ -257,12 +498,24 @@ const HomePage = () => {
         {/* Section Content */}
         <div className="relative z-10 w-full max-w-6xl text-center">
           {/* Section Title */}
-          <h2 className="text-3xl md:text-4xl font-bold text-white mb-8">
+          <motion.h2 
+            className="text-3xl md:text-4xl font-bold text-white mb-8"
+            variants={fadeInUp}
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true }}
+          >
             Our <span className="text-orange-500">Videos</span>
-          </h2>
+          </motion.h2>
 
           {/* Video Grid */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6">
+          <motion.div 
+            className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6"
+            variants={staggerContainer}
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true }}
+          >
             {/* Video Cards */}
             {[
               videoThumbnail1,
@@ -270,34 +523,58 @@ const HomePage = () => {
               videoThumbnail3,
               videoThumbnail4,
             ].map((video, index) => (
-              <div
+              <motion.div
                 key={index}
                 className="relative group overflow-hidden rounded-lg shadow-lg"
+                variants={fadeInUp}
+                whileHover={{ 
+                  y: -10,
+                  boxShadow: "0px 15px 25px rgba(0, 0, 0, 0.3)"
+                }}
               >
-                <img
+                <motion.img
                   src={video}
                   alt={`Video ${index + 1}`}
-                  className="w-full h-48 object-cover transition duration-300 group-hover:brightness-75"
+                  className="w-full h-48 object-cover"
+                  whileHover={{ scale: 1.05 }}
+                  transition={{ duration: 0.3 }}
                 />
-                <button className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-orange-500 text-white p-3 rounded-full opacity-0 transition-opacity duration-300 group-hover:opacity-100">
+                <motion.button 
+                  className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-orange-500 text-white p-3 rounded-full opacity-0 group-hover:opacity-100"
+                  whileHover={{ scale: 1.2 }}
+                  transition={{ duration: 0.2 }}
+                >
                   ▶️
-                </button>
-                <div className="p-4 bg-gray-900">
+                </motion.button>
+                <motion.div 
+                  className="p-4 bg-gray-900"
+                  initial={{ y: 30, opacity: 0 }}
+                  whileInView={{ y: 0, opacity: 1 }}
+                  transition={{ delay: 0.1 * index }}
+                  viewport={{ once: true }}
+                >
                   <h3 className="text-white font-semibold">
                     Video Title {index + 1}
                   </h3>
                   <span className="text-gray-400 text-sm">Category</span>
-                </div>
-              </div>
+                </motion.div>
+              </motion.div>
             ))}
-          </div>
+          </motion.div>
         </div>
       </div>
-      {/* 🔵 Footer Section */}
-      <footer className="bg-[#10202B] text-white py-8">
+
+      {/* Footer Section */}
+      <footer className="bg-[#10202B] text-white py-8" id="contact">
         <div className="max-w-6xl mx-auto px-6 grid grid-cols-1 md:grid-cols-3 gap-8">
           {/* Contact Us */}
-          <div className="space-y-4">
+          <motion.div 
+            className="space-y-4"
+            initial={{ opacity: 0, y: 30 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5 }}
+            viewport={{ once: true }}
+          >
             <h3 className="text-lg font-semibold mb-2">Contact Us</h3>
             <p className="text-gray-300 text-sm">Sahan Ovrids</p>
             <p className="text-gray-300 text-sm">+07123456789</p>
@@ -305,101 +582,115 @@ const HomePage = () => {
 
             {/* Contact Form */}
             <form className="space-y-3">
-              <input
+              <motion.input
                 type="text"
                 placeholder="Full Name"
                 className="w-full bg-gray-800 text-white px-3 py-2 rounded-md focus:outline-none focus:ring-2 focus:ring-orange-500 text-sm"
+                whileFocus={{ scale: 1.02, boxShadow: "0px 0px 8px rgba(249, 115, 22, 0.4)" }}
               />
-              <input
+              <motion.input
                 type="text"
                 placeholder="Mobile Number"
                 className="w-full bg-gray-800 text-white px-3 py-2 rounded-md focus:outline-none focus:ring-2 focus:ring-orange-500 text-sm"
+                whileFocus={{ scale: 1.02, boxShadow: "0px 0px 8px rgba(249, 115, 22, 0.4)" }}
               />
-              <input
+              <motion.input
                 type="email"
                 placeholder="Email"
                 className="w-full bg-gray-800 text-white px-3 py-2 rounded-md focus:outline-none focus:ring-2 focus:ring-orange-500 text-sm"
+                whileFocus={{ scale: 1.02, boxShadow: "0px 0px 8px rgba(249, 115, 22, 0.4)" }}
               />
-              <textarea
+              <motion.textarea
                 placeholder="Message"
                 className="w-full bg-gray-800 text-white px-3 py-2 rounded-md focus:outline-none focus:ring-2 focus:ring-orange-500 text-sm"
-              ></textarea>
-              <button className="w-full px-5 py-2 bg-orange-500 text-white font-semibold rounded-md shadow-lg hover:bg-orange-600 focus:outline-none text-sm">
+                whileFocus={{ scale: 1.02, boxShadow: "0px 0px 8px rgba(249, 115, 22, 0.4)" }}
+              ></motion.textarea>
+              <motion.button 
+                className="w-full px-5 py-2 bg-orange-500 text-white font-semibold rounded-md shadow-lg hover:bg-orange-600 focus:outline-none text-sm"
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+              >
                 Submit
-              </button>
+              </motion.button>
             </form>
-          </div>
+          </motion.div>
 
           {/* Quick Links */}
-          <div className="space-y-4">
+          <motion.div 
+            className="space-y-4"
+            initial={{ opacity: 0, y: 30 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5, delay: 0.1 }}
+            viewport={{ once: true }}
+          >
             <h3 className="text-lg font-semibold mb-2">Quick Links</h3>
             <ul className="space-y-2 text-gray-300 text-sm">
-              <li>
-                <a
-                  href="#gallery"
-                  className="hover:text-orange-500 transition duration-200 ease-in-out"
+              {[
+                { name: "Gallery", href: "#gallery" },
+                { name: "About Us", href: "#about" },
+                { name: "Videos", href: "#videos" },
+                { name: "Testimonials", href: "#testimonials" },
+                { name: "Contact Us", href: "#contact" }
+              ].map((link, index) => (
+                <motion.li 
+                  key={index}
+                  whileHover={{ x: 5, color: "#f97316" }}
+                  transition={{ duration: 0.2 }}
                 >
-                  Gallery
-                </a>
-              </li>
-              <li>
-                <a
-                  href="#about"
-                  className="hover:text-orange-500 transition duration-200 ease-in-out"
-                >
-                  About Us
-                </a>
-              </li>
-              <li>
-                <a
-                  href="#videos"
-                  className="hover:text-orange-500 transition duration-200 ease-in-out"
-                >
-                  Videos
-                </a>
-              </li>
-              <li>
-                <a
-                  href="#testimonials"
-                  className="hover:text-orange-500 transition duration-200 ease-in-out"
-                >
-                  Testimonials
-                </a>
-              </li>
-              <li>
-                <a
-                  href="#contact"
-                  className="hover:text-orange-500 transition duration-200 ease-in-out"
-                >
-                  Contact Us
-                </a>
-              </li>
+                  <a
+                    href={link.href}
+                    className="transition duration-200 ease-in-out"
+                  >
+                    {link.name}
+                  </a>
+                </motion.li>
+              ))}
             </ul>
-          </div>
+          </motion.div>
 
           {/* Company Info */}
-          <div className="space-y-4">
-            <h3 className="text-lg font-semibold mb-2 flex items-center">
-              <img
-                src={logo} // Ensure your logo path is correct here
-                alt="MCU Photography Logo"
+          <motion.div 
+            className="space-y-4"
+            initial={{ opacity: 0, y: 30 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5, delay: 0.2 }}
+            viewport={{ once: true }}
+          >
+            <motion.h3 
+              className="text-lg font-semibold mb-2 flex items-center"
+              initial={{ x: 20, opacity: 0 }}
+              whileInView={{ x: 0, opacity: 1 }}
+              transition={{ duration: 0.5 }}
+              viewport={{ once: true }}
+            >
+              <motion.img
+                src={logo}
+                alt="SKW Photography Logo"
                 className="mr-2 w-8 h-8 object-contain"
+                whileHover={{ rotate: 360 }}
+                transition={{ duration: 1 }}
               />
               SKW Photography
-            </h3>
+            </motion.h3>
             <p className="text-gray-300 text-sm">971/C, Malabe, Sri Lanka</p>
             <p className="text-gray-300 text-sm">+94 712 123 123</p>
             <p className="text-gray-300 text-sm">photography@gmail.com</p>
             <p className="text-gray-300 text-sm mt-2">
               Opening Hours: <br /> Mon-Sat: 8:00 AM - 6:00 PM
             </p>
-          </div>
+          </motion.div>
         </div>
 
         {/* Copyright */}
-        <div className="text-center text-gray-400 text-xs mt-6">
+        <motion.div 
+          className="text-center text-gray-400 text-xs mt-6"
+          initial={{ opacity: 0 }}
+          whileInView={{ opacity: 1 }}
+          transition={{ delay: 0.5 }}
+          viewport={{ once: true }}
+        >
           © Copyright 2024. SKW Photography. All Rights Reserved.
-        </div>
+        </motion.div>
       </footer>
     </div>
   );

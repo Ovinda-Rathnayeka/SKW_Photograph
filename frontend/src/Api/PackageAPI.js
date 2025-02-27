@@ -1,13 +1,11 @@
 import axios from "axios";
 
-// ✅ Create an axios instance with the base URL for the API
+
 const api = axios.create({
-  baseURL: "http://localhost:5000/package", // Adjust to match your backend API URL
+  baseURL: "http://localhost:5000/package", 
 });
 
-// ================== 📸 PHOTO PACKAGE API FUNCTIONS ================== //
 
-// ✅ Fetch all photo packages
 export const fetchPhotoPackages = async () => {
   try {
     console.log("📦 Fetching all photo packages...");
@@ -23,7 +21,7 @@ export const fetchPhotoPackages = async () => {
   }
 };
 
-// ✅ Fetch a specific photo package by ID
+
 export const fetchPhotoPackageById = async (packageId) => {
   try {
     console.log("🔍 Fetching photo package with ID:", packageId);
@@ -45,13 +43,13 @@ export const fetchPhotoPackageById = async (packageId) => {
   }
 };
 
-// ✅ Delete a photo package by ID
+
 export const deletePhotoPackage = async (packageId) => {
   try {
     console.log("🗑️ Deleting photo package with ID:", packageId);
     const response = await api.delete(`/${packageId}`);
     console.log("✅ Package deleted successfully!", response.data);
-    return response.data.message; // Assuming response contains a success message
+    return response.data.message; 
   } catch (error) {
     console.error(
       "❌ Error deleting photo package:",
@@ -61,17 +59,17 @@ export const deletePhotoPackage = async (packageId) => {
   }
 };
 
-// ✅ Update a photo package
+
 export const updatePhotoPackage = async (packageId, updatedData) => {
   try {
     console.log("✏️ Updating photo package:", packageId);
     const response = await api.put(`/${packageId}`, updatedData, {
       headers: {
-        "Content-Type": "application/json", // Adjust as needed
+        "Content-Type": "application/json", 
       },
     });
     console.log("✅ Package updated successfully!", response.data);
-    return response.data; // Assuming the response contains the updated package
+    return response.data; 
   } catch (error) {
     console.error(
       "❌ Error updating photo package:",

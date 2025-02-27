@@ -1,18 +1,14 @@
 import axios from "axios";
 
-// ✅ Create an axios instance with the base URL for the API
 const api = axios.create({
   baseURL: "http://localhost:5000/auth",
-  withCredentials: true, // Ensures cookies are sent with requests
+  withCredentials: true,
 });
 
-// ================== 📱 AUTH API FUNCTIONS ================== //
-
-// ✅ Signup (Register new customer)
 export const signup = async (userData) => {
   try {
     const response = await api.post("/signup", userData);
-    return response.data; // Assuming response contains success message and customer data
+    return response.data;
   } catch (error) {
     console.error(
       "❌ Error during signup:",
@@ -22,11 +18,10 @@ export const signup = async (userData) => {
   }
 };
 
-// ✅ Login (Authenticate existing customer)
 export const login = async (credentials) => {
   try {
     const response = await api.post("/login", credentials);
-    return response.data; // Assuming response contains JWT token and customer data
+    return response.data;
   } catch (error) {
     console.error(
       "❌ Error during login:",
@@ -36,11 +31,10 @@ export const login = async (credentials) => {
   }
 };
 
-// ✅ Logout (Clear session/cookie)
 export const logout = async () => {
   try {
     const response = await api.post("/logout");
-    return response.data.message; // Assuming response contains a success message
+    return response.data.message;
   } catch (error) {
     console.error(
       "❌ Error during logout:",
@@ -50,11 +44,10 @@ export const logout = async () => {
   }
 };
 
-// ✅ Fetch Logged-in User Details
 export const fetchUserDetails = async () => {
   try {
-    const response = await api.get("/me"); // Fetch user data from /me
-    return response.data; // Assuming response contains user details
+    const response = await api.get("/me");
+    return response.data;
   } catch (error) {
     console.error(
       "❌ Error fetching user details:",
