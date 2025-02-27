@@ -3,41 +3,43 @@ import Customer from "../Models/CustomerModel.js";
 import PhotoPackage from "../Models/PackageModel.js";
 import mongoose from "mongoose";
 
-// ✅ Function to validate MongoDB ObjectId
 const isValidObjectId = (id) => mongoose.Types.ObjectId.isValid(id);
 
-// ✅ CREATE NEW BOOKING
 export const createBooking = async (req, res) => {
-  const { customerId, packageId, totalPrice, additionalNotes } = req.body;
+  const {
+    customerId,
+    packageId,
+    bookingDate,
+    bookingTime,
+    totalPrice,
+    additionalNotes,
+  } = req.body;
 
   try {
-    // Validate ObjectId format
     if (!isValidObjectId(customerId) || !isValidObjectId(packageId)) {
       return res
         .status(400)
         .json({ message: "Invalid ObjectId format for customer or package" });
     }
 
-    // Check if the customer exists
     const customer = await Customer.findById(customerId);
     if (!customer)
       return res.status(404).json({ message: "Customer not found" });
 
-    // Check if the package exists
     const photoPackage = await PhotoPackage.findById(packageId);
     if (!photoPackage)
       return res.status(404).json({ message: "Photo package not found" });
 
-    // Create new booking
     const newBooking = new Booking({
       customerId,
       packageId,
+      bookingDate,
+      bookingTime,
       totalPrice,
       additionalNotes,
     });
     await newBooking.save();
 
-    // Populate customer & package details in response
     const populatedBooking = await newBooking.populate([
       "customerId",
       "packageId",
@@ -55,7 +57,6 @@ export const createBooking = async (req, res) => {
   }
 };
 
-// ✅ GET ALL BOOKINGS
 export const getAllBookings = async (req, res) => {
   try {
     const bookings = await Booking.find()
@@ -71,7 +72,6 @@ export const getAllBookings = async (req, res) => {
   }
 };
 
-// ✅ GET A SINGLE BOOKING BY ID
 export const getBookingById = async (req, res) => {
   const { id } = req.params;
 
@@ -97,7 +97,6 @@ export const getBookingById = async (req, res) => {
   }
 };
 
-// ✅ UPDATE A BOOKING
 export const updateBooking = async (req, res) => {
   const { id } = req.params;
   const updateData = req.body;
@@ -127,7 +126,6 @@ export const updateBooking = async (req, res) => {
   }
 };
 
-// ✅ DELETE A BOOKING
 export const deleteBooking = async (req, res) => {
   const { id } = req.params;
 

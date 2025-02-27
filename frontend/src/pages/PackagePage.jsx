@@ -10,7 +10,7 @@ const PackagePage = () => {
   const [selectedPackage, setSelectedPackage] = useState(null);
   const [isBookingOpen, setIsBookingOpen] = useState(false);
 
-  const categories = ["Wedding", "Normal", "Event", "Party", "Musical"];
+  const categories = ["Wedding", "Pre-Shoot", "Pre-Shoot + Wedding", "Party", "Normal"];
 
   // Fetch user details when the component loads
   useEffect(() => {

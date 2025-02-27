@@ -14,7 +14,11 @@ const bookingSchema = new mongoose.Schema(
     },
     bookingDate: {
       type: Date,
-      default: Date.now,
+      required: true,
+    },
+    bookingTime: {
+      type: String,
+      required: true,
     },
     status: {
       type: String,
@@ -32,7 +36,7 @@ const bookingSchema = new mongoose.Schema(
     },
   },
   {
-    timestamps: true, // ✅ Automatically adds `createdAt` and `updatedAt`
+    timestamps: true,
   }
 );
 
