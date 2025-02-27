@@ -1,7 +1,6 @@
 import mongoose from "mongoose";
 
 const PhotoPackageSchema = new mongoose.Schema({
-  packageId: { type: String, required: true, unique: true },
   packageName: { type: String, required: true },
   category: { type: String, required: true },
   price: { type: Number, required: true },
@@ -19,6 +18,11 @@ const PhotoPackageSchema = new mongoose.Schema({
   availability: { type: Boolean, default: true },
   createdAt: { type: Date, default: Date.now },
   updatedAt: { type: Date, default: Date.now },
+});
+
+PhotoPackageSchema.pre("save", function (next) {
+  this.updatedAt = Date.now();
+  next();
 });
 
 const PhotoPackage = mongoose.model("PhotoPackage", PhotoPackageSchema);
