@@ -1,3 +1,3 @@
 # SKW_Photograph
 
-Mern Project kavishka
+Mern Project
