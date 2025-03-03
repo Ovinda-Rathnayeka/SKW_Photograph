@@ -46,11 +46,11 @@ export const createBooking = async (req, res) => {
     ]);
 
     res.status(201).json({
-      message: "🎉 Booking created successfully!",
+      message: "Booking created successfully!",
       booking: populatedBooking,
     });
   } catch (error) {
-    console.error("❌ Error creating booking:", error);
+    console.error("Error creating booking:", error);
     res
       .status(500)
       .json({ message: "Error creating booking", error: error.message });
@@ -65,7 +65,7 @@ export const getAllBookings = async (req, res) => {
 
     res.status(200).json(bookings);
   } catch (error) {
-    console.error("❌ Error fetching bookings:", error);
+    console.error("Error fetching bookings:", error);
     res
       .status(500)
       .json({ message: "Error fetching bookings", error: error.message });
@@ -90,7 +90,7 @@ export const getBookingById = async (req, res) => {
 
     res.status(200).json(booking);
   } catch (error) {
-    console.error("❌ Error fetching booking:", error);
+    console.error("Error fetching booking:", error);
     res
       .status(500)
       .json({ message: "Error fetching booking", error: error.message });
@@ -115,11 +115,11 @@ export const updateBooking = async (req, res) => {
     }
 
     res.status(200).json({
-      message: "✅ Booking updated successfully!",
+      message: "Booking updated successfully!",
       booking: updatedBooking,
     });
   } catch (error) {
-    console.error("❌ Error updating booking:", error);
+    console.error("Error updating booking:", error);
     res
       .status(500)
       .json({ message: "Error updating booking", error: error.message });
@@ -140,9 +140,9 @@ export const deleteBooking = async (req, res) => {
       return res.status(404).json({ message: "Booking not found" });
     }
 
-    res.status(200).json({ message: "🗑️ Booking deleted successfully!" });
+    res.status(200).json({ message: "Booking deleted successfully!" });
   } catch (error) {
-    console.error("❌ Error deleting booking:", error);
+    console.error("Error deleting booking:", error);
     res
       .status(500)
       .json({ message: "Error deleting booking", error: error.message });

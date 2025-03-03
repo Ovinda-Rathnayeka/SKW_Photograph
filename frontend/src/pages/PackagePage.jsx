@@ -12,34 +12,34 @@ const PackagePage = () => {
 
   const categories = ["Wedding", "Pre-Shoot", "Pre-Shoot + Wedding", "Party", "Normal"];
 
-  // Fetch user details when the component loads
+  
   useEffect(() => {
     const getUser = async () => {
       try {
         const userData = await fetchUserDetails();
         setUser(userData);
       } catch (error) {
-        console.error("❌ Error fetching user details:", error);
+        console.error("Error fetching user details:", error);
       }
     };
     getUser();
   }, []);
 
-  // Fetch packages when the component loads
+  
   useEffect(() => {
     const getPackages = async () => {
       try {
         const data = await fetchPhotoPackages();
-        console.log("✅ Packages fetched:", data);
+        console.log("Packages fetched:", data);
         setPackages(data);
       } catch (error) {
-        console.error("❌ Error fetching packages:", error);
+        console.error("Error fetching packages:", error);
       }
     };
     getPackages();
   }, []);
 
-  // Handle opening the booking modal
+  
   const handleBookNow = (pkg) => {
     console.log("📦 Selected Package (Before Fix):", pkg);
   
@@ -57,10 +57,10 @@ const PackagePage = () => {
       description: pkg.description
     });
   
-    console.log("📦 Selected Package (After Fix):", selectedPackage);
+    console.log("Selected Package (After Fix):", selectedPackage);
     setIsBookingOpen(true);
   };
-  // Handle closing the booking modal
+  
   const closeBookingModal = () => {
     setIsBookingOpen(false);
     setSelectedPackage(null);
@@ -146,7 +146,7 @@ const PackagePage = () => {
         <BookingPage
           selectedPackage={selectedPackage}
           user={user}
-          onClose={closeBookingModal} // Function to close the modal
+          onClose={closeBookingModal} 
         />
       )}
 

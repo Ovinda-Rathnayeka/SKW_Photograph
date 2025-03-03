@@ -1,9 +1,15 @@
 import bcrypt from "bcryptjs";
 import Customer from "../Models/CustomerModel.js";
+import sendOTP from "../Middleware/Auth.js";
 
 const createCustomer = async (req, res) => {
   try {
     const { name, email, password, phone, nic, address } = req.body;
+
+    const existingCustomer = await Customer.findOne({ email });
+    if (existingCustomer) {
+      return res.status(400).json({ message: "Email already in use" });
+    }
 
     const hashedPassword = await bcrypt.hash(password, 10);
 
@@ -25,6 +31,20 @@ const createCustomer = async (req, res) => {
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
+};
+
+const sendOTPForCustomer = async (email) => {
+  const customer = await Customer.findOne({ email });
+  if (!customer) {
+    throw new Error("Customer not found");
+  }
+
+  const otp = Math.floor(100000 + Math.random() * 900000).toString(); 
+  customer.otp = otp;
+  customer.otpExpiration = Date.now() + 5 * 60 * 1000; 
+  await customer.save();
+
+  await sendOTP(email, otp);
 };
 
 const getAllCustomers = async (req, res) => {
@@ -99,10 +119,39 @@ const deleteCustomer = async (req, res) => {
   }
 };
 
+const verifyOTPForCustomer = async (req, res) => {
+  try {
+    const { email, otp } = req.body;
+    const customer = await Customer.findOne({ email });
+
+    if (!customer) {
+      return res.status(404).json({ message: "Customer not found" });
+    }
+
+    if (customer.otp !== otp) {
+      return res.status(400).json({ message: "Invalid OTP" });
+    }
+
+    if (Date.now() > customer.otpExpiration) {
+      return res.status(400).json({ message: "OTP has expired" });
+    }
+
+    customer.otpVerified = true;
+    customer.otp = undefined;
+    customer.otpExpiration = undefined;
+    await customer.save();
+
+    res.status(200).json({ message: "OTP verified successfully", customer });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+};
+
 export {
   createCustomer,
   getAllCustomers,
   getCustomerById,
   updateCustomer,
   deleteCustomer,
+  verifyOTPForCustomer,
 };
