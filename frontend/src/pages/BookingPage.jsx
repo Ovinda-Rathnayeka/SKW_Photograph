@@ -56,6 +56,7 @@ const BookingPage = ({ selectedPackage, onClose }) => {
     setIsSubmitting(true);
     const bookingData = {
       customerId: user?._id,
+      email: user?.email,
       packageId: selectedPackage._id,
       bookingDate: date,
       bookingTime: time,
