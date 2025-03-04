@@ -8,6 +8,8 @@ import Customer from "./Routes/CustomerRoutes.js";
 import Booking from "./Routes/BookingRoutes.js";
 import cookieParser from "cookie-parser";
 
+import cloudinary from "./Middleware/CloudinaryConfig.js";
+
 const app = express();
 dotenv.config();
 app.use(cookieParser());
@@ -29,9 +31,14 @@ mongoose
   .then(() => console.log("MongoDB connected"))
   .catch((err) => console.log("MongoDB connection error:", err));
 
-app.get("/", (req, res) => {
-  res.send("Hello World from the server!");
-});
+cloudinary.api
+  .ping()
+  .then(() => {
+    console.log("Cloudinary connection successful!");
+  })
+  .catch((error) => {
+    console.error("Cloudinary connection failed:", error);
+  });
 
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {

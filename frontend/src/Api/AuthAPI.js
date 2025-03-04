@@ -11,7 +11,7 @@ export const signup = async (userData) => {
     return response.data;
   } catch (error) {
     console.error(
-      "❌ Error during signup:",
+      "Error during signup:",
       error.response?.data || error.message
     );
     throw new Error(error.response?.data?.message || "Error during signup");
@@ -23,10 +23,7 @@ export const login = async (credentials) => {
     const response = await api.post("/login", credentials);
     return response.data;
   } catch (error) {
-    console.error(
-      "❌ Error during login:",
-      error.response?.data || error.message
-    );
+    console.error("Error during login:", error.response?.data || error.message);
     throw new Error(error.response?.data?.message || "Error during login");
   }
 };
@@ -37,7 +34,7 @@ export const logout = async () => {
     return response.data.message;
   } catch (error) {
     console.error(
-      "❌ Error during logout:",
+      "Error during logout:",
       error.response?.data || error.message
     );
     throw new Error(error.response?.data?.message || "Error during logout");
@@ -50,11 +47,26 @@ export const fetchUserDetails = async () => {
     return response.data;
   } catch (error) {
     console.error(
-      "❌ Error fetching user details:",
+      "Error fetching user details:",
       error.response?.data || error.message
     );
     throw new Error(
       error.response?.data?.message || "Error fetching user details"
+    );
+  }
+};
+
+export const verifyOTP = async (otpData) => {
+  try {
+    const response = await api.post("/verify-otp", otpData);
+    return response.data;
+  } catch (error) {
+    console.error(
+      "Error during OTP verification:",
+      error.response?.data || error.message
+    );
+    throw new Error(
+      error.response?.data?.message || "Error during OTP verification"
     );
   }
 };

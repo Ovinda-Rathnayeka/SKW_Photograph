@@ -9,7 +9,7 @@ const createPackage = async (req, res) => {
     const savedPackage = await newPackage.save();
     res.status(201).json(savedPackage);
   } catch (error) {
-    console.error("❌ Error creating package:", error);
+    console.error("Error creating package:", error);
     res.status(500).json({ message: "Error creating package", error });
   }
 };
@@ -37,7 +37,7 @@ export const getAllPackages = async (req, res) => {
 
     res.status(200).json(formattedPackages);
   } catch (error) {
-    console.error("❌ Error fetching packages:", error);
+    console.error("Error fetching packages:", error);
     res.status(500).json({ message: "Error fetching packages", error });
   }
 };
@@ -56,7 +56,7 @@ const getPackageById = async (req, res) => {
     }
     res.status(200).json(packageData);
   } catch (error) {
-    console.error("❌ Error fetching package:", error);
+    console.error("Error fetching package:", error);
     res.status(500).json({ message: "Error fetching package", error });
   }
 };
@@ -77,7 +77,7 @@ const updatePackageById = async (req, res) => {
     }
     res.status(200).json(updatedPackage);
   } catch (error) {
-    console.error("❌ Error updating package:", error);
+    console.error("Error updating package:", error);
     res.status(500).json({ message: "Error updating package", error });
   }
 };
@@ -94,9 +94,9 @@ const deletePackageById = async (req, res) => {
     if (!deletedPackage) {
       return res.status(404).json({ message: "Package not found" });
     }
-    res.status(200).json({ message: "✅ Package deleted successfully!" });
+    res.status(200).json({ message: "Package deleted successfully!" });
   } catch (error) {
-    console.error("❌ Error deleting package:", error);
+    console.error(" Error deleting package:", error);
     res.status(500).json({ message: "Error deleting package", error });
   }
 };

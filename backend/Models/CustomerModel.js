@@ -9,6 +9,10 @@ const customerSchema = new mongoose.Schema({
   address: { type: String },
   createdAt: { type: Date, default: Date.now },
   active: { type: Boolean, default: true },
+
+  otp: { type: String },
+  otpExpiration: { type: Date },
+  otpVerified: { type: Boolean, default: false },
 });
 
 const Customer = mongoose.model("Customer", customerSchema);
