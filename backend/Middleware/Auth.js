@@ -28,27 +28,38 @@ const sendOTP = async (email, otp) => {
   const mailOptions = {
     from: process.env.EMAIL_USER,
     to: email,
-    subject: "SKW Photography - Login OTP",
+    subject: "🔐 SKW Photography - Login OTP",
     html: `
-    <div style="background: linear-gradient(to right, #0D1117, #161B22); padding: 30px; text-align: center; font-family: Arial, sans-serif; color: white;">
-      
-      <!-- Logo -->
-      <img src="${logoUrl}" alt="Company Logo" width="120" style="margin-bottom: 20px; border-radius: 10px;">
-
-      <!-- OTP Message -->
-      <div style="background: #1E252F; padding: 20px; border-radius: 10px; display: inline-block; max-width: 400px;">
-        <h2 style="color: #E66A4E; margin-bottom: 10px;">🔑 Your Login Code</h2>
-        <p style="font-size: 18px; color: #B0B3B8;">Use the OTP below to log in to your account:</p>
-        <p style="font-size: 24px; font-weight: bold; color: #FFD700; background: #333; padding: 10px; display: inline-block; border-radius: 5px;">
-          ${otp}
+      <div style="background: linear-gradient(to right, #0D1117, #161B22); padding: 40px; text-align: center; font-family: Arial, sans-serif; color: white;">
+        
+        <!-- Logo -->
+        <div style="margin-bottom: 20px;">
+          <img src="https://i.pinimg.com/736x/2d/5a/0b/2d5a0b7d1be84bcf932f40f53402259b.jpg" 
+               alt="SKW Photography Logo" 
+               width="120" 
+               style="border-radius: 10px; box-shadow: 0 0 10px rgba(255, 215, 0, 0.5);">
+        </div>
+  
+        <!-- OTP Container -->
+        <div style="background: #1E252F; padding: 25px; border-radius: 12px; display: inline-block; max-width: 450px; box-shadow: 0 4px 8px rgba(0,0,0,0.2);">
+          <h2 style="color: #E66A4E; margin-bottom: 12px;">🔑 Your Secure Login Code</h2>
+          <p style="font-size: 18px; color: #B0B3B8;">Enter this OTP to access your account:</p>
+          
+          <p style="font-size: 28px; font-weight: bold; color: #FFD700; background: #333; padding: 12px 20px; display: inline-block; border-radius: 6px; letter-spacing: 3px;">
+            ${otp}
+          </p>
+  
+          <p style="font-size: 14px; color: #B0B3B8; margin-top: 15px;">
+            ⚠️ This code will expire in <strong>5 minutes</strong>. Do not share it with anyone.
+          </p>
+        </div>
+  
+        <!-- Footer -->
+        <p style="margin-top: 25px; font-size: 14px; color: #888;">
+          If you did not request this OTP, please ignore this email.
         </p>
-        <p style="font-size: 14px; color: #B0B3B8; margin-top: 10px;">⚠️ This code expires in <strong>5 minutes</strong>. Do not share it with anyone.</p>
       </div>
-
-      <!-- Footer -->
-      <p style="margin-top: 20px; font-size: 14px; color: #888;">If you did not request this OTP, please ignore this email.</p>
-    </div>
-  `,
+    `,
   };
 
   try {
