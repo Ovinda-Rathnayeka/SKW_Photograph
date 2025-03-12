@@ -2,8 +2,11 @@ import Booking from "../Models/BookingModel.js";
 import Customer from "../Models/CustomerModel.js";
 import PhotoPackage from "../Models/PackageModel.js";
 import mongoose from "mongoose";
+<<<<<<< Updated upstream
 import nodemailer from "nodemailer";
 import dotenv from "dotenv";
+=======
+>>>>>>> Stashed changes
 
 const isValidObjectId = (id) => mongoose.Types.ObjectId.isValid(id);
 
@@ -15,11 +18,17 @@ export const createBooking = async (req, res) => {
     bookingTime,
     totalPrice,
     additionalNotes,
+<<<<<<< Updated upstream
     email,
   } = req.body;
 
   try {
     
+=======
+  } = req.body;
+
+  try {
+>>>>>>> Stashed changes
     if (!isValidObjectId(customerId) || !isValidObjectId(packageId)) {
       return res
         .status(400)
@@ -42,14 +51,21 @@ export const createBooking = async (req, res) => {
       totalPrice,
       additionalNotes,
     });
+<<<<<<< Updated upstream
 
     
     const savedBooking = await newBooking.save();
     const populatedBooking = await savedBooking.populate([
+=======
+    await newBooking.save();
+
+    const populatedBooking = await newBooking.populate([
+>>>>>>> Stashed changes
       "customerId",
       "packageId",
     ]);
 
+<<<<<<< Updated upstream
     
     await sendBookingConfirmationEmail(email, populatedBooking);
 
@@ -60,12 +76,21 @@ export const createBooking = async (req, res) => {
     });
   } catch (error) {
     console.error("Error creating booking:", error);
+=======
+    res.status(201).json({
+      message: "🎉 Booking created successfully!",
+      booking: populatedBooking,
+    });
+  } catch (error) {
+    console.error("❌ Error creating booking:", error);
+>>>>>>> Stashed changes
     res
       .status(500)
       .json({ message: "Error creating booking", error: error.message });
   }
 };
 
+<<<<<<< Updated upstream
 const sendBookingConfirmationEmail = async (email, booking) => {
   try {
     const transporter = nodemailer.createTransport({
@@ -132,6 +157,8 @@ const sendBookingConfirmationEmail = async (email, booking) => {
   }
 };
 
+=======
+>>>>>>> Stashed changes
 export const getAllBookings = async (req, res) => {
   try {
     const bookings = await Booking.find()
@@ -140,7 +167,11 @@ export const getAllBookings = async (req, res) => {
 
     res.status(200).json(bookings);
   } catch (error) {
+<<<<<<< Updated upstream
     console.error("Error fetching bookings:", error);
+=======
+    console.error("❌ Error fetching bookings:", error);
+>>>>>>> Stashed changes
     res
       .status(500)
       .json({ message: "Error fetching bookings", error: error.message });
@@ -165,7 +196,11 @@ export const getBookingById = async (req, res) => {
 
     res.status(200).json(booking);
   } catch (error) {
+<<<<<<< Updated upstream
     console.error("Error fetching booking:", error);
+=======
+    console.error("❌ Error fetching booking:", error);
+>>>>>>> Stashed changes
     res
       .status(500)
       .json({ message: "Error fetching booking", error: error.message });
@@ -190,11 +225,19 @@ export const updateBooking = async (req, res) => {
     }
 
     res.status(200).json({
+<<<<<<< Updated upstream
       message: "Booking updated successfully!",
       booking: updatedBooking,
     });
   } catch (error) {
     console.error("Error updating booking:", error);
+=======
+      message: "✅ Booking updated successfully!",
+      booking: updatedBooking,
+    });
+  } catch (error) {
+    console.error("❌ Error updating booking:", error);
+>>>>>>> Stashed changes
     res
       .status(500)
       .json({ message: "Error updating booking", error: error.message });
@@ -215,9 +258,15 @@ export const deleteBooking = async (req, res) => {
       return res.status(404).json({ message: "Booking not found" });
     }
 
+<<<<<<< Updated upstream
     res.status(200).json({ message: "Booking deleted successfully!" });
   } catch (error) {
     console.error("Error deleting booking:", error);
+=======
+    res.status(200).json({ message: "🗑️ Booking deleted successfully!" });
+  } catch (error) {
+    console.error("❌ Error deleting booking:", error);
+>>>>>>> Stashed changes
     res
       .status(500)
       .json({ message: "Error deleting booking", error: error.message });

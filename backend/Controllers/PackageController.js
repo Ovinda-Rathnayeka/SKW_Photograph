@@ -1,12 +1,16 @@
 import mongoose from "mongoose";
 import PhotoPackage from "../Models/PackageModel.js";
+<<<<<<< Updated upstream
 import multerconfig from "../Middleware/MulterConfig.js";
 import cloudinary from "../Middleware/CloudinaryConfig.js";
+=======
+>>>>>>> Stashed changes
 
 const isValidObjectId = (id) => mongoose.Types.ObjectId.isValid(id);
 
 const createPackage = async (req, res) => {
   try {
+<<<<<<< Updated upstream
     if (req.file) {
     
       const cloudinaryResult = await cloudinary.uploader.upload(req.file.path, {
@@ -24,6 +28,13 @@ const createPackage = async (req, res) => {
     res.status(201).json(savedPackage); 
   } catch (error) {
     console.error("Error creating package:", error);
+=======
+    const newPackage = new PhotoPackage(req.body);
+    const savedPackage = await newPackage.save();
+    res.status(201).json(savedPackage);
+  } catch (error) {
+    console.error("❌ Error creating package:", error);
+>>>>>>> Stashed changes
     res.status(500).json({ message: "Error creating package", error });
   }
 };
@@ -51,7 +62,11 @@ export const getAllPackages = async (req, res) => {
 
     res.status(200).json(formattedPackages);
   } catch (error) {
+<<<<<<< Updated upstream
     console.error("Error fetching packages:", error);
+=======
+    console.error("❌ Error fetching packages:", error);
+>>>>>>> Stashed changes
     res.status(500).json({ message: "Error fetching packages", error });
   }
 };
@@ -70,7 +85,11 @@ const getPackageById = async (req, res) => {
     }
     res.status(200).json(packageData);
   } catch (error) {
+<<<<<<< Updated upstream
     console.error("Error fetching package:", error);
+=======
+    console.error("❌ Error fetching package:", error);
+>>>>>>> Stashed changes
     res.status(500).json({ message: "Error fetching package", error });
   }
 };
@@ -83,6 +102,7 @@ const updatePackageById = async (req, res) => {
   }
 
   try {
+<<<<<<< Updated upstream
     
     if (req.file) {
       
@@ -110,6 +130,17 @@ const updatePackageById = async (req, res) => {
     res.status(200).json(updatedPackage); 
   } catch (error) {
     console.error("Error updating package:", error);
+=======
+    const updatedPackage = await PhotoPackage.findByIdAndUpdate(id, req.body, {
+      new: true,
+    });
+    if (!updatedPackage) {
+      return res.status(404).json({ message: "Package not found" });
+    }
+    res.status(200).json(updatedPackage);
+  } catch (error) {
+    console.error("❌ Error updating package:", error);
+>>>>>>> Stashed changes
     res.status(500).json({ message: "Error updating package", error });
   }
 };
@@ -126,9 +157,15 @@ const deletePackageById = async (req, res) => {
     if (!deletedPackage) {
       return res.status(404).json({ message: "Package not found" });
     }
+<<<<<<< Updated upstream
     res.status(200).json({ message: "Package deleted successfully!" });
   } catch (error) {
     console.error(" Error deleting package:", error);
+=======
+    res.status(200).json({ message: "✅ Package deleted successfully!" });
+  } catch (error) {
+    console.error("❌ Error deleting package:", error);
+>>>>>>> Stashed changes
     res.status(500).json({ message: "Error deleting package", error });
   }
 };

@@ -18,7 +18,10 @@
     "mongoose": "^8.10.2",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
+<<<<<<< Updated upstream
     "react-icons": "^5.5.0",
+=======
+>>>>>>> Stashed changes
     "react-intersection-observer": "^9.15.1",
     "react-lazy-load-image-component": "^1.6.3",
     "react-modal": "^3.16.3",

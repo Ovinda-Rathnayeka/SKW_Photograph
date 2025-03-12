@@ -11,7 +11,11 @@ export const signup = async (userData) => {
     return response.data;
   } catch (error) {
     console.error(
+<<<<<<< Updated upstream
       "Error during signup:",
+=======
+      "❌ Error during signup:",
+>>>>>>> Stashed changes
       error.response?.data || error.message
     );
     throw new Error(error.response?.data?.message || "Error during signup");
@@ -23,7 +27,14 @@ export const login = async (credentials) => {
     const response = await api.post("/login", credentials);
     return response.data;
   } catch (error) {
+<<<<<<< Updated upstream
     console.error("Error during login:", error.response?.data || error.message);
+=======
+    console.error(
+      "❌ Error during login:",
+      error.response?.data || error.message
+    );
+>>>>>>> Stashed changes
     throw new Error(error.response?.data?.message || "Error during login");
   }
 };
@@ -34,7 +45,11 @@ export const logout = async () => {
     return response.data.message;
   } catch (error) {
     console.error(
+<<<<<<< Updated upstream
       "Error during logout:",
+=======
+      "❌ Error during logout:",
+>>>>>>> Stashed changes
       error.response?.data || error.message
     );
     throw new Error(error.response?.data?.message || "Error during logout");
@@ -47,7 +62,11 @@ export const fetchUserDetails = async () => {
     return response.data;
   } catch (error) {
     console.error(
+<<<<<<< Updated upstream
       "Error fetching user details:",
+=======
+      "❌ Error fetching user details:",
+>>>>>>> Stashed changes
       error.response?.data || error.message
     );
     throw new Error(
@@ -56,6 +75,7 @@ export const fetchUserDetails = async () => {
   }
 };
 
+<<<<<<< Updated upstream
 export const verifyOTP = async (otpData) => {
   try {
     const response = await api.post("/verify-otp", otpData);
@@ -71,4 +91,6 @@ export const verifyOTP = async (otpData) => {
   }
 };
 
+=======
+>>>>>>> Stashed changes
 export default api;

@@ -1,16 +1,22 @@
 import bcrypt from "bcryptjs";
 import Customer from "../Models/CustomerModel.js";
+<<<<<<< Updated upstream
 import sendOTP from "../Middleware/Auth.js";
+=======
+>>>>>>> Stashed changes
 
 const createCustomer = async (req, res) => {
   try {
     const { name, email, password, phone, nic, address } = req.body;
 
+<<<<<<< Updated upstream
     const existingCustomer = await Customer.findOne({ email });
     if (existingCustomer) {
       return res.status(400).json({ message: "Email already in use" });
     }
 
+=======
+>>>>>>> Stashed changes
     const hashedPassword = await bcrypt.hash(password, 10);
 
     const newCustomer = new Customer({
@@ -33,6 +39,7 @@ const createCustomer = async (req, res) => {
   }
 };
 
+<<<<<<< Updated upstream
 const sendOTPForCustomer = async (email) => {
   const customer = await Customer.findOne({ email });
   if (!customer) {
@@ -47,6 +54,8 @@ const sendOTPForCustomer = async (email) => {
   await sendOTP(email, otp);
 };
 
+=======
+>>>>>>> Stashed changes
 const getAllCustomers = async (req, res) => {
   try {
     const customers = await Customer.find();
@@ -119,6 +128,7 @@ const deleteCustomer = async (req, res) => {
   }
 };
 
+<<<<<<< Updated upstream
 const verifyOTPForCustomer = async (req, res) => {
   try {
     const { email, otp } = req.body;
@@ -147,11 +157,16 @@ const verifyOTPForCustomer = async (req, res) => {
   }
 };
 
+=======
+>>>>>>> Stashed changes
 export {
   createCustomer,
   getAllCustomers,
   getCustomerById,
   updateCustomer,
   deleteCustomer,
+<<<<<<< Updated upstream
   verifyOTPForCustomer,
+=======
+>>>>>>> Stashed changes
 };

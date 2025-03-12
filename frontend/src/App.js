@@ -5,7 +5,10 @@ import HomePage from "./pages/HomePage.jsx";
 import PackagePage from "./pages/PackagePage.jsx";
 import LoginPage from "./pages/LoginPage.jsx";
 import { logout } from "./Api/AuthAPI.js";
+<<<<<<< Updated upstream
 import PaymentPage from "./pages/PaymentPage.jsx";
+=======
+>>>>>>> Stashed changes
 
 function App() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
@@ -36,7 +39,10 @@ function App() {
           path="/login"
           element={<LoginPage setIsLoggedIn={setIsLoggedIn} />}
         />
+<<<<<<< Updated upstream
         <Route path="/payment" element={<PaymentPage />} />
+=======
+>>>>>>> Stashed changes
       </Routes>
     </Router>
   );

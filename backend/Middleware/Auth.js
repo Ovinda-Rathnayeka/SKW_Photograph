@@ -4,7 +4,10 @@ import dotenv from "dotenv";
 import Customer from "../Models/CustomerModel.js";
 import cookieParser from "cookie-parser";
 import express from "express";
+<<<<<<< Updated upstream
 import nodemailer from "nodemailer";
+=======
+>>>>>>> Stashed changes
 
 dotenv.config();
 
@@ -14,6 +17,7 @@ const app = express();
 app.use(express.json());
 app.use(cookieParser());
 
+<<<<<<< Updated upstream
 const sendOTP = async (email, otp) => {
   const transporter = nodemailer.createTransport({
     service: "gmail",
@@ -70,6 +74,8 @@ const sendOTP = async (email, otp) => {
   }
 };
 
+=======
+>>>>>>> Stashed changes
 const signup = async (req, res) => {
   try {
     const { name, nic, phone, email, password } = req.body;
@@ -114,6 +120,7 @@ const login = async (req, res) => {
       return res.status(400).json({ message: "Invalid credentials" });
     }
 
+<<<<<<< Updated upstream
     const otp = Math.floor(100000 + Math.random() * 900000).toString();
     customer.otp = otp;
     customer.otpExpiration = Date.now() + 5 * 60 * 1000;
@@ -144,13 +151,18 @@ const verifyOTP = async (req, res) => {
       return res.status(400).json({ message: "OTP expired" });
     }
 
+=======
+>>>>>>> Stashed changes
     const token = jwt.sign({ id: customer._id }, jwtSecret, {
       expiresIn: "1h",
     });
 
+<<<<<<< Updated upstream
     customer.otpVerified = true;
     await customer.save();
 
+=======
+>>>>>>> Stashed changes
     res.cookie("authToken", token, {
       httpOnly: true,
       secure: process.env.NODE_ENV === "production",
@@ -158,7 +170,11 @@ const verifyOTP = async (req, res) => {
       maxAge: 3600000,
     });
 
+<<<<<<< Updated upstream
     res.status(200).json({ message: "OTP verified. Login successful", token });
+=======
+    res.status(200).json({ message: "Login successful", token, customer });
+>>>>>>> Stashed changes
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
@@ -188,7 +204,11 @@ const verifyToken = (req, res, next) => {
   }
 };
 
+<<<<<<< Updated upstream
 const profile = async (req, res) => {
+=======
+const getProfile = async (req, res) => {
+>>>>>>> Stashed changes
   try {
     const customer = await Customer.findById(req.customerId).select(
       "-password"
@@ -203,6 +223,7 @@ const profile = async (req, res) => {
   }
 };
 
+<<<<<<< Updated upstream
 export default {
   signup,
   login,
@@ -212,3 +233,6 @@ export default {
   profile,
   sendOTP,
 };
+=======
+export { signup, login, logout, verifyToken, getProfile };
+>>>>>>> Stashed changes

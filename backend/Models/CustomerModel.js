@@ -9,10 +9,13 @@ const customerSchema = new mongoose.Schema({
   address: { type: String },
   createdAt: { type: Date, default: Date.now },
   active: { type: Boolean, default: true },
+<<<<<<< Updated upstream
 
   otp: { type: String },
   otpExpiration: { type: Date },
   otpVerified: { type: Boolean, default: false },
+=======
+>>>>>>> Stashed changes
 });
 
 const Customer = mongoose.model("Customer", customerSchema);

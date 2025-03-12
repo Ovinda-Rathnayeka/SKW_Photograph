@@ -1,7 +1,10 @@
 import React, { useEffect, useState } from "react";
 import { fetchUserDetails } from "../Api/AuthAPI.js";
 import { createBooking } from "../Api/BookingAPI.js";
+<<<<<<< Updated upstream
 import PaymentPage from "./PaymentPage"; 
+=======
+>>>>>>> Stashed changes
 
 const BookingPage = ({ selectedPackage, onClose }) => {
   const [user, setUser] = useState(null);
@@ -12,9 +15,14 @@ const BookingPage = ({ selectedPackage, onClose }) => {
   const [selectedAdditions, setSelectedAdditions] = useState([]);
   const [date, setDate] = useState("");
   const [time, setTime] = useState("");
+<<<<<<< Updated upstream
   const [isPaymentModalOpen, setIsPaymentModalOpen] = useState(false); 
   const [bookingResult, setBookingResult] = useState(null); 
 
+=======
+
+  
+>>>>>>> Stashed changes
   const additions = [
     { id: 1, name: "Professional Makeup", price: 50 },
     { id: 2, name: "Luxury Dress Rental", price: 80 },
@@ -58,7 +66,10 @@ const BookingPage = ({ selectedPackage, onClose }) => {
     setIsSubmitting(true);
     const bookingData = {
       customerId: user?._id,
+<<<<<<< Updated upstream
       email: user?.email,
+=======
+>>>>>>> Stashed changes
       packageId: selectedPackage._id,
       bookingDate: date,
       bookingTime: time,
@@ -67,6 +78,7 @@ const BookingPage = ({ selectedPackage, onClose }) => {
     };
 
     try {
+<<<<<<< Updated upstream
       
       const result = await createBooking(bookingData);
       console.log(result); 
@@ -79,6 +91,11 @@ const BookingPage = ({ selectedPackage, onClose }) => {
       } else {
         alert("Booking Confirmation Failed");
       }
+=======
+      const result = await createBooking(bookingData);
+      alert("Booking Confirmed! ID: " + result._id);
+      onClose(); 
+>>>>>>> Stashed changes
     } catch (error) {
       alert("Failed to create booking: " + error.message);
     } finally {
@@ -87,8 +104,14 @@ const BookingPage = ({ selectedPackage, onClose }) => {
   };
 
   return (
+<<<<<<< Updated upstream
     <div className={`fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 p-4 z-50 ${isPaymentModalOpen ? 'backdrop-blur-lg' : ''}`}>
       <div className="bg-[#1B242C] p-6 rounded-lg shadow-lg w-[95%] max-w-[900px] text-white flex flex-col">
+=======
+    <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 p-4 z-50">
+      <div className="bg-[#1B242C] p-6 rounded-lg shadow-lg w-[95%] max-w-[900px] text-white flex flex-col">
+        
+>>>>>>> Stashed changes
         <h2 className="text-xl font-bold text-red-500 mb-4 text-center flex items-center justify-center">
           📸 Confirm Your Booking
         </h2>
@@ -116,7 +139,13 @@ const BookingPage = ({ selectedPackage, onClose }) => {
           </div>
         </div>
 
+<<<<<<< Updated upstream
         <div className="grid grid-cols-2 gap-4">
+=======
+        
+        <div className="grid grid-cols-2 gap-4">
+          
+>>>>>>> Stashed changes
           <div className="bg-[#2A3A45] p-4 rounded-lg">
             <h3 className="text-md font-semibold text-gray-300">🧑‍💼 Customer Info</h3>
             {loading ? (
@@ -180,6 +209,7 @@ const BookingPage = ({ selectedPackage, onClose }) => {
           </div>
         </div>
       </div>
+<<<<<<< Updated upstream
 
       {/* Open Payment Modal after successful booking */}
       {isPaymentModalOpen && bookingResult && (
@@ -191,6 +221,8 @@ const BookingPage = ({ selectedPackage, onClose }) => {
           onClose={() => setIsPaymentModalOpen(false)} 
         />
       )}
+=======
+>>>>>>> Stashed changes
     </div>
   );
 };

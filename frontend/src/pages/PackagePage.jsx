@@ -12,34 +12,57 @@ const PackagePage = () => {
 
   const categories = ["Wedding", "Pre-Shoot", "Pre-Shoot + Wedding", "Party", "Normal"];
 
+<<<<<<< Updated upstream
   
+=======
+  // Fetch user details when the component loads
+>>>>>>> Stashed changes
   useEffect(() => {
     const getUser = async () => {
       try {
         const userData = await fetchUserDetails();
         setUser(userData);
       } catch (error) {
+<<<<<<< Updated upstream
         console.error("Error fetching user details:", error);
+=======
+        console.error("❌ Error fetching user details:", error);
+>>>>>>> Stashed changes
       }
     };
     getUser();
   }, []);
 
+<<<<<<< Updated upstream
   
+=======
+  // Fetch packages when the component loads
+>>>>>>> Stashed changes
   useEffect(() => {
     const getPackages = async () => {
       try {
         const data = await fetchPhotoPackages();
+<<<<<<< Updated upstream
         console.log("Packages fetched:", data);
         setPackages(data);
       } catch (error) {
         console.error("Error fetching packages:", error);
+=======
+        console.log("✅ Packages fetched:", data);
+        setPackages(data);
+      } catch (error) {
+        console.error("❌ Error fetching packages:", error);
+>>>>>>> Stashed changes
       }
     };
     getPackages();
   }, []);
 
+<<<<<<< Updated upstream
   
+=======
+  // Handle opening the booking modal
+>>>>>>> Stashed changes
   const handleBookNow = (pkg) => {
     console.log("📦 Selected Package (Before Fix):", pkg);
   
@@ -57,10 +80,17 @@ const PackagePage = () => {
       description: pkg.description
     });
   
+<<<<<<< Updated upstream
     console.log("Selected Package (After Fix):", selectedPackage);
     setIsBookingOpen(true);
   };
   
+=======
+    console.log("📦 Selected Package (After Fix):", selectedPackage);
+    setIsBookingOpen(true);
+  };
+  // Handle closing the booking modal
+>>>>>>> Stashed changes
   const closeBookingModal = () => {
     setIsBookingOpen(false);
     setSelectedPackage(null);
@@ -146,7 +176,11 @@ const PackagePage = () => {
         <BookingPage
           selectedPackage={selectedPackage}
           user={user}
+<<<<<<< Updated upstream
           onClose={closeBookingModal} 
+=======
+          onClose={closeBookingModal} // Function to close the modal
+>>>>>>> Stashed changes
         />
       )}
 
