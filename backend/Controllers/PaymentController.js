@@ -6,12 +6,15 @@ import PhotoPackage from "../Models/PackageModel.js";
 import cloudinary from "../Middleware/CloudinaryConfig.js";
 import nodemailer from "nodemailer";
 
+// Helper function to generate unique transaction ID
 const generateTransactionId = () => {
   return `TR${Math.floor(Math.random() * 1000000)}`;
 };
 
+// Helper function to validate MongoDB ObjectId
 const isValidObjectId = (id) => mongoose.Types.ObjectId.isValid(id);
 
+// Payment creation controller
 const createPayment = async (req, res) => {
   const {
     bookingId,
@@ -20,10 +23,11 @@ const createPayment = async (req, res) => {
     customerId,
     packageId,
     paymentMethod,
-    paymentType,
+    paymentType, // 'full' or 'half'
   } = req.body;
 
   try {
+    // Validate booking ID, customer ID, and package ID format
     if (
       !isValidObjectId(bookingId) ||
       !isValidObjectId(customerId) ||
@@ -34,8 +38,10 @@ const createPayment = async (req, res) => {
       });
     }
 
+    // Initialize toPayAmount for half payment
     let toPayAmount = 0;
     if (paymentType === "half") {
+      // Validate half payment amount
       if (
         !halfPaymentAmount ||
         halfPaymentAmount <= 0 ||
@@ -43,9 +49,10 @@ const createPayment = async (req, res) => {
       ) {
         return res.status(400).json({ message: "Invalid half payment amount" });
       }
-      toPayAmount = amount - halfPaymentAmount;
+      toPayAmount = amount - halfPaymentAmount; // Calculate the remaining amount for half payments
     }
 
+    // Handle image upload if provided
     let proofImageUrl = "";
     if (req.file) {
       const cloudinaryResult = await cloudinary.uploader.upload(req.file.path, {
@@ -55,22 +62,25 @@ const createPayment = async (req, res) => {
       proofImageUrl = cloudinaryResult.secure_url;
     }
 
+    // Create the payment record with customerId and packageId
     const newPayment = new Payment({
       bookingId,
-      customerId,
-      packageId,
+      customerId, // Save customerId
+      packageId, // Save packageId
       amount,
-      halfPaymentAmount: paymentType === "half" ? halfPaymentAmount : 0,
-      toPayAmount,
+      halfPaymentAmount: paymentType === "half" ? halfPaymentAmount : 0, // Save halfPaymentAmount only for half payment
+      toPayAmount, // Store the remaining amount to be paid
       paymentMethod,
-      paymentType,
+      paymentType, // Store the payment type (full or half)
       proofImageUrl,
       transactionId: generateTransactionId(),
-      paymentStatus: "Pending",
+      paymentStatus: "Pending", // Default to "Pending"
     });
 
+    // Save the payment record
     const savedPayment = await newPayment.save();
 
+    // Fetch the booking details, customer details, and package details
     const booking = await Booking.findById(bookingId)
       .populate("customerId")
       .populate("packageId");
@@ -83,6 +93,7 @@ const createPayment = async (req, res) => {
         .json({ message: "Booking, Customer, or Package not found" });
     }
 
+    // Send the payment, booking, and package details to the customer via email
     await sendPaymentConfirmationEmail(
       customer.email,
       booking,
@@ -91,6 +102,7 @@ const createPayment = async (req, res) => {
       paymentType
     );
 
+    // Respond with the saved payment data
     res.status(201).json(savedPayment);
   } catch (error) {
     console.error("Error creating payment:", error);
@@ -98,6 +110,7 @@ const createPayment = async (req, res) => {
   }
 };
 
+// Send email after payment is created
 const sendPaymentConfirmationEmail = async (
   email,
   booking,
@@ -114,6 +127,7 @@ const sendPaymentConfirmationEmail = async (
       },
     });
 
+    // Create the email content based on the payment type (full or half)
     let paymentDetails = `
       <li><strong>💸 Half Payment:</strong> $${payment.halfPaymentAmount}</li>
       <li><strong>💰 Remaining Amount:</strong> $${payment.toPayAmount}</li>
@@ -191,6 +205,7 @@ const sendPaymentConfirmationEmail = async (
   }
 };
 
+// Get all payments API function
 const getAllPayments = async (req, res) => {
   try {
     const payments = await Payment.find().populate("bookingId");
@@ -201,6 +216,7 @@ const getAllPayments = async (req, res) => {
   }
 };
 
+// Get payment by ID API function
 const getPaymentById = async (req, res) => {
   const { id } = req.params;
   if (!isValidObjectId(id)) {
@@ -219,6 +235,7 @@ const getPaymentById = async (req, res) => {
   }
 };
 
+// Update payment status by ID API function
 const updatePaymentStatus = async (req, res) => {
   const { id } = req.params;
 

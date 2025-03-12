@@ -1,37 +1,36 @@
 import React, { useState } from "react";
 import { createPayment } from "../Api/PaymentAPI.js"; 
-
-
 import { FaUpload } from "react-icons/fa"; 
 import { FaMoneyBillAlt } from "react-icons/fa"; 
 
 function PaymentPage({ bookingId, customerId, packageId, totalPrice, onClose }) {
   const [paymentMethod, setPaymentMethod] = useState("Bank Transfer");
-  const [paymentType, setPaymentType] = useState("full"); 
-  const [halfPaymentAmount, setHalfPaymentAmount] = useState("");
-  const [proofImage, setProofImage] = useState(null);
-  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [paymentType, setPaymentType] = useState("full"); // 'full' or 'half'
+  const [halfPaymentAmount, setHalfPaymentAmount] = useState(""); // Store half payment amount
+  const [proofImage, setProofImage] = useState(null); // Store proof image
+  const [isSubmitting, setIsSubmitting] = useState(false); // To handle form submission
 
   const handleFileChange = (e) => {
-    setProofImage(e.target.files[0]);
+    setProofImage(e.target.files[0]); // Set proof image when file is uploaded
   };
 
   const handleHalfPaymentChange = (e) => {
     const value = e.target.value;
+    // Only allow the half payment amount to be less than or equal to total price
     if (value <= totalPrice) {
       setHalfPaymentAmount(value);
     }
   };
 
   const handlePaymentTypeChange = (e) => {
-    setPaymentType(e.target.value); 
-    setHalfPaymentAmount(""); 
+    setPaymentType(e.target.value); // Switch between full and half payment
+    setHalfPaymentAmount(""); // Reset half payment amount when switching to full payment
   };
 
   const handleClear = () => {
-    setHalfPaymentAmount(""); 
-    setProofImage(null); 
-    setPaymentMethod("Bank Transfer"); 
+    setHalfPaymentAmount(""); // Clear half payment amount
+    setProofImage(null); // Clear proof of payment image
+    setPaymentMethod("Bank Transfer"); // Reset payment method
   };
 
   const handleConfirmPayment = async () => {
@@ -40,7 +39,7 @@ function PaymentPage({ bookingId, customerId, packageId, totalPrice, onClose }) 
       return;
     }
 
-    
+    // Validate half payment amount is not greater than total price
     if (paymentType === "half" && halfPaymentAmount > totalPrice) {
       alert("Half payment amount cannot be greater than total price.");
       return;
@@ -48,20 +47,22 @@ function PaymentPage({ bookingId, customerId, packageId, totalPrice, onClose }) 
 
     setIsSubmitting(true);
 
+    // Prepare payment data
     const paymentData = {
       bookingId,
       customerId,
       packageId,
       amount: totalPrice,
-      halfPaymentAmount,
+      halfPaymentAmount: paymentType === "half" ? halfPaymentAmount : 0, // Only include for half payments
       paymentMethod,
-      paymentStatus: "Pending", 
+      paymentType, // Pass the payment type (full or half)
+      paymentStatus: "Pending", // Default status
     };
 
     try {
-      const result = await createPayment(paymentData, proofImage); 
+      const result = await createPayment(paymentData, proofImage); // Send payment data to the backend
       alert("Payment Confirmed! Transaction ID: " + result.transactionId);
-      onClose(); 
+      onClose(); // Close modal after confirmation
     } catch (error) {
       console.error("Payment error:", error);
       alert("Payment failed: " + error.message);

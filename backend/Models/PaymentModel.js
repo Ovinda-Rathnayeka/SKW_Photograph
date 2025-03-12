@@ -1,6 +1,5 @@
 import mongoose from "mongoose";
 
-
 const paymentSchema = new mongoose.Schema({
   bookingId: {
     type: mongoose.Schema.Types.ObjectId,
@@ -9,12 +8,12 @@ const paymentSchema = new mongoose.Schema({
   },
   customerId: {
     type: mongoose.Schema.Types.ObjectId,
-    ref: "Customer", 
+    ref: "Customer",
     required: true,
   },
   packageId: {
     type: mongoose.Schema.Types.ObjectId,
-    ref: "PhotoPackage", 
+    ref: "PhotoPackage",
     required: true,
   },
   amount: {
@@ -23,7 +22,7 @@ const paymentSchema = new mongoose.Schema({
   },
   halfPaymentAmount: {
     type: Number,
-    required: true,
+    default: 0, // Default to 0 if it's a full payment
   },
   toPayAmount: {
     type: Number,
@@ -46,8 +45,13 @@ const paymentSchema = new mongoose.Schema({
     enum: ["Pending", "Completed", "Failed"],
     default: "Pending",
   },
+  paymentType: {
+    // New field to store the payment type (full or half)
+    type: String,
+    enum: ["full", "half"], // Only "full" or "half" are allowed
+    required: true,
+  },
 });
-
 
 const Payment = mongoose.model("Payment", paymentSchema);
 export default Payment;
