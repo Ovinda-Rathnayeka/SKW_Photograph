@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { fetchUserDetails } from "../Api/AuthAPI.js";
 import { createBooking } from "../Api/BookingAPI.js";
+import PaymentPage from "./PaymentPage"; 
 
 const BookingPage = ({ selectedPackage, onClose }) => {
   const [user, setUser] = useState(null);
@@ -11,8 +12,9 @@ const BookingPage = ({ selectedPackage, onClose }) => {
   const [selectedAdditions, setSelectedAdditions] = useState([]);
   const [date, setDate] = useState("");
   const [time, setTime] = useState("");
+  const [isPaymentModalOpen, setIsPaymentModalOpen] = useState(false); 
+  const [bookingResult, setBookingResult] = useState(null); 
 
-  
   const additions = [
     { id: 1, name: "Professional Makeup", price: 50 },
     { id: 2, name: "Luxury Dress Rental", price: 80 },
@@ -65,9 +67,18 @@ const BookingPage = ({ selectedPackage, onClose }) => {
     };
 
     try {
+      
       const result = await createBooking(bookingData);
-      alert("Booking Confirmed! ID: " + result._id);
-      onClose(); 
+      console.log(result); 
+
+      
+      if (result && result.booking && result.booking._id) {
+        setBookingResult(result.booking); 
+        alert("Booking Confirmed! ID: " + result.booking._id);
+        setIsPaymentModalOpen(true); 
+      } else {
+        alert("Booking Confirmation Failed");
+      }
     } catch (error) {
       alert("Failed to create booking: " + error.message);
     } finally {
@@ -76,9 +87,8 @@ const BookingPage = ({ selectedPackage, onClose }) => {
   };
 
   return (
-    <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 p-4 z-50">
+    <div className={`fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 p-4 z-50 ${isPaymentModalOpen ? 'backdrop-blur-lg' : ''}`}>
       <div className="bg-[#1B242C] p-6 rounded-lg shadow-lg w-[95%] max-w-[900px] text-white flex flex-col">
-        
         <h2 className="text-xl font-bold text-red-500 mb-4 text-center flex items-center justify-center">
           📸 Confirm Your Booking
         </h2>
@@ -106,9 +116,7 @@ const BookingPage = ({ selectedPackage, onClose }) => {
           </div>
         </div>
 
-        
         <div className="grid grid-cols-2 gap-4">
-          
           <div className="bg-[#2A3A45] p-4 rounded-lg">
             <h3 className="text-md font-semibold text-gray-300">🧑‍💼 Customer Info</h3>
             {loading ? (
@@ -172,6 +180,17 @@ const BookingPage = ({ selectedPackage, onClose }) => {
           </div>
         </div>
       </div>
+
+      {/* Open Payment Modal after successful booking */}
+      {isPaymentModalOpen && bookingResult && (
+        <PaymentPage 
+          bookingId={bookingResult._id} 
+          customerId={user._id} 
+          packageId={selectedPackage._id} 
+          totalPrice={totalPrice} 
+          onClose={() => setIsPaymentModalOpen(false)} 
+        />
+      )}
     </div>
   );
 };
