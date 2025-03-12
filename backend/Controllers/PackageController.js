@@ -1,13 +1,27 @@
 import mongoose from "mongoose";
 import PhotoPackage from "../Models/PackageModel.js";
+import multerconfig from "../Middleware/MulterConfig.js";
+import cloudinary from "../Middleware/CloudinaryConfig.js";
 
 const isValidObjectId = (id) => mongoose.Types.ObjectId.isValid(id);
 
 const createPackage = async (req, res) => {
   try {
+    if (req.file) {
+    
+      const cloudinaryResult = await cloudinary.uploader.upload(req.file.path, {
+        folder: "skw-photography",
+        allowed_formats: ["jpg", "jpeg", "png"],
+      });
+
+      
+      req.body.image = cloudinaryResult.secure_url;
+    }
+
     const newPackage = new PhotoPackage(req.body);
     const savedPackage = await newPackage.save();
-    res.status(201).json(savedPackage);
+
+    res.status(201).json(savedPackage); 
   } catch (error) {
     console.error("Error creating package:", error);
     res.status(500).json({ message: "Error creating package", error });
@@ -69,13 +83,31 @@ const updatePackageById = async (req, res) => {
   }
 
   try {
+    
+    if (req.file) {
+      
+      const cloudinaryResult = await cloudinary.v2.uploader.upload(
+        req.file.path,
+        {
+          folder: "skw-photography",
+          allowed_formats: ["jpg", "jpeg", "png"],
+        }
+      );
+
+      
+      req.body.image = cloudinaryResult.secure_url;
+    }
+
+    
     const updatedPackage = await PhotoPackage.findByIdAndUpdate(id, req.body, {
       new: true,
     });
+
     if (!updatedPackage) {
       return res.status(404).json({ message: "Package not found" });
     }
-    res.status(200).json(updatedPackage);
+
+    res.status(200).json(updatedPackage); 
   } catch (error) {
     console.error("Error updating package:", error);
     res.status(500).json({ message: "Error updating package", error });

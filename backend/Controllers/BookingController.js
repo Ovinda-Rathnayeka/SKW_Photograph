@@ -19,6 +19,7 @@ export const createBooking = async (req, res) => {
   } = req.body;
 
   try {
+    
     if (!isValidObjectId(customerId) || !isValidObjectId(packageId)) {
       return res
         .status(400)
@@ -41,18 +42,21 @@ export const createBooking = async (req, res) => {
       totalPrice,
       additionalNotes,
     });
-    await newBooking.save();
 
-    const populatedBooking = await newBooking.populate([
+    
+    const savedBooking = await newBooking.save();
+    const populatedBooking = await savedBooking.populate([
       "customerId",
       "packageId",
     ]);
 
+    
     await sendBookingConfirmationEmail(email, populatedBooking);
 
+    
     res.status(201).json({
       message: "Booking created successfully! Confirmation email sent.",
-      booking: populatedBooking,
+      booking: populatedBooking, 
     });
   } catch (error) {
     console.error("Error creating booking:", error);

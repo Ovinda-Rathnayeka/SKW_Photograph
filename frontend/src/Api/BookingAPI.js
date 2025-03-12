@@ -6,16 +6,18 @@ const api = axios.create({
 });
 
 const isValidObjectId = (id) => mongoose.Types.ObjectId.isValid(id);
-
 export const createBooking = async (bookingData) => {
   try {
     console.log("Creating booking with data:", bookingData);
+
     const response = await api.post("/", bookingData, {
       headers: {
         "Content-Type": "application/json",
       },
     });
+
     console.log("Booking created successfully:", response.data);
+
     return response.data;
   } catch (error) {
     console.error(

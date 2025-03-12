@@ -7,6 +7,7 @@ import Auth from "./Routes/AuthRoutes.js";
 import Customer from "./Routes/CustomerRoutes.js";
 import Booking from "./Routes/BookingRoutes.js";
 import cookieParser from "cookie-parser";
+import Payment from "./Routes/PaymentRoutes.js";
 
 import cloudinary from "./Middleware/CloudinaryConfig.js";
 
@@ -15,16 +16,18 @@ dotenv.config();
 app.use(cookieParser());
 app.use(
   cors({
-    origin: "http://localhost:3000",
+    origin: ["http://localhost:3000", "http://localhost:3001"],
     credentials: true,
   })
 );
+
 app.use(express.json());
 
 app.use("/package", packageRoutes);
 app.use("/auth", Auth);
 app.use("/customer", Customer);
 app.use("/booking", Booking);
+app.use("/payment", Payment);
 
 mongoose
   .connect(process.env.MONGODB_URI)
