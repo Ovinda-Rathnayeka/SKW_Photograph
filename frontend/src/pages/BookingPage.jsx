@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { fetchUserDetails } from "../Api/AuthAPI.js";
 import { createBooking } from "../Api/BookingAPI.js";
-import PaymentPage from "./PaymentPage"; 
+import PaymentPage from "./PaymentPage";                                                                                         
 
 const BookingPage = ({ selectedPackage, onClose }) => {
   const [user, setUser] = useState(null);
