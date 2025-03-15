@@ -7,6 +7,7 @@ import Dashboard from "./Page/Dashboard.jsx";
 import Navbar from "./components/Navbar.jsx";
 import Sidebar from "./components/Sidebar.jsx";
 import PaymentPage from "./Page/PaymentPage.jsx";
+import DisplayBooking from "./Page/DisplayBooking.jsx";
 
 function App() {
   return (
@@ -28,6 +29,7 @@ function App() {
               <Route path="/add-package" element={<PackageAdd />} />
               <Route path="/packagedisplay" element={<PackageDisplay />} />
               <Route path="/payment" element={<PaymentPage />} />
+              <Route path="/displaybooking" element={<DisplayBooking />} />
             </Routes>
           </div>
         </div>
