@@ -1,12 +1,14 @@
 import React, { useEffect, useState } from "react";
-import { fetchAllPayments, updatePaymentStatus } from "../API/PaymentAPI.js"; // Import necessary API calls
+import { fetchAllPayments, updatePaymentStatus, getPaymentWithDetails } from "../API/PaymentAPI"; // Import necessary functions
 
 function PaymentPage() {
   const [payments, setPayments] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [selectedImage, setSelectedImage] = useState(null); // State for the selected image
   const [showModal, setShowModal] = useState(false); // State for controlling modal visibility
+  const [showImageModal, setShowImageModal] = useState(false); // State for showing proof image modal
+  const [paymentDetails, setPaymentDetails] = useState(null); // State to store payment details for modal
+  const [selectedImage, setSelectedImage] = useState(null); // State for selected proof image URL
 
   // Fetch all payments on component mount
   useEffect(() => {
@@ -39,15 +41,26 @@ function PaymentPage() {
     }
   };
 
-  // Handle image click and open modal
-  const handleImageClick = (imageUrl) => {
-    setSelectedImage(imageUrl); // Set the selected image URL
-    setShowModal(true); // Show the modal
+  // Handle the "View Details" button click to fetch and display all payment details
+  const handleViewDetails = async (paymentId) => {
+    try {
+      const details = await getPaymentWithDetails(paymentId); // Fetch payment details with related data (Booking, Customer, Package)
+      setPaymentDetails(details); // Set the details in state
+      setShowModal(true); // Show the modal
+    } catch (err) {
+      console.error("Error fetching payment details:", err.message);
+    }
   };
 
-  // Close the modal
+  // Handle the modal close
   const closeModal = () => {
     setShowModal(false);
+    setPaymentDetails(null); // Clear payment details when closing modal
+  };
+
+  // Handle the image modal close
+  const closeImageModal = () => {
+    setShowImageModal(false);
     setSelectedImage(null); // Reset selected image when closing modal
   };
 
@@ -59,7 +72,7 @@ function PaymentPage() {
     <div className="container mx-auto p-6">
       <h2 className="text-3xl font-semibold text-center mb-6">Payment Details</h2>
 
-      {/* Table to display all payments with finance look */}
+      {/* Table to display all payments */}
       <table className="min-w-full table-auto border-collapse text-sm">
         <thead className="bg-gray-100">
           <tr>
@@ -102,11 +115,15 @@ function PaymentPage() {
                 <td className="border-b px-4 py-2 text-center">{payment.paymentStatus}</td>
                 <td className="border-b px-4 py-2">{payment.paymentMethod}</td>
                 <td className="border-b px-4 py-2">{payment.transactionId}</td>
+
                 <td className="border-b px-4 py-2">
                   {/* Display a photo icon instead of the full image */}
                   <button
                     className="text-blue-500 hover:text-blue-700"
-                    onClick={() => handleImageClick(payment.proofImageUrl)} // Open the image in a modal
+                    onClick={() => {
+                      setSelectedImage(payment.proofImageUrl); // Set the selected image URL
+                      setShowImageModal(true); // Open the image modal
+                    }}
                   >
                     View Proof
                   </button>
@@ -126,6 +143,14 @@ function PaymentPage() {
                   >
                     Mark as Failed
                   </button>
+
+                  {/* View Details Button */}
+                  <button
+                    onClick={() => handleViewDetails(payment._id)} // Fetch and view all details in the modal
+                    className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
+                  >
+                    View Details
+                  </button>
                 </td>
               </tr>
             );
@@ -133,13 +158,39 @@ function PaymentPage() {
         </tbody>
       </table>
 
-      {/* Modal to display image when clicked */}
-      {showModal && (
+      {/* Modal to display payment details */}
+      {showModal && paymentDetails && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
+          <div className="bg-white p-6 rounded-lg max-w-xl overflow-auto">
+            <div className="flex justify-between items-center mb-4">
+              <h3 className="text-xl font-semibold">Payment Details</h3>
+              <button onClick={closeModal} className="text-red-500 font-bold">X</button>
+            </div>
+
+            {/* Display payment details */}
+            <p><strong>Payment ID:</strong> {paymentDetails.payment._id}</p>
+            <p><strong>Amount Paid:</strong> ${paymentDetails.payment.amount}</p>
+            <p><strong>Remaining Balance:</strong> ${paymentDetails.payment.paymentType === "half" ? paymentDetails.payment.toPayAmount - paymentDetails.payment.halfPaymentAmount : 0}</p>
+            <p><strong>Booking ID:</strong> {paymentDetails.bookingDetails._id}</p>
+            <p><strong>Customer Name:</strong> {paymentDetails.customerDetails.name}</p>
+            <p><strong>Phone:</strong> {paymentDetails.customerDetails.phone}</p>
+            <p><strong>NIC:</strong> {paymentDetails.customerDetails.nic}</p>
+            <p><strong>Package:</strong> {paymentDetails.packageDetails.packageName}</p>
+            <p><strong>Booking Date:</strong> {paymentDetails.bookingDetails.bookingDate}</p>
+            <p><strong>Payment Method:</strong> {paymentDetails.payment.paymentMethod}</p>
+
+            <button className="mt-4 px-4 py-2 bg-gray-600 text-white rounded-lg" onClick={closeModal}>Close</button>
+          </div>
+        </div>
+      )}
+
+      {/* Modal for displaying the proof image */}
+      {showImageModal && selectedImage && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
           <div className="bg-white p-6 rounded-lg max-w-xl">
             <div className="flex justify-between items-center mb-4">
               <h3 className="text-xl font-semibold">Payment Proof Image</h3>
-              <button onClick={closeModal} className="text-red-500 font-bold">X</button>
+              <button onClick={closeImageModal} className="text-red-500 font-bold">X</button>
             </div>
             <img
               src={selectedImage}
