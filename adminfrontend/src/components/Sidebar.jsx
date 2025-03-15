@@ -26,7 +26,7 @@ function Sidebar() {
       <ul className="space-y-3 flex-1">
         <SidebarItem icon={<FaTachometerAlt />} text="Dashboard" link="/" />
         <SidebarItem icon={<FaUser />} text="Users" link="/users" />
-        <SidebarItem icon={<FaCog />} text="Settings" link="/settings" />
+        <SidebarItem icon={<FaCog />} text="Payment" link="/payment" />
         <SidebarItem icon={<FaBox />} text="Add Package" link="/add-package" />
         <SidebarItem icon={<FaEye />} text="View Packages" link="/packagedisplay" />
       </ul>

@@ -238,21 +238,26 @@ const getPaymentById = async (req, res) => {
 // Update payment status by ID API function
 const updatePaymentStatus = async (req, res) => {
   const { id } = req.params;
+  const { paymentStatus } = req.body; // Get the new payment status from the body
 
+  // Validate the payment ID format
   if (!isValidObjectId(id)) {
     return res.status(400).json({ message: "Invalid payment ID format" });
   }
 
   try {
+    // Update the payment status (no image upload, only status update)
     const updatedPayment = await Payment.findByIdAndUpdate(
       id,
-      { paymentStatus: req.body.paymentStatus },
-      { new: true }
+      { paymentStatus }, // Only update payment status, no proof image
+      { new: true } // Return the updated document
     );
+
     if (!updatedPayment) {
       return res.status(404).json({ message: "Payment not found" });
     }
-    res.status(200).json(updatedPayment);
+
+    res.status(200).json(updatedPayment); // Return the updated payment
   } catch (error) {
     console.error("Error updating payment:", error);
     res.status(500).json({ message: "Error updating payment", error });

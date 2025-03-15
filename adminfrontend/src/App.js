@@ -6,6 +6,7 @@ import PackageDisplay from "./Page/PackageDisplay.jsx";
 import Dashboard from "./Page/Dashboard.jsx";
 import Navbar from "./components/Navbar.jsx";
 import Sidebar from "./components/Sidebar.jsx";
+import PaymentPage from "./Page/PaymentPage.jsx";
 
 function App() {
   return (
@@ -26,6 +27,7 @@ function App() {
               <Route path="/login" element={<LoginPage />} />
               <Route path="/add-package" element={<PackageAdd />} />
               <Route path="/packagedisplay" element={<PackageDisplay />} />
+              <Route path="/payment" element={<PaymentPage />} />
             </Routes>
           </div>
         </div>
