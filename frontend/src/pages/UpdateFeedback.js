@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { useNavigate, useParams } from "react-router";
-import Nav from "../Nav/Nav";
 
 function UpdateFeedback() {
   const [inputs, setInputs] = useState({
@@ -84,7 +83,6 @@ function UpdateFeedback() {
 
   return (
     <div className="bg-gray-900 min-h-screen flex flex-col">
-      <Nav />
 
       {/* Centered Form with Spacing */}
       <div className="flex-grow flex items-center justify-center mt-12 mb-16 px-4">

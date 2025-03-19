@@ -1,6 +1,5 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import Nav from "../Nav/Nav";
 import axios from "axios";
 
 function AddFeedback() {
@@ -84,7 +83,6 @@ function AddFeedback() {
 
   return (
     <div className="bg-gray-900 min-h-screen flex flex-col">
-      <Nav />
 
       {/* Form Container */}
       <div className="flex-grow flex items-center justify-center mt-12 mb-16">

@@ -1,8 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { motion } from "framer-motion";
-import Nav from "../Nav/Nav";
 import axios from "axios";
-import Feedbacks from "../Feedbacks/Feedbacks";
+import Feedbacks from "./Feedbacks"; // Import Feedbacks Component
 import { ArrowUpCircle } from "lucide-react"; // Import Jump to Top Icon
 
 const url = "http://localhost:5000/feedbacks";
@@ -63,7 +62,6 @@ function FeedbackDetails() {
 
   return (
     <div className="bg-gray-900 min-h-screen flex flex-col">
-      <Nav />
       <br />
 
       {/* Customer Feedback Heading */}
