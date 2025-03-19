@@ -38,7 +38,7 @@ export const fetchAllCustomers = async () => {
 // Function to fetch a customer by ID
 export const fetchCustomerById = async (customerId) => {
   try {
-    const response = await api.get(`/${customerId}`); // GET request to fetch a customer by ID
+    const response = await api.get(`/${customerId}`);
     console.log("Fetched customer by ID:", response.data);
     return response.data;
   } catch (error) {

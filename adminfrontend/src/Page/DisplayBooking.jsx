@@ -1,8 +1,10 @@
 import React, { useState, useEffect } from 'react';
-import { fetchAllBookings, updateBookingStatus } from '../API/UserAPI/BookingAPI.js'; 
+import { fetchAllBookings, updateBookingStatus } from '../API/UserAPI/BookingAPI.js';
+import { fetchCustomerById } from '../API/UserAPI/CustomerAPI.js'; 
 
 function DisplayBooking() {
   const [bookings, setBookings] = useState([]);
+  const [customerDetails, setCustomerDetails] = useState({});
   const [error, setError] = useState(null);
 
   useEffect(() => {
@@ -10,6 +12,29 @@ function DisplayBooking() {
       try {
         const bookingsData = await fetchAllBookings();
         setBookings(bookingsData);
+
+        // Fetch customer details for each booking
+        const customerPromises = bookingsData.map(async (booking) => {
+          if (booking.customerId && typeof booking.customerId === "string") {
+            try {
+              const customer = await fetchCustomerById(booking.customerId);
+              return { id: booking.customerId, customer };
+            } catch (err) {
+              console.error(`Error fetching customer ${booking.customerId}:`, err);
+              return null;
+            }
+          }
+          return null;
+        });
+
+        // Resolve all customer details
+        const customerData = await Promise.all(customerPromises);
+        const customerMap = {};
+        customerData.forEach((data) => {
+          if (data) customerMap[data.id] = data.customer;
+        });
+
+        setCustomerDetails(customerMap);
       } catch (err) {
         setError(err.message);
       }
@@ -21,7 +46,6 @@ function DisplayBooking() {
   const handleUpdateStatus = async (bookingId, newStatus) => {
     try {
       const updatedBooking = await updateBookingStatus(bookingId, newStatus);
-
       setBookings((prevBookings) =>
         prevBookings.map((booking) =>
           booking._id === bookingId ? { ...booking, status: updatedBooking.status } : booking
@@ -42,13 +66,14 @@ function DisplayBooking() {
 
   return (
     <div>
-      <h2>All Bookings</h2>
       <table>
         <thead>
           <tr>
             <th>Booking ID</th>
+            <th>Customer ID</th>
             <th>Customer Name</th>
             <th>Customer Email</th>
+            <th>Customer Phone</th>
             <th>Package Name</th>
             <th>Package Price</th>
             <th>Booking Date</th>
@@ -62,8 +87,10 @@ function DisplayBooking() {
           {bookings.map((booking) => (
             <tr key={booking._id}>
               <td>{booking._id}</td>
-              <td>{booking.customerId ? booking.customerId.name : 'N/A'}</td>
-              <td>{booking.customerId ? booking.customerId.email : 'N/A'}</td>
+              <td>{typeof booking.customerId === "object" ? booking.customerId._id : booking.customerId}</td>
+              <td>{typeof booking.customerId === "object" ? booking.customerId.name : customerDetails[booking.customerId]?.name || 'N/A'}</td>
+              <td>{typeof booking.customerId === "object" ? booking.customerId.email : customerDetails[booking.customerId]?.email || 'N/A'}</td>
+              <td>{typeof booking.customerId === "object" ? booking.customerId.phone : customerDetails[booking.customerId]?.phone || 'N/A'}</td>
               <td>{booking.packageId ? booking.packageId.packageName : 'N/A'}</td>
               <td>{booking.packageId ? `$${booking.packageId.price}` : 'N/A'}</td>
               <td>{new Date(booking.bookingDate).toLocaleDateString()}</td>

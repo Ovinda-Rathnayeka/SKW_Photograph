@@ -23,7 +23,7 @@ function SignupPage({ setIsLoggedIn }) {
     try {
       await signup(userData);
       setIsLoggedIn(true);  
-      navigate("/Home");  
+      navigate("/login");  
     } catch (err) {
       setError("Signup failed. Please try again.");
     }

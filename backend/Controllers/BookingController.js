@@ -252,8 +252,12 @@ export const updateBookingStatus = async (req, res) => {
       return res.status(404).json({ message: "Booking not found" });
     }
 
+    // Log to ensure status change is correct
+    console.log(`Booking status changed to: ${status}`);
+
     // Send confirmation email if booking is confirmed
     if (status === "Confirmed") {
+      console.log("Confirmed status detected, sending confirmation email...");
       await sendBookingConfirmedEmail(
         updatedBooking.customerId.email,
         updatedBooking
@@ -262,6 +266,7 @@ export const updateBookingStatus = async (req, res) => {
 
     // Send cancellation email if booking is cancelled
     if (status === "Cancelled") {
+      console.log("Cancelled status detected, sending cancellation email...");
       await sendBookingCancelledEmail(
         updatedBooking.customerId.email,
         updatedBooking
@@ -279,8 +284,11 @@ export const updateBookingStatus = async (req, res) => {
       .json({ message: "Error updating booking status", error: error.message });
   }
 };
+
 const sendBookingCancelledEmail = async (email, booking) => {
   try {
+    console.log("Sending cancellation email to:", email);
+
     const transporter = nodemailer.createTransport({
       service: "gmail",
       auth: {
@@ -344,5 +352,74 @@ const sendBookingCancelledEmail = async (email, booking) => {
     console.log(`Booking cancellation email sent to ${email}`);
   } catch (error) {
     console.error("Error sending cancellation email:", error.message);
+  }
+};
+const sendBookingConfirmedEmail = async (email, booking) => {
+  try {
+    console.log("Sending confirmation email to:", email); // Debugging line to ensure it's being called
+
+    const transporter = nodemailer.createTransport({
+      service: "gmail",
+      auth: {
+        user: process.env.EMAIL_USER,
+        pass: process.env.EMAIL_PASS,
+      },
+    });
+
+    const mailOptions = {
+      from: process.env.EMAIL_USER,
+      to: email,
+      subject: "📸 Your Booking Has Been Confirmed",
+      html: `
+        <div style="font-family: Arial, sans-serif; max-width: 600px; margin: auto; border: 1px solid #ddd; border-radius: 10px; overflow: hidden;">
+          
+          <!-- Header Image -->
+          <div style="text-align: center; background-color: #000;">
+            <img src="https://i.pinimg.com/736x/2d/5a/0b/2d5a0b7d1be84bcf932f40f53402259b.jpg" 
+                 alt="Photography Banner" 
+                 style="width: 100%; max-height: 200px; object-fit: cover;">
+          </div>
+    
+          <!-- Booking Confirmation Message -->
+          <div style="padding: 20px; background-color: #f9f9f9; text-align: center;">
+            <h2 style="color: #333;">📷 Your Booking Has Been Confirmed</h2>
+            <p style="font-size: 16px; color: #666;">
+              We are excited to confirm your booking. Here are the details:
+            </p>
+    
+            <div style="background-color: #fff; padding: 15px; border-radius: 8px; box-shadow: 0 2px 5px rgba(0,0,0,0.1);">
+              <ul style="list-style: none; padding: 0; text-align: left; font-size: 16px; color: #444;">
+                <li><strong>📅 Date:</strong> ${booking.bookingDate}</li>
+                <li><strong>⏰ Time:</strong> ${booking.bookingTime}</li>
+                <li><strong>🎨 Package:</strong> ${
+                  booking.packageId.packageName
+                }</li>
+                <li><strong>💰 Total Price:</strong> $${booking.totalPrice}</li>
+                <li><strong>📝 Add-ons:</strong> ${
+                  booking.additionalNotes || "None"
+                }</li>
+              </ul>
+            </div>
+    
+            <p style="margin-top: 20px; font-size: 14px; color: #666;">
+              If you have any questions or need to make adjustments, please reach out to us.
+            </p>
+    
+            <!-- CTA Button -->
+            <a href="#" style="display: inline-block; background-color: #5bc0de; color: #fff; text-decoration: none; padding: 12px 24px; border-radius: 5px; margin-top: 15px; font-size: 16px;">Contact Support</a>
+          </div>
+    
+          <!-- Footer -->
+          <div style="text-align: center; padding: 10px; background-color: #000; color: #fff; font-size: 14px;">
+            <p>📷 Your Photography Team</p>
+          </div>
+        </div>
+      `,
+    };
+
+    await transporter.sendMail(mailOptions);
+    console.log(`Booking confirmation email sent to ${email}`);
+  } catch (error) {
+    console.error("Error sending confirmation email:", error.message);
   }
 };

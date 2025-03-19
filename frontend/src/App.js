@@ -40,7 +40,7 @@ function App() {
         <Route path="/payment" element={<PaymentPage />} />
         <Route
           path="/signup"
-          element={<SignupPage setIsLoggedIn={setIsLoggedIn} />}
+          element={<SignupPage />}
         />
       </Routes>
     </Router>
