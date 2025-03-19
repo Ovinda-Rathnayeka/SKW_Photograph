@@ -6,6 +6,7 @@ import PackagePage from "./pages/PackagePage.jsx";
 import LoginPage from "./pages/LoginPage.jsx";
 import { logout } from "./Api/AuthAPI.js";
 import PaymentPage from "./pages/PaymentPage.jsx";
+import UserProfile from "./pages/ProfilePage.jsx";
 
 function App() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
@@ -37,6 +38,8 @@ function App() {
           element={<LoginPage setIsLoggedIn={setIsLoggedIn} />}
         />
         <Route path="/payment" element={<PaymentPage />} />
+        <Route path="/profile" element={<UserProfile />} />
+
       </Routes>
     </Router>
   );
