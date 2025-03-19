@@ -120,8 +120,10 @@ const login = async (req, res) => {
     await customer.save();
 
     await sendOTP(email, otp);
-
-    res.status(200).json({ message: "OTP sent to email. Please verify." });
+     res.status(200).json({ 
+      message: "OTP sent to email. Please verify.", 
+      _id: customer._id.toString()  
+    });
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
@@ -203,6 +205,27 @@ const profile = async (req, res) => {
   }
 };
 
+const updateProfile= async (req, res) => {
+  try {
+    const { name, email, phone, address,nic } = req.body;
+    const customer = await Customer.findById(req.customerId);
+
+    if (!customer) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+   
+    customer.name = name || customer.name;
+    customer.email = email || customer.email;
+    customer.phone = phone || customer.phone;
+    customer.address = address || customer.address;
+    customer.nic = nic || customer.nic;
+    await customer.save();
+    res.status(200).json({ message: "Profile updated successfully", customer });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+}
 export default {
   signup,
   login,
@@ -210,5 +233,6 @@ export default {
   logout,
   verifyToken,
   profile,
+  updateProfile,
   sendOTP,
 };
