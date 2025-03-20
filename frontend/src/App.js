@@ -6,6 +6,7 @@ import PackagePage from "./pages/PackagePage.jsx";
 import LoginPage from "./pages/LoginPage.jsx";
 import { logout } from "./Api/AuthAPI.js";
 import PaymentPage from "./pages/PaymentPage.jsx";
+import SignupPage from "./pages/SingupPage.jsx";
 
 import Feedbacks from "./pages/FeedbackDetails.js";
 import AddFeedback from "./pages/AddFeedback.js";

@@ -10,10 +10,6 @@ router.get("/", PaymentController.getAllPayments);
 
 router.get("/:id", PaymentController.getPaymentById);
 
-router.put(
-  "/:id",
-  upload.single("proofImage"),
-  PaymentController.updatePaymentStatus
-);
+router.put("/:id", PaymentController.updatePaymentStatus);
 
 export default router;

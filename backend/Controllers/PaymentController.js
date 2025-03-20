@@ -6,15 +6,12 @@ import PhotoPackage from "../Models/PackageModel.js";
 import cloudinary from "../Middleware/CloudinaryConfig.js";
 import nodemailer from "nodemailer";
 
-// Helper function to generate unique transaction ID
 const generateTransactionId = () => {
   return `TR${Math.floor(Math.random() * 1000000)}`;
 };
 
-// Helper function to validate MongoDB ObjectId
 const isValidObjectId = (id) => mongoose.Types.ObjectId.isValid(id);
 
-// Payment creation controller
 const createPayment = async (req, res) => {
   const {
     bookingId,
@@ -23,11 +20,10 @@ const createPayment = async (req, res) => {
     customerId,
     packageId,
     paymentMethod,
-    paymentType, // 'full' or 'half'
+    paymentType,
   } = req.body;
 
   try {
-    // Validate booking ID, customer ID, and package ID format
     if (
       !isValidObjectId(bookingId) ||
       !isValidObjectId(customerId) ||
@@ -38,10 +34,8 @@ const createPayment = async (req, res) => {
       });
     }
 
-    // Initialize toPayAmount for half payment
     let toPayAmount = 0;
     if (paymentType === "half") {
-      // Validate half payment amount
       if (
         !halfPaymentAmount ||
         halfPaymentAmount <= 0 ||
@@ -49,10 +43,9 @@ const createPayment = async (req, res) => {
       ) {
         return res.status(400).json({ message: "Invalid half payment amount" });
       }
-      toPayAmount = amount - halfPaymentAmount; // Calculate the remaining amount for half payments
+      toPayAmount = amount - halfPaymentAmount;
     }
 
-    // Handle image upload if provided
     let proofImageUrl = "";
     if (req.file) {
       const cloudinaryResult = await cloudinary.uploader.upload(req.file.path, {
@@ -62,25 +55,22 @@ const createPayment = async (req, res) => {
       proofImageUrl = cloudinaryResult.secure_url;
     }
 
-    // Create the payment record with customerId and packageId
     const newPayment = new Payment({
       bookingId,
-      customerId, // Save customerId
-      packageId, // Save packageId
+      customerId,
+      packageId,
       amount,
-      halfPaymentAmount: paymentType === "half" ? halfPaymentAmount : 0, // Save halfPaymentAmount only for half payment
-      toPayAmount, // Store the remaining amount to be paid
+      halfPaymentAmount: paymentType === "half" ? halfPaymentAmount : 0,
+      toPayAmount,
       paymentMethod,
-      paymentType, // Store the payment type (full or half)
+      paymentType,
       proofImageUrl,
       transactionId: generateTransactionId(),
-      paymentStatus: "Pending", // Default to "Pending"
+      paymentStatus: "Pending",
     });
 
-    // Save the payment record
     const savedPayment = await newPayment.save();
 
-    // Fetch the booking details, customer details, and package details
     const booking = await Booking.findById(bookingId)
       .populate("customerId")
       .populate("packageId");
@@ -93,7 +83,6 @@ const createPayment = async (req, res) => {
         .json({ message: "Booking, Customer, or Package not found" });
     }
 
-    // Send the payment, booking, and package details to the customer via email
     await sendPaymentConfirmationEmail(
       customer.email,
       booking,
@@ -102,7 +91,6 @@ const createPayment = async (req, res) => {
       paymentType
     );
 
-    // Respond with the saved payment data
     res.status(201).json(savedPayment);
   } catch (error) {
     console.error("Error creating payment:", error);
@@ -110,7 +98,6 @@ const createPayment = async (req, res) => {
   }
 };
 
-// Send email after payment is created
 const sendPaymentConfirmationEmail = async (
   email,
   booking,
@@ -127,7 +114,6 @@ const sendPaymentConfirmationEmail = async (
       },
     });
 
-    // Create the email content based on the payment type (full or half)
     let paymentDetails = `
       <li><strong>💸 Half Payment:</strong> $${payment.halfPaymentAmount}</li>
       <li><strong>💰 Remaining Amount:</strong> $${payment.toPayAmount}</li>
@@ -238,6 +224,7 @@ const getPaymentById = async (req, res) => {
 // Update payment status by ID API function
 const updatePaymentStatus = async (req, res) => {
   const { id } = req.params;
+  const { paymentStatus } = req.body;
 
   if (!isValidObjectId(id)) {
     return res.status(400).json({ message: "Invalid payment ID format" });
@@ -246,16 +233,89 @@ const updatePaymentStatus = async (req, res) => {
   try {
     const updatedPayment = await Payment.findByIdAndUpdate(
       id,
-      { paymentStatus: req.body.paymentStatus },
+      { paymentStatus },
       { new: true }
-    );
+    ).populate("bookingId customerId packageId");
+
     if (!updatedPayment) {
       return res.status(404).json({ message: "Payment not found" });
     }
+
+    // Send email notification based on payment status
+    if (paymentStatus === "Completed") {
+      await sendPaymentSuccessEmail(
+        updatedPayment.customerId.email,
+        updatedPayment
+      );
+    } else if (paymentStatus === "Failed") {
+      await sendPaymentFailedEmail(
+        updatedPayment.customerId.email,
+        updatedPayment
+      );
+    }
+
     res.status(200).json(updatedPayment);
   } catch (error) {
     console.error("Error updating payment:", error);
     res.status(500).json({ message: "Error updating payment", error });
+  }
+};
+
+const sendPaymentSuccessEmail = async (email, payment) => {
+  try {
+    const transporter = nodemailer.createTransport({
+      service: "gmail",
+      auth: { user: process.env.EMAIL_USER, pass: process.env.EMAIL_PASS },
+    });
+
+    const mailOptions = {
+      from: process.env.EMAIL_USER,
+      to: email,
+      subject: "✅ Payment Successful - Thank You!",
+      html: `
+        <div style="font-family: Arial, sans-serif; text-align: center;">
+          <h2 style="color: green;">✅ Payment Completed Successfully</h2>
+          <p>Your payment for <strong>${payment.packageId.packageName}</strong> has been received.</p>
+          <p><strong>Amount Paid:</strong> $${payment.amount}</p>
+          <p><strong>Transaction ID:</strong> ${payment.transactionId}</p>
+          <p>Thank you for choosing our photography services! 📷</p>
+        </div>
+      `,
+    };
+
+    await transporter.sendMail(mailOptions);
+    console.log(`Payment success email sent to ${email}`);
+  } catch (error) {
+    console.error("Error sending success email:", error.message);
+  }
+};
+
+const sendPaymentFailedEmail = async (email, payment) => {
+  try {
+    const transporter = nodemailer.createTransport({
+      service: "gmail",
+      auth: { user: process.env.EMAIL_USER, pass: process.env.EMAIL_PASS },
+    });
+
+    const mailOptions = {
+      from: process.env.EMAIL_USER,
+      to: email,
+      subject: "❌ Payment Failed - Action Required",
+      html: `
+        <div style="font-family: Arial, sans-serif; text-align: center;">
+          <h2 style="color: red;">❌ Payment Failed</h2>
+          <p>Unfortunately, your payment for <strong>${payment.packageId.packageName}</strong> was not successful.</p>
+          <p><strong>Attempted Amount:</strong> $${payment.amount}</p>
+          <p><strong>Transaction ID:</strong> ${payment.transactionId}</p>
+          <p>Please try again or contact support for assistance.</p>
+        </div>
+      `,
+    };
+
+    await transporter.sendMail(mailOptions);
+    console.log(`Payment failed email sent to ${email}`);
+  } catch (error) {
+    console.error("Error sending failed email:", error.message);
   }
 };
 
