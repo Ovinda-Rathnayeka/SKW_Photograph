@@ -9,6 +9,7 @@ import Booking from "./Routes/BookingRoutes.js";
 import cookieParser from "cookie-parser";
 import Payment from "./Routes/PaymentRoutes.js";
 import Employee from "./Routes/EmployeeRoute.js";
+import Feedback from "./Routes/FeedbackRoute.js";
 
 import cloudinary from "./Middleware/CloudinaryConfig.js";
 
@@ -30,6 +31,7 @@ app.use("/customer", Customer);
 app.use("/booking", Booking);
 app.use("/payment", Payment);
 app.use("/employee", Employee);
+app.use("/feedbacks", Feedback);
 
 mongoose
   .connect(process.env.MONGODB_URI)

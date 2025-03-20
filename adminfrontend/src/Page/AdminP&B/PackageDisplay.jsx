@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { getAllPackages, deletePackageById, updatePackageById } from "../API/PackageAPI.js"; // Adjust paths if necessary
+import { getAllPackages, deletePackageById, updatePackageById } from "../../API/PackageAPI.js"; // Adjust paths if necessary
 
 function PackageDisplay() {
   const [packages, setPackages] = useState([]);

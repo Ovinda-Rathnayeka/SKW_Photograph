@@ -47,22 +47,22 @@ function PaymentPage({ bookingId, customerId, packageId, totalPrice, onClose }) 
 
     setIsSubmitting(true);
 
-    // Prepare payment data
+    
     const paymentData = {
       bookingId,
       customerId,
       packageId,
       amount: totalPrice,
-      halfPaymentAmount: paymentType === "half" ? halfPaymentAmount : 0, // Only include for half payments
+      halfPaymentAmount: paymentType === "half" ? halfPaymentAmount : 0, 
       paymentMethod,
-      paymentType, // Pass the payment type (full or half)
-      paymentStatus: "Pending", // Default status
+      paymentType, 
+      paymentStatus: "Pending", 
     };
 
     try {
-      const result = await createPayment(paymentData, proofImage); // Send payment data to the backend
+      const result = await createPayment(paymentData, proofImage); 
       alert("Payment Confirmed! Transaction ID: " + result.transactionId);
-      onClose(); // Close modal after confirmation
+      onClose(); 
     } catch (error) {
       console.error("Payment error:", error);
       alert("Payment failed: " + error.message);

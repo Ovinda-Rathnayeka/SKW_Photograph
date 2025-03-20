@@ -1,5 +1,5 @@
 import React from "react";
-import logo from "../components/images/logo.png";
+import logo from "../../components/images/logo.png";
 
 function LoginPage() {
   return (

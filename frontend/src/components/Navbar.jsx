@@ -23,7 +23,8 @@ const Navbar = ({ isLoggedIn, onLogout }) => {
             <a href="#video" className="text-[#8f8888] font-bold hover:text-[#747c7c]">Video Gallery</a>
             <Link to="/packages" className="text-[#8f8888] font-bold hover:text-[#747c7c]">Packages</Link>
             <a href="#store" className="text-[#8f8888] font-bold hover:text-[#747c7c]">Store</a>
-            <a href="#contact" className="text-[#8f8888] font-bold hover:text-[#747c7c]">Contact Us</a>
+            <Link to="/feedbacks" className="text-[#8f8888] font-bold hover:text-[#747c7c]">Feedbacks</Link>
+        <a href="#contact" className="text-[#8f8888] font-bold hover:text-[#747c7c]">Contact Us</a>
           </div>
           <div className="flex space-x-4 mt-4">
             {isLoggedIn ? (
