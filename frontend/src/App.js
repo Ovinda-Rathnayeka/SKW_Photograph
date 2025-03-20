@@ -42,17 +42,10 @@ function App() {
           element={<LoginPage setIsLoggedIn={setIsLoggedIn} />}
         />
         <Route path="/payment" element={<PaymentPage />} />
-<<<<<<< HEAD
-        <Route
-          path="/signup"
-          element={<SignupPage />}
-        />
-=======
 
         <Route path="/feedbacks" element={<Feedbacks />} />
         <Route path="/add-feedback" element={<AddFeedback />} />
         <Route path="/feedbacks/:id" element={<UpdateFeedback />} />
->>>>>>> main
       </Routes>
     </Router>
   );

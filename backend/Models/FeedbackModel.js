@@ -1,10 +1,11 @@
 import mongoose from "mongoose";
-// Importing the mongoose module to create a schema for the feedback data model
+
 const Schema = mongoose.Schema;
 
 const feedbackSchema = new mongoose.Schema({
-  user: {
-    type: String, // Storing user name or email for now
+  customerId: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "Customer",
     required: true,
   },
   category: {
@@ -25,6 +26,11 @@ const feedbackSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
+  images: [
+    {
+      type: String,
+    },
+  ],
   createdAt: {
     type: Date,
     default: Date.now,
@@ -37,4 +43,3 @@ const feedbackSchema = new mongoose.Schema({
 const FeedbackModel = mongoose.model("Feedback", feedbackSchema);
 // Creating a model for the feedback schema and exporting it
 export default FeedbackModel;
-// Compare this snippet from backend/Models/FeedbackModel.js:
