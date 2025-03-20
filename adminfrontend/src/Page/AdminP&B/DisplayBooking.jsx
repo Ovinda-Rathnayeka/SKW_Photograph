@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { fetchAllBookings, updateBookingStatus } from '../API/UserAPI/BookingAPI.js';
-import { fetchCustomerById } from '../API/UserAPI/CustomerAPI.js'; 
+import { fetchAllBookings, updateBookingStatus } from '../../API/UserAPI/BookingAPI.js';
+import { fetchCustomerById } from '../../API/UserAPI/CustomerAPI.js'; 
 
 function DisplayBooking() {
   const [bookings, setBookings] = useState([]);

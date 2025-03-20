@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { fetchAllPayments, updatePaymentStatus, getPaymentWithDetails } from "../API/PaymentAPI"; // Import necessary functions
+import { fetchAllPayments, updatePaymentStatus, getPaymentWithDetails } from "../../API/PaymentAPI"; // Import necessary functions
 
 function PaymentPage() {
   const [payments, setPayments] = useState([]);

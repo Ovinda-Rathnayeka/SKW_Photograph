@@ -1,13 +1,13 @@
 import React from "react";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
-import LoginPage from "./Page/LoginPage.jsx";
-import PackageAdd from "./Page/PackageAdd.jsx";
-import PackageDisplay from "./Page/PackageDisplay.jsx";
-import Dashboard from "./Page/Dashboard.jsx";
-import Navbar from "./components/Navbar.jsx";
-import Sidebar from "./components/Sidebar.jsx";
-import PaymentPage from "./Page/PaymentPage.jsx";
-import DisplayBooking from "./Page/DisplayBooking.jsx";
+import LoginPage from "./Page/AdminP&B/LoginPage.jsx";
+import PackageAdd from "./Page/AdminP&B/PackageAdd.jsx";
+import PackageDisplay from "./Page/AdminP&B/PackageDisplay.jsx";
+import Dashboard from "./Page/AdminP&B/Dashboard.jsx";
+import Navbar from "./components/AdminP&B/Navbar.jsx";
+import Sidebar from "./components/AdminP&B/Sidebar.jsx";
+import PaymentPage from "./Page/AdminP&B/PaymentPage.jsx";
+import DisplayBooking from "./Page/AdminP&B/DisplayBooking.jsx";
 
 function App() {
   return (

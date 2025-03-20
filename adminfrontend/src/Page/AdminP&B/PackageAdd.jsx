@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { createPackage } from "../API/PackageAPI.js";
+import { createPackage } from "../../API/PackageAPI.js";
 import { FaCloudUploadAlt, FaCheckCircle } from "react-icons/fa"; // Upload & Success Icon
 
 function PackageAdd() {
