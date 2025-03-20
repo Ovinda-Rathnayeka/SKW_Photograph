@@ -82,9 +82,9 @@ const updateCustomer = async (req, res) => {
     }
 
     // Prevent email from being updated (optional security measure)
-    if (updateData.email) {
-      return res.status(400).json({ message: "Email cannot be updated" });
-    }
+    // if (updateData.email) {
+    //   return res.status(400).json({ message: "Email cannot be updated" });
+    // }
 
     const updatedCustomer = await Customer.findByIdAndUpdate(id, updateData, {
       new: true,
@@ -101,6 +101,7 @@ const updateCustomer = async (req, res) => {
     });
   } catch (error) {
     res.status(500).json({ error: error.message });
+    console.log(error);
   }
 };
 
