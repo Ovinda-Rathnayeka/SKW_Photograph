@@ -74,14 +74,21 @@ const getCustomerById = async (req, res) => {
 const updateCustomer = async (req, res) => {
   try {
     const { id } = req.params;
-    const { password } = req.body;
+    const updateData = { ...req.body };
 
-    if (password) {
-      req.body.password = await bcrypt.hash(password, 10);
+    // Ensure sensitive fields are handled properly
+    if (updateData.password) {
+      updateData.password = await bcrypt.hash(updateData.password, 10);
     }
 
-    const updatedCustomer = await Customer.findByIdAndUpdate(id, req.body, {
+    // Prevent email from being updated (optional security measure)
+    if (updateData.email) {
+      return res.status(400).json({ message: "Email cannot be updated" });
+    }
+
+    const updatedCustomer = await Customer.findByIdAndUpdate(id, updateData, {
       new: true,
+      runValidators: true, // Ensures updated data conforms to schema validation
     });
 
     if (!updatedCustomer) {
