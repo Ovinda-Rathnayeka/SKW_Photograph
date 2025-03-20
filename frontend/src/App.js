@@ -11,6 +11,8 @@ import SignupPage from "./pages/SingupPage.jsx";
 import Feedbacks from "./pages/FeedbackDetails.js";
 import AddFeedback from "./pages/AddFeedback.js";
 import UpdateFeedback from "./pages/UpdateFeedback.js";
+import Product from "./pages/ProductDisplay.jsx";
+import Cart from "./pages/CartDisplay.js";
 
 function App() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
@@ -46,6 +48,7 @@ function App() {
         <Route path="/feedbacks" element={<Feedbacks />} />
         <Route path="/add-feedback" element={<AddFeedback />} />
         <Route path="/feedbacks/:id" element={<UpdateFeedback />} />
+        <Route path="/product" element={<Cart />} />
       </Routes>
     </Router>
   );
