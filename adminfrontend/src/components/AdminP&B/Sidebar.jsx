@@ -8,8 +8,7 @@ import {
   FaEye,
   FaSignOutAlt,
 } from "react-icons/fa";
-import logo from "../components/images/logo.png";
-
+import logo from "../images/logo.png";
 function Sidebar() {
   return (
     <div className="w-64 h-screen bg-gray-900 text-white flex flex-col p-5">
