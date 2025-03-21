@@ -1,7 +1,8 @@
-import React, {useState} from "react";
+import React, { useState } from "react";
 import logo from "../components/images/logo.png";
 import { Link } from "react-router-dom";
 import Sidebar from "./Sidebar";
+import profile_image from "../components/images/profile_image.png";
 
 const Navbar = ({ isLoggedIn, onLogout }) => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
@@ -24,26 +25,23 @@ const Navbar = ({ isLoggedIn, onLogout }) => {
             <Link to="/packages" className="text-[#8f8888] font-bold hover:text-[#747c7c]">Packages</Link>
             <a href="#store" className="text-[#8f8888] font-bold hover:text-[#747c7c]">Store</a>
             <Link to="/feedbacks" className="text-[#8f8888] font-bold hover:text-[#747c7c]">Feedbacks</Link>
-        <a href="#contact" className="text-[#8f8888] font-bold hover:text-[#747c7c]">Contact Us</a>
+            <a href="#contact" className="text-[#8f8888] font-bold hover:text-[#747c7c]">Contact Us</a>
           </div>
-          <div className="flex space-x-4 mt-4">
+          <div className="flex space-x-4">
             {isLoggedIn ? (
-               <button
-               onClick={toggleSidebar}
-               className="text-white px-4 py-2 text-center">
-               Profile
-             </button>
+              <button
+                onClick={toggleSidebar}
+                className="text-white px-4 py-2 text-center">
+                <img className="w-15 h-14" src={profile_image} />
+              </button>
             ) : (
-              <>
-                <Link to="/login" className="bg-[#73747c] text-white px-4 py-2 rounded hover:bg-[#3c4c51] text-center">Login</Link>
-               
-              </>
+              <Link to="/login" className="bg-[#73747c] text-white px-4 py-2 rounded hover:bg-[#3c4c51] text-center">Login</Link>
             )}
           </div>
         </div>
       </nav>
 
-      <div className="pt-20"> 
+      <div className="pt-20">
         <Sidebar isOpen={isSidebarOpen} onClose={toggleSidebar} />
       </div>
     </>
