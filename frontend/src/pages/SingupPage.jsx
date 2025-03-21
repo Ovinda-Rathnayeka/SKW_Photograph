@@ -1,6 +1,6 @@
 import React, { useState } from "react";
-import { signup } from "../Api/AuthAPI.js";  
-import { useNavigate } from "react-router-dom";
+import { signup } from "../Api/AuthAPI.js";
+import { Link, useNavigate } from "react-router-dom";
 import logo from "../components/images/logo.png";
 
 function SignupPage({ setIsLoggedIn }) {
@@ -22,8 +22,8 @@ function SignupPage({ setIsLoggedIn }) {
     e.preventDefault();
     try {
       await signup(userData);
-      setIsLoggedIn(true);  
-      navigate("/login");  
+      setIsLoggedIn(true);
+      navigate("/login");
     } catch (err) {
       setError("Signup failed. Please try again.");
     }
@@ -110,6 +110,13 @@ function SignupPage({ setIsLoggedIn }) {
             >
               Signup ➝
             </button>
+            <div className="text-white flex">
+              Already have an account?
+              <Link to="/login" className="text-red-300">
+                {" "}
+                Let me Login
+              </Link>
+            </div>
           </div>
         </form>
       </div>

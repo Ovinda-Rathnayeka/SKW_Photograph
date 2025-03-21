@@ -1,13 +1,13 @@
 import React, { useState } from "react";
-import { login, verifyOTP } from "../Api/AuthAPI.js"; 
-import { useNavigate } from "react-router-dom";
+import { login, verifyOTP } from "../Api/AuthAPI.js";
+import { Link, useNavigate } from "react-router-dom";
 import logo from "../components/images/logo.png";
 
 function LoginPage({ setIsLoggedIn }) {
   const [credentials, setCredentials] = useState({ email: "", password: "" });
-  const [otp, setOtp] = useState(""); 
+  const [otp, setOtp] = useState("");
   const [error, setError] = useState("");
-  const [isOtpSent, setIsOtpSent] = useState(false); 
+  const [isOtpSent, setIsOtpSent] = useState(false);
   const navigate = useNavigate();
 
   const handleChange = (e) => {
@@ -15,17 +15,16 @@ function LoginPage({ setIsLoggedIn }) {
   };
 
   const handleOtpChange = (e) => {
-    setOtp(e.target.value); 
+    setOtp(e.target.value);
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      
       const user = await login(credentials);
-      sessionStorage.setItem("user", JSON.stringify(user)); 
-      setIsOtpSent(true); 
-      setError(""); 
+      sessionStorage.setItem("user", JSON.stringify(user));
+      setIsOtpSent(true);
+      setError("");
     } catch (err) {
       setError("Invalid email or password");
     }
@@ -34,14 +33,13 @@ function LoginPage({ setIsLoggedIn }) {
   const handleOtpSubmit = async (e) => {
     e.preventDefault();
     try {
-      
       const verificationResponse = await verifyOTP({
         email: credentials.email,
         otp: otp,
       });
-      sessionStorage.setItem("user", JSON.stringify(verificationResponse)); 
-      setIsLoggedIn(true); 
-      navigate("/Home"); 
+      sessionStorage.setItem("user", JSON.stringify(verificationResponse));
+      setIsLoggedIn(true);
+      navigate("/Home");
     } catch (err) {
       setError("Invalid OTP");
     }
@@ -57,9 +55,8 @@ function LoginPage({ setIsLoggedIn }) {
           Login
         </h2>
         {error && <p className="text-red-500 text-center mt-2">{error}</p>}
-        
+
         {!isOtpSent ? (
-          
           <form onSubmit={handleSubmit} className="mt-6">
             <label className="block text-gray-300">Email</label>
             <input
@@ -80,16 +77,21 @@ function LoginPage({ setIsLoggedIn }) {
               required
               className="w-full p-2 mt-1 bg-[#0D1117] border border-gray-600 rounded-lg text-white"
             />
-
             <button
               type="submit"
               className="w-full mt-6 p-3 bg-[#E66A4E] rounded-xl text-white font-bold hover:bg-[#C2563F] transition"
             >
               Login ➝
             </button>
+            <div className="text-white flex">
+              Don't have an account?
+              <Link to="/signup" className="text-red-300">
+                {" "}
+                Let me Signup
+              </Link>
+            </div>
           </form>
         ) : (
-          
           <form onSubmit={handleOtpSubmit} className="mt-6">
             <label className="block text-gray-300">Enter OTP</label>
             <input
@@ -98,7 +100,7 @@ function LoginPage({ setIsLoggedIn }) {
               value={otp}
               onChange={handleOtpChange}
               required
-              maxLength={6} 
+              maxLength={6}
               className="w-full p-2 mt-1 bg-[#0D1117] border border-gray-600 rounded-lg text-white"
             />
 

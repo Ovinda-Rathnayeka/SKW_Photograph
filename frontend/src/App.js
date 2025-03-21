@@ -41,6 +41,10 @@ function App() {
           path="/login"
           element={<LoginPage setIsLoggedIn={setIsLoggedIn} />}
         />
+        <Route
+          path="/signup"
+          element={<SignupPage setIsLoggedIn={setIsLoggedIn} />}
+        />
         <Route path="/payment" element={<PaymentPage />} />
         <Route path="/profile" element={<UserProfile />} />
         <Route path="/feedbacks" element={<Feedbacks />} />
