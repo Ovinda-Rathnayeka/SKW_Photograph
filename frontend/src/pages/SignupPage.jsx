@@ -11,14 +11,43 @@ function SignupPage({ setIsLoggedIn }) {
     confirmPassword: ""
   });
   const [error, setError] = useState("");
+  const [passwordErrors, setPasswordErrors] = useState([]);
   const navigate = useNavigate();
+
+  const validatePassword = (password) => {
+    const errors = [];
+    if (password.length < 8) {
+      errors.push("Password must be at least 8 characters long");
+    }
+    if (!/[!@#$%^&*(),.?":{}|<>]/.test(password)) {
+      errors.push("Password must contain at least one special character");
+    }
+    if (!/[A-Z]/.test(password)) {
+      errors.push("Password must contain at least one uppercase letter");
+    }
+    if (!/[a-z]/.test(password)) {
+      errors.push("Password must contain at least one lowercase letter");
+    }
+    if (!/[0-9]/.test(password)) {
+      errors.push("Password must contain at least one number");
+    }
+    return errors;
+  };
 
   const handleChange = (e) => {
     setUserData({ ...userData, [e.target.name]: e.target.value });
+    if (e.target.name === 'password') {
+      setPasswordErrors(validatePassword(e.target.value));
+    }
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    const passwordValidationErrors = validatePassword(userData.password);
+    if (passwordValidationErrors.length > 0) {
+      setError("Please fix password requirements");
+      return;
+    }
     if (userData.password !== userData.confirmPassword) {
       setError("Passwords do not match");
       return;
@@ -85,6 +114,13 @@ function SignupPage({ setIsLoggedIn }) {
               required
               className="w-full p-2 mt-1 bg-[#0D1117] border border-gray-600 rounded-lg text-white"
             />
+            {passwordErrors.length > 0 && (
+              <ul className="mt-2 text-sm text-red-400">
+                {passwordErrors.map((error, index) => (
+                  <li key={index}>{error}</li>
+                ))}
+              </ul>
+            )}
           </div>
 
           <div>

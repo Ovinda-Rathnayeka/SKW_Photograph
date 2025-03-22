@@ -9,6 +9,10 @@ import {updateCustomer} from "../Api/CustomerAPI"
 const UserProfile = () => {
   const navigate = useNavigate();
   const [isEditing, setIsEditing] = useState(false);
+  const [errors, setErrors] = useState({
+    phone: '',
+    nic: ''
+  });
   const [user, setUser] = useState({
     name: "",
     email: "",
@@ -21,7 +25,16 @@ const UserProfile = () => {
     otpVerified: true,
   });
 
- 
+  const validatePhone = (phone) => {
+    const phoneRegex = /^\d{10}$/;
+    return phoneRegex.test(phone);
+  };
+
+  const validateNIC = (nic) => {
+    const nicRegex = /^\d{12}$/;
+    return nicRegex.test(nic);
+  };
+
   useEffect(() => {
     const fetchUserData = async () => {
       try {
@@ -42,10 +55,36 @@ const UserProfile = () => {
   }, []);
 
   const handleChange = (e) => {
-    setUser({ ...user, [e.target.name]: e.target.value });
+    const { name, value } = e.target;
+    setUser({ ...user, [name]: value });
+
+    if (name === 'phone') {
+      if (!validatePhone(value) && value !== '') {
+        setErrors(prev => ({ ...prev, phone: 'Phone number must be exactly 10 digits' }));
+      } else {
+        setErrors(prev => ({ ...prev, phone: '' }));
+      }
+    }
+
+    if (name === 'nic') {
+      if (!validateNIC(value) && value !== '') {
+        setErrors(prev => ({ ...prev, nic: 'NIC must be exactly 12 digits' }));
+      } else {
+        setErrors(prev => ({ ...prev, nic: '' }));
+      }
+    }
   };
 
   const handleSave = async () => {
+    if (errors.phone || errors.nic) {
+      Swal.fire({
+        title: "Validation Error!",
+        text: "Please correct the errors before saving.",
+        icon: "error",
+        confirmButtonText: "OK",
+      });
+      return;
+    }
     const userId = sessionStorage.getItem("_id")
     try {
       const updatedData = {
@@ -119,23 +158,32 @@ const UserProfile = () => {
         <div className="mt-8">
           <div className="space-y-6">
             {["email", "phone", "nic", "address"].map((field) => (
-              <p key={field} className="flex items-center gap-3 text-gray-700 bg-gray-100 p-3 rounded-lg">
-                {field === "email" && <FaEnvelope className="text-gray-500" />}
-                {field === "phone" && <FaPhone className="text-gray-500" />}
-                {field === "nic" && <FaIdCard className="text-gray-500" />}
-                {field === "address" && <FaHome className="text-gray-500" />}
-                {isEditing ? (
-                  <input
-                    type="text"
-                    name={field}
-                    value={user[field]}
-                    onChange={handleChange}
-                    className="border p-3 rounded-lg w-full focus:ring-2 focus:ring-blue-400"
-                  />
-                ) : (
-                  user[field]
+              <div key={field}>
+                <p className="flex items-center gap-3 text-gray-700 bg-gray-100 p-3 rounded-lg">
+                  {field === "email" && <FaEnvelope className="text-gray-500" />}
+                  {field === "phone" && <FaPhone className="text-gray-500" />}
+                  {field === "nic" && <FaIdCard className="text-gray-500" />}
+                  {field === "address" && <FaHome className="text-gray-500" />}
+                  {isEditing ? (
+                    <>
+                      <input
+                        type="text"
+                        name={field}
+                        value={user[field]}
+                        onChange={handleChange}
+                        className={`border p-3 rounded-lg w-full focus:ring-2 focus:ring-blue-400 ${
+                          errors[field] ? 'border-red-500' : ''
+                        }`}
+                      />
+                    </>
+                  ) : (
+                    user[field]
+                  )}
+                </p>
+                {isEditing && errors[field] && (
+                  <p className="text-red-500 text-sm mt-1">{errors[field]}</p>
                 )}
-              </p>
+              </div>
             ))}
             <p className="text-gray-700 font-semibold">Joined: {user.createdAt}</p>
             <p className={`text-sm font-semibold ${user.otpVerified ? "text-green-600" : "text-red-600"}`}>
