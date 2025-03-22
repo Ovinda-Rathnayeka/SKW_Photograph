@@ -8,6 +8,8 @@ import Navbar from "./components/AdminP&B/Navbar.jsx";
 import Sidebar from "./components/AdminP&B/Sidebar.jsx";
 import PaymentPage from "./Page/AdminP&B/PaymentPage.jsx";
 import DisplayBooking from "./Page/AdminP&B/DisplayBooking.jsx";
+import AdminProductPage from "./Page/AdminP&B/AdminProductPage.jsx";
+import AdminOrderManagement from "./Page/AdminP&B/AdminOrderManagement.jsx";
 
 function App() {
   return (
@@ -30,6 +32,9 @@ function App() {
               <Route path="/packagedisplay" element={<PackageDisplay />} />
               <Route path="/payment" element={<PaymentPage />} />
               <Route path="/displaybooking" element={<DisplayBooking />} />
+              <Route path="/AdminProduct" element={<AdminProductPage />} />
+              <Route path="/AdminOrder" element={<AdminOrderManagement />} />
+
             </Routes>
           </div>
         </div>
