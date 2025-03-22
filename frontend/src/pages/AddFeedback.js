@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import feedbackAPI from "../Api/FeedbackAPI";
 import { fetchUserDetails } from "../Api/AuthAPI";
 import { useNavigate } from "react-router-dom";
+import Swal from "sweetalert2";
 
 function AddFeedback() {
   const history = useNavigate();
@@ -10,6 +11,9 @@ function AddFeedback() {
     rating: 1,
     title: "",
     comment: "",
+    responseTime: 1,
+    workQuality: 1,
+    satisfaction: 1,
   });
   const [images, setImages] = useState([]);
   const [customerEmail, setCustomerEmail] = useState("");
@@ -31,7 +35,6 @@ function AddFeedback() {
     fetchUser();
   }, []);
 
-  // Validation function
   const validate = (name, value) => {
     let errors = { ...validationErrors };
 
@@ -48,10 +51,9 @@ function AddFeedback() {
         errors.title = "";
       }
     }
-    
 
     if (name === "comment") {
-      const plainText = value.replace(/[^a-zA-Z]/g, ""); // only letters
+      const plainText = value.replace(/[^a-zA-Z]/g, "");
       errors.comment =
         plainText.length > 100 ? "Comment must not exceed 100 letters." : "";
     }
@@ -88,12 +90,16 @@ function AddFeedback() {
   };
 
   const isFormValid = () => {
+    const letterCount = feedbackData.comment.replace(/[^a-zA-Z]/g, "").length;
+
     return (
       feedbackData.category &&
       feedbackData.title &&
       /^[1-5]$/.test(feedbackData.rating) &&
-      feedbackData.comment.replace(/[^a-zA-Z]/g, "").length >= 100 &&
-      (!validationErrors.images || validationErrors.images === "") &&
+      letterCount > 0 &&
+      letterCount <= 100 &&
+      (validationErrors.images === undefined ||
+        validationErrors.images === "") &&
       Object.values(validationErrors).every((err) => err === "")
     );
   };
@@ -101,22 +107,30 @@ function AddFeedback() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
-
+  
     try {
       if (!customerId) {
         setError("Customer ID is missing.");
         setLoading(false);
         return;
       }
-
+  
       const feedbackWithCustomer = {
         ...feedbackData,
         customerEmail,
         customerId,
       };
-
+  
       await feedbackAPI.createFeedback(feedbackWithCustomer, images);
-      alert("Feedback added successfully!");
+  
+      Swal.fire({
+        position: "center",
+        icon: "success",
+        title: "Your feedback has been submitted!",
+        showConfirmButton: false,
+        timer: 1500
+      });
+  
       setFeedbackData({ category: "", rating: 1, title: "", comment: "" });
       setImages([]);
       history("/feedbacks");
@@ -126,6 +140,7 @@ function AddFeedback() {
       setLoading(false);
     }
   };
+  
 
   return (
     <div className="max-w-7xl mx-auto p-6">
@@ -147,14 +162,19 @@ function AddFeedback() {
 
         <div className="mb-4">
           <label className="block mb-2">Category</label>
-          <input
-            type="text"
+          <select
             name="category"
             value={feedbackData.category}
             onChange={handleChange}
             className="w-full p-2 border border-gray-300 rounded-md focus:outline-none focus:border-gray-300"
             required
-          />
+          >
+            <option value="">Select a category</option>
+            <option value="Service">Service</option>
+            <option value="Purchase">Purchase</option>
+            <option value="Package">Package</option>
+            <option value="Rental">Rental</option>
+          </select>
           {validationErrors.category && (
             <p className="text-red-500 text-sm">{validationErrors.category}</p>
           )}
