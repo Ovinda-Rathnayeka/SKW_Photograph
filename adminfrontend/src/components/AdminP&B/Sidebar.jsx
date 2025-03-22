@@ -23,13 +23,13 @@ function Sidebar() {
 
       {/* Sidebar Links */}
       <ul className="space-y-3 flex-1">
-        <SidebarItem icon={<FaTachometerAlt />} text="Dashboard" link="/" />
+      {/* <SidebarItem icon={<FaTachometerAlt />} text="Dashboard" link="/" />
         <SidebarItem icon={<FaUser />} text="Bookings" link="/displaybooking" />
         <SidebarItem icon={<FaCog />} text="Payment" link="/payment" />
         <SidebarItem icon={<FaBox />} text="Add Package" link="/add-package" />
-        <SidebarItem icon={<FaEye />} text="View Packages" link="/packagedisplay" />
+        <SidebarItem icon={<FaEye />} text="View Packages" link="/packagedisplay" />*/}  
         <SidebarItem icon={<FaEye />} text="Sales Admin" link="/AdminProduct" />
-        <SidebarItem icon={<FaEye />} text="Sales Admin" link="/AdminOrder" />
+        <SidebarItem icon={<FaEye />} text="Order Management" link="/AdminOrder" />
       </ul>
 
       {/* Logout Button */}
