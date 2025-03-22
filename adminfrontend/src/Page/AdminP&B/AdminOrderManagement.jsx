@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
+import "./AdminProductPage.css";
 
 function AdminOrderManagement() {
   const [orders, setOrders] = useState([]);
@@ -23,16 +24,17 @@ function AdminOrderManagement() {
   }, []);
 
   const handleAcceptOrder = async (orderId) => {
+    console.log("Sending PATCH to backend for ID:", orderId);
+
     try {
-      const res = await axios.post(
-        `http://localhost:5000/cart-payment/${orderId}/accept`,
+      const res = await axios.patch(
+        `http://localhost:5000/cart-payment/${orderId}/status`,
         {},
         { withCredentials: true }
       );
 
       alert(res.data.message);
 
-      // ✅ Update the order status in UI immediately
       setOrders((prevOrders) =>
         prevOrders.map((order) =>
           order._id === orderId
@@ -50,7 +52,7 @@ function AdminOrderManagement() {
 
   return (
     <div className="p-6 max-w-7xl mx-auto">
-      <h1 className="text-3xl font-bold mb-6 text-center"> Order Management</h1>
+      <h1 className="text-3xl font-bold mb-6 text-center">Order Management</h1>
 
       {orders.length === 0 ? (
         <p className="text-center text-gray-600">No orders found.</p>
@@ -107,7 +109,7 @@ function AdminOrderManagement() {
                   <td className="px-4 py-2">
                     {order.paymentStatus !== "Accepted" ? (
                       <button
-                        onClick={() => handleAcceptOrder(order._id)}
+                        onClick={() => handleAcceptOrder(order._id.toString())}
                         className="bg-green-500 text-white px-3 py-1 rounded hover:bg-green-600"
                       >
                         Accept

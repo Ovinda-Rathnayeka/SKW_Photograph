@@ -1,11 +1,10 @@
 import CartPayment from "../Models/CartPaymentModel.js";
 import Cart from "../Models/CartModel.js";
 import cloudinary from "../Middleware/CloudinaryConfig.js";
-import nodemailer from "nodemailer";
 
 const generateTransactionId = () => `TRCART${Math.floor(Math.random() * 1000000)}`;
 
-// ✅ Create cart payment (slip optional)
+// Create cart payment
 export const createCartPayment = async (req, res) => {
   const { customerId, address, totalAmount, paymentMethod } = req.body;
 
@@ -15,7 +14,6 @@ export const createCartPayment = async (req, res) => {
       return res.status(400).json({ message: "No items found in cart." });
     }
 
-    // ✅ Optional proof image
     let proofImageUrl = "";
     if (req.file) {
       const uploaded = await cloudinary.uploader.upload(req.file.path, {
@@ -51,7 +49,7 @@ export const createCartPayment = async (req, res) => {
   }
 };
 
-// ✅ Get all cart payments
+// Get all cart payments
 export const getAllCartPayments = async (req, res) => {
   try {
     const payments = await CartPayment.find()
@@ -64,43 +62,27 @@ export const getAllCartPayments = async (req, res) => {
   }
 };
 
-// ✅ Accept cart payment and send confirmation email
+// Accept cart payment (update status)
 export const acceptCartPayment = async (req, res) => {
+  const { id } = req.params;
+  console.log("Accepting order ID:", id);
+
   try {
-    const payment = await CartPayment.findById(req.params.id).populate("customerId");
+    const updated = await CartPayment.findByIdAndUpdate(
+      id,
+      { paymentStatus: "Accepted" },
+      { new: true }
+    );
 
-    if (!payment) return res.status(404).json({ message: "Order not found" });
-
-    payment.paymentStatus = "Accepted";
-    await payment.save();
-
-    const customerEmail = payment.customerId?.email;
-    const customerName = payment.customerId?.name || "Customer";
-
-    if (customerEmail) {
-      const transporter = nodemailer.createTransport({
-        service: "gmail",
-        auth: {
-          user: process.env.EMAIL_USER,
-          pass: process.env.EMAIL_PASS,
-        },
-      });
-
-      await transporter.sendMail({
-        from: process.env.EMAIL_USER,
-        to: customerEmail,
-        subject: "Order Confirmed - SKW Photography",
-        html: `
-          <h2>Dear ${customerName},</h2>
-          <p>Your order totaling <strong>$${payment.totalAmount}</strong> has been <strong>accepted</strong>.</p>
-          <p>Thank you for choosing SKW Photography!</p>
-        `,
-      });
+    if (!updated) {
+      console.log("Order not found:", id);
+      return res.status(404).json({ message: "Order not found" });
     }
 
-    res.json({ message: "Order accepted and email sent." });
-  } catch (err) {
-    console.error("Error accepting order:", err);
+    console.log("Order accepted:", updated._id);
+    res.json({ message: "Order accepted successfully." });
+  } catch (error) {
+    console.error("Error updating status:", error);
     res.status(500).json({ message: "Failed to accept order" });
   }
 };

@@ -1,7 +1,7 @@
 import axios from "axios";
 
 const api = axios.create({
-  baseURL: "http://localhost:5000/cart-payment", // ✅ UPDATED
+  baseURL: "http://localhost:5000/cart-payment", 
   withCredentials: true,
 });
 
@@ -12,11 +12,11 @@ export const createCartPayment = async (paymentData, proofImage) => {
   formData.append("totalAmount", paymentData.totalAmount);
 
   if (proofImage) {
-    formData.append("proofImage", proofImage); // ✅ Optional
+    formData.append("proofImage", proofImage); 
   }
 
   try {
-    const response = await api.post("/", formData); // ✅ POST to /cart-payment
+    const response = await api.post("/", formData);
     return response.data;
   } catch (error) {
     console.error("Error creating cart payment:", error.response?.data || error.message);
