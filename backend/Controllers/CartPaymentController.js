@@ -1,6 +1,8 @@
 import CartPayment from "../Models/CartPaymentModel.js";
 import Cart from "../Models/CartModel.js";
+import Customer from "../Models/CustomerModel.js";
 import cloudinary from "../Middleware/CloudinaryConfig.js";
+import nodemailer from "nodemailer";
 
 const generateTransactionId = () => `TRCART${Math.floor(Math.random() * 1000000)}`;
 
@@ -62,7 +64,7 @@ export const getAllCartPayments = async (req, res) => {
   }
 };
 
-// Update payment status (Accept or Deny)
+// Update payment status (Accept or Deny) + Send email
 export const updateCartPaymentStatus = async (req, res) => {
   const { id } = req.params;
   const { status } = req.body;
@@ -74,19 +76,67 @@ export const updateCartPaymentStatus = async (req, res) => {
   }
 
   try {
+    // Update the payment status and get customer info
     const updated = await CartPayment.findByIdAndUpdate(
       id,
       { paymentStatus: status },
       { new: true }
-    );
+    ).populate("customerId");
 
     if (!updated) {
       return res.status(404).json({ message: "Order not found" });
     }
 
-    res.json({ message: `Order ${status.toLowerCase()} successfully.` });
+    // Fetch customer email
+    const customer = updated.customerId;
+    if (!customer || !customer.email) {
+      return res.status(400).json({ message: "Customer email not found" });
+    }
+
+    // Setup nodemailer
+    const transporter = nodemailer.createTransport({
+      service: "gmail",
+      auth: {
+        user: process.env.EMAIL_USER,
+        pass: process.env.EMAIL_PASS,
+      },
+    });
+
+    // Email content
+    const subject = `Your Order Has Been ${status}`;
+
+    const htmlContent = `
+      <div style="background-color:#000000;padding:30px 20px;font-family:'Segoe UI',sans-serif;color:#ffffff;">
+        <div style="max-width:600px;margin:0 auto;background-color:#1a1a1a;border-radius:12px;padding:30px;border:1px solid #ffa500;">
+          <h2 style="color:#ffa500;text-align:center;">Order ${status}</h2>
+          <p style="font-size:16px;">Hi <strong>${customer.name || "Customer"}</strong>,</p>
+          <p style="font-size:15px;line-height:1.6;">
+            Your order with <strong style="color:#ffa500;">Transaction ID: ${updated.transactionId}</strong> has been 
+            <strong style="color:#ffa500;">${status}</strong>.
+          </p>
+          <p style="font-size:15px;line-height:1.6;">
+            We truly appreciate your trust in our service.
+          </p>
+          <div style="margin-top:30px;">
+            <p style="font-size:14px;color:#aaa;">Best regards,</p>
+            <p style="font-size:15px;font-weight:bold;color:#fff;">SKW Photography Team</p>
+          </div>
+        </div>
+        <p style="text-align:center;margin-top:30px;font-size:12px;color:#777;">© 2024 SKW Photography. All rights reserved.</p>
+      </div>
+    `;
+
+    // Send email
+    await transporter.sendMail({
+      from: `"SKW Photography" <${process.env.EMAIL_USER}>`,
+      to: customer.email,
+      subject,
+      html: htmlContent,
+    });
+
+    res.json({ message: `Order ${status.toLowerCase()} and email sent successfully.` });
   } catch (error) {
     console.error("Error updating order status:", error);
-    res.status(500).json({ message: "Failed to update order status" });
+    res.status(500).json({ message: "Failed to update order status", error });
   }
 };
