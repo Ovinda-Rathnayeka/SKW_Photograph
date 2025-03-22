@@ -24,6 +24,7 @@ const Navbar = ({ isLoggedIn, onLogout }) => {
             <Link to="/packages" className="text-[#8f8888] font-bold hover:text-[#747c7c]">Packages</Link>
             <a href="#store" className="text-[#8f8888] font-bold hover:text-[#747c7c]">Store</a>
             <a href="#contact" className="text-[#8f8888] font-bold hover:text-[#747c7c]">Contact Us</a>
+            <Link to="/feedbacks" className="text-[#8f8888] font-bold hover:text-[#747c7c]">Feedback</Link>
           </div>
           <div className="flex space-x-4 mt-4">
             {isLoggedIn ? (
