@@ -13,6 +13,7 @@ import Product from "./Routes/ProductRoutes.js";
 import Cart from "./Routes/CartRoutes.js";
 
 import cloudinary from "./Middleware/CloudinaryConfig.js";
+import Employee from "./Routes/EmployeeRoute.js";
 
 const app = express();
 dotenv.config();
@@ -34,6 +35,7 @@ app.use("/payment", Payment);
 app.use("/feedbacks", Feedback);
 app.use("/product", Product);
 app.use("/cart", Cart);
+app.use("/employee", Employee);
 
 mongoose
   .connect(process.env.MONGODB_URI)
