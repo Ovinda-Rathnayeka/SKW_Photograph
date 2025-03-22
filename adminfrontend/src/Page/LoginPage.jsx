@@ -21,7 +21,7 @@ const LoginPage = () => {
       
       const adminEmails = [
         "packageadmin@gmail.com",
-        "rescourcesadmin@gmail.com",
+        "resourceadmin@skwphotography.com",
         "hradmin@gmail.com",
         "admin4@example.com",
         "admin5@example.com"
@@ -35,8 +35,8 @@ const LoginPage = () => {
           
           if (email === "packageadmin@skwphotography.com") {
             navigate("/PDashboard"); 
-          } else if (email === "rescourcesadmin@gmail.com") {
-            navigate("/admin/resources-dashboard"); 
+          } else if (email === "resourceadmin@skwphotography.com") {
+            navigate("/RDashbaord"); 
           } else if (email === "hradmin@gmail.com") {
             navigate("/admin/hr-dashboard"); 
           } else {
