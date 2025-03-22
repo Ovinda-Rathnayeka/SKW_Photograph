@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import logo from "../components/images/logo.png";
 import { Link } from "react-router-dom";
 import Sidebar from "./Sidebar";
+import profile_image from "../components/images/profile_image.png";
 
 const Navbar = ({ isLoggedIn, onLogout }) => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
@@ -31,7 +32,7 @@ const Navbar = ({ isLoggedIn, onLogout }) => {
                <button
                onClick={toggleSidebar}
                className="text-white px-4 py-2 text-center">
-               Profile
+                <img className = "w-14 h-14" src = {profile_image}/>
              </button>
             ) : (
               <>

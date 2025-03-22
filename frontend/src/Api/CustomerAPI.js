@@ -16,7 +16,9 @@ export const getCustomerById = async (_id) => {
 export const updateCustomer = async (_id, updatedData) => {
   try {
     const response = await axios.put(`${API_URL}/update/${_id}`, updatedData);
-    return response.data;
+    const user = response.data.customer;
+    console.log(user);
+    return user;
   } catch (error) {
     console.error('Error updating customer data:', error);
     throw error;
