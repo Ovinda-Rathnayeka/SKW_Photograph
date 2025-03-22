@@ -1,8 +1,10 @@
 import React, { useState, useEffect } from "react";
 import feedbackAPI from "../Api/FeedbackAPI"; // Import the feedback API methods
 import { fetchUserDetails } from "../Api/AuthAPI"; // Import the fetchUserDetails method for fetching customer details
+import { useNavigate } from "react-router-dom";
 
 function AddFeedback() {
+  const history = useNavigate();
   const [feedbackData, setFeedbackData] = useState({
     category: "",
     rating: 1,
@@ -76,6 +78,7 @@ function AddFeedback() {
       alert("Feedback added successfully!");
       setFeedbackData({ category: "", rating: 1, title: "", comment: "" });
       setImages([]);
+      history("/feedbacks");
     } catch (err) {
       setLoading(false);
       setError("Failed to add feedback.");
