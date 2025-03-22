@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
-import feedbackAPI from "../Api/FeedbackAPI"; // Import the feedback API methods
-import { fetchUserDetails } from "../Api/AuthAPI"; // Import the fetchUserDetails method for fetching customer details
+import feedbackAPI from "../Api/FeedbackAPI";
+import { fetchUserDetails } from "../Api/AuthAPI";
 import { useNavigate } from "react-router-dom";
 
 function AddFeedback() {
@@ -16,14 +16,14 @@ function AddFeedback() {
   const [customerId, setCustomerId] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
+  const [validationErrors, setValidationErrors] = useState({});
 
-  // Fetch user details (customer email and customerId)
   useEffect(() => {
     const fetchUser = async () => {
       try {
-        const userDetails = await fetchUserDetails(); // Fetch customer details
-        setCustomerEmail(userDetails.email); // Set email
-        setCustomerId(userDetails._id); // Set customerId
+        const userDetails = await fetchUserDetails();
+        setCustomerEmail(userDetails.email);
+        setCustomerId(userDetails._id);
       } catch (err) {
         setError("Error fetching customer details.");
       }
@@ -31,57 +31,99 @@ function AddFeedback() {
     fetchUser();
   }, []);
 
-  // Handle form data change
+  // Validation function
+  const validate = (name, value) => {
+    let errors = { ...validationErrors };
+
+    if (name === "category") {
+      errors.category = value.trim() === "" ? "Category is required." : "";
+    }
+
+    if (name === "title") {
+      if (value.trim() === "") {
+        errors.title = "Title is required.";
+      } else if (!/^[a-zA-Z0-9\s]+$/.test(value)) {
+        errors.title = "Title cannot contain special characters.";
+      } else {
+        errors.title = "";
+      }
+    }
+    
+
+    if (name === "comment") {
+      const plainText = value.replace(/[^a-zA-Z]/g, ""); // only letters
+      errors.comment =
+        plainText.length > 100 ? "Comment must not exceed 100 letters." : "";
+    }
+
+    if (name === "rating") {
+      const valid = /^[1-5]$/.test(value);
+      errors.rating = valid
+        ? ""
+        : "Rating must be a whole number between 1 and 5.";
+    }
+
+    setValidationErrors(errors);
+  };
+
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setFeedbackData({
-      ...feedbackData,
-      [name]: value,
-    });
+    setFeedbackData((prev) => ({ ...prev, [name]: value }));
+    validate(name, value);
   };
 
-  // Handle image change
   const handleImageChange = (e) => {
-    setImages([...e.target.files]);
+    const selectedFiles = Array.from(e.target.files);
+    const allowedTypes = ["image/jpeg", "image/jpg", "image/png"];
+
+    const isValid = selectedFiles.every((file) =>
+      allowedTypes.includes(file.type)
+    );
+    let errors = { ...validationErrors };
+    errors.images = isValid ? "" : "Only JPG, JPEG, PNG files are allowed.";
+    setValidationErrors(errors);
+
+    if (isValid) setImages(selectedFiles);
+    else setImages([]);
   };
 
-  // Handle form submit
+  const isFormValid = () => {
+    return (
+      feedbackData.category &&
+      feedbackData.title &&
+      /^[1-5]$/.test(feedbackData.rating) &&
+      feedbackData.comment.replace(/[^a-zA-Z]/g, "").length >= 100 &&
+      (!validationErrors.images || validationErrors.images === "") &&
+      Object.values(validationErrors).every((err) => err === "")
+    );
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
 
-    // Log the feedback data to the console before sending it
-    console.log("Feedback Data: ", {
-      ...feedbackData,
-      customerEmail,
-      customerId,
-    });
-
     try {
-      // Ensure customerId is set before submitting the feedback
       if (!customerId) {
         setError("Customer ID is missing.");
         setLoading(false);
         return;
       }
 
-      // Add customer email and customerId to the form data
       const feedbackWithCustomer = {
         ...feedbackData,
         customerEmail,
         customerId,
       };
 
-      // Send feedback data and images to the backend
       await feedbackAPI.createFeedback(feedbackWithCustomer, images);
-      setLoading(false);
       alert("Feedback added successfully!");
       setFeedbackData({ category: "", rating: 1, title: "", comment: "" });
       setImages([]);
       history("/feedbacks");
     } catch (err) {
-      setLoading(false);
       setError("Failed to add feedback.");
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -98,8 +140,8 @@ function AddFeedback() {
             type="email"
             name="email"
             value={customerEmail}
-            readOnly
-            className="w-full p-2 border border-gray-300 rounded-md"
+            disabled
+            className="w-full p-2 border border-gray-300 rounded-md bg-gray-100 text-gray-500 cursor-not-allowed focus:outline-none focus:border-gray-300"
           />
         </div>
 
@@ -110,9 +152,12 @@ function AddFeedback() {
             name="category"
             value={feedbackData.category}
             onChange={handleChange}
-            className="w-full p-2 border border-gray-300 rounded-md"
+            className="w-full p-2 border border-gray-300 rounded-md focus:outline-none focus:border-gray-300"
             required
           />
+          {validationErrors.category && (
+            <p className="text-red-500 text-sm">{validationErrors.category}</p>
+          )}
         </div>
 
         <div className="mb-4">
@@ -122,9 +167,12 @@ function AddFeedback() {
             name="title"
             value={feedbackData.title}
             onChange={handleChange}
-            className="w-full p-2 border border-gray-300 rounded-md"
+            className="w-full p-2 border border-gray-300 rounded-md focus:outline-none focus:border-gray-300"
             required
           />
+          {validationErrors.title && (
+            <p className="text-red-500 text-sm">{validationErrors.title}</p>
+          )}
         </div>
 
         <div className="mb-4">
@@ -133,9 +181,12 @@ function AddFeedback() {
             name="comment"
             value={feedbackData.comment}
             onChange={handleChange}
-            className="w-full p-2 border border-gray-300 rounded-md"
+            className="w-full p-2 border border-gray-300 rounded-md focus:outline-none focus:border-gray-300"
             required
           />
+          {validationErrors.comment && (
+            <p className="text-red-500 text-sm">{validationErrors.comment}</p>
+          )}
         </div>
 
         <div className="mb-4">
@@ -147,9 +198,12 @@ function AddFeedback() {
             onChange={handleChange}
             min="1"
             max="5"
-            className="w-full p-2 border border-gray-300 rounded-md"
+            className="w-full p-2 border border-gray-300 rounded-md focus:outline-none focus:border-gray-300"
             required
           />
+          {validationErrors.rating && (
+            <p className="text-red-500 text-sm">{validationErrors.rating}</p>
+          )}
         </div>
 
         <div className="mb-4">
@@ -158,14 +212,17 @@ function AddFeedback() {
             type="file"
             multiple
             onChange={handleImageChange}
-            className="w-full p-2 border border-gray-300 rounded-md"
+            className="w-full p-2 border border-gray-300 rounded-md focus:outline-none focus:border-gray-300"
           />
+          {validationErrors.images && (
+            <p className="text-red-500 text-sm">{validationErrors.images}</p>
+          )}
         </div>
 
         <button
           type="submit"
-          className="bg-blue-500 text-white py-2 px-4 rounded mt-4 hover:bg-blue-700"
-          disabled={loading}
+          className="bg-blue-500 text-white py-2 px-4 rounded mt-4 hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed"
+          disabled={!isFormValid() || loading}
         >
           {loading ? "Adding Feedback..." : "Add Feedback"}
         </button>
