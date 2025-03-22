@@ -11,6 +11,7 @@ import SignupPage from "./pages/SingupPage.jsx";
 import Feedbacks from "./pages/FeedbackDetails.js";
 import AddFeedback from "./pages/AddFeedback.js";
 import UpdateFeedback from "./pages/UpdateFeedback.js";
+import Profile from "./pages/ProfilePage.jsx";
 
 function App() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
@@ -50,6 +51,7 @@ function App() {
         <Route path="/feedbacks" element={<Feedbacks />} />
         <Route path="/add-feedback" element={<AddFeedback />} />
         <Route path="/feedbacks/:id" element={<UpdateFeedback />} />
+        <Route path="/profile" element={<Profile/>} />
       </Routes>
     </Router>
   );

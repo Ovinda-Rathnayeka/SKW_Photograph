@@ -42,35 +42,8 @@ const Navbar = ({ isLoggedIn, onLogout }) => {
         </div>
       </nav>
 
-      <div className="pt-20"> 
-        <Sidebar isOpen={isSidebarOpen} onClose={toggleSidebar} />
-      </div>
-<<<<<<< HEAD
+      <Sidebar isOpen={isSidebarOpen} onClose={toggleSidebar} onLogout={onLogout} />
     </>
-=======
-      <div className="hidden md:flex space-x-8">
-        <Link to="/Home" className="text-[#8f8888] font-bold hover:text-[#747c7c]">Home</Link>
-        <a href="#about" className="text-[#8f8888] font-bold hover:text-[#747c7c]">About Us</a>
-        <a href="#video" className="text-[#8f8888] font-bold hover:text-[#747c7c]">Video Gallery</a>
-        <Link to="/packages" className="text-[#8f8888] font-bold hover:text-[#747c7c]">Packages</Link>
-        <Link to="/product" className="text-[#8f8888] font-bold hover:text-[#747c7c]">Store</Link>
-        <Link to="/feedbacks" className="text-[#8f8888] font-bold hover:text-[#747c7c]">Feedbacks</Link>
-        <a href="#contact" className="text-[#8f8888] font-bold hover:text-[#747c7c]">Contact Us</a>
-      </div>
-      <div className="flex space-x-4 mt-4">
-        {isLoggedIn ? (
-          <button onClick={onLogout} className="bg-[#73747c] text-white px-4 py-2 rounded hover:bg-[#3c4c51] text-center">
-            Logout
-          </button>
-        ) : (
-          <>
-            <Link to="/login" className="bg-[#73747c] text-white px-4 py-2 rounded hover:bg-[#3c4c51] text-center">Login</Link>
-            <Link to="/signup" className="bg-[#5b5c5e] text-white px-4 py-2 rounded hover:bg-[#30383d] text-center">Sign Up</Link>
-          </>
-        )}
-      </div>
-    </nav>
->>>>>>> origin/main
   );
 };
 
