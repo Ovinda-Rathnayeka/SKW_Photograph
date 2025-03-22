@@ -1,118 +1,142 @@
 import React, { useState, useEffect } from 'react';
 import { fetchAllBookings, updateBookingStatus } from '../../API/UserAPI/BookingAPI.js';
-import { fetchCustomerById } from '../../API/UserAPI/CustomerAPI.js'; 
+import { fetchCustomerById } from '../../API/UserAPI/CustomerAPI.js';
 
 function DisplayBooking() {
   const [bookings, setBookings] = useState([]);
   const [customerDetails, setCustomerDetails] = useState({});
   const [error, setError] = useState(null);
+  const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
-    const getBookings = async () => {
-      try {
-        const bookingsData = await fetchAllBookings();
-        setBookings(bookingsData);
+  // ✅ Function to fetch bookings + customer info
+  const getBookings = async () => {
+    try {
+      setLoading(true);
+      const bookingsData = await fetchAllBookings();
+      setBookings(bookingsData);
 
-        // Fetch customer details for each booking
-        const customerPromises = bookingsData.map(async (booking) => {
-          if (booking.customerId && typeof booking.customerId === "string") {
-            try {
-              const customer = await fetchCustomerById(booking.customerId);
-              return { id: booking.customerId, customer };
-            } catch (err) {
-              console.error(`Error fetching customer ${booking.customerId}:`, err);
-              return null;
-            }
+      const customerPromises = bookingsData.map(async (booking) => {
+        if (booking.customerId && typeof booking.customerId === 'string') {
+          try {
+            const customer = await fetchCustomerById(booking.customerId);
+            return { id: booking.customerId, customer };
+          } catch (err) {
+            console.error(`Error fetching customer ${booking.customerId}:`, err);
+            return null;
           }
-          return null;
-        });
+        }
+        return null;
+      });
 
-        // Resolve all customer details
-        const customerData = await Promise.all(customerPromises);
-        const customerMap = {};
-        customerData.forEach((data) => {
-          if (data) customerMap[data.id] = data.customer;
-        });
+      const customerData = await Promise.all(customerPromises);
+      const customerMap = {};
+      customerData.forEach((data) => {
+        if (data) customerMap[data.id] = data.customer;
+      });
 
-        setCustomerDetails(customerMap);
-      } catch (err) {
-        setError(err.message);
-      }
-    };
+      setCustomerDetails(customerMap);
+    } catch (err) {
+      setError(err.message);
+    } finally {
+      setLoading(false);
+    }
+  };
 
+  // Initial fetch
+  useEffect(() => {
     getBookings();
   }, []);
 
+  // ✅ Refresh bookings after status update
   const handleUpdateStatus = async (bookingId, newStatus) => {
     try {
-      const updatedBooking = await updateBookingStatus(bookingId, newStatus);
-      setBookings((prevBookings) =>
-        prevBookings.map((booking) =>
-          booking._id === bookingId ? { ...booking, status: updatedBooking.status } : booking
-        )
-      );
+      await updateBookingStatus(bookingId, newStatus);
+      await getBookings(); // Refetch updated data
     } catch (err) {
       setError(err.message);
     }
   };
 
-  if (error) {
-    return <div>Error: {error}</div>;
-  }
-
-  if (bookings.length === 0) {
-    return <div>No bookings available.</div>;
-  }
+  if (loading) return <div className="text-center py-6 text-slate-600">Loading bookings...</div>;
+  if (error) return <div className="text-red-500 text-center mt-4">Error: {error}</div>;
+  if (bookings.length === 0) return <div className="text-center mt-4 text-slate-600">No bookings available.</div>;
 
   return (
-    <div>
-      <table>
-        <thead>
-          <tr>
-            <th>Booking ID</th>
-            <th>Customer ID</th>
-            <th>Customer Name</th>
-            <th>Customer Email</th>
-            <th>Customer Phone</th>
-            <th>Package Name</th>
-            <th>Package Price</th>
-            <th>Booking Date</th>
-            <th>Status</th>
-            <th>Total Price</th>
-            <th>Additional Notes</th>
-            <th>Actions</th>
-          </tr>
-        </thead>
-        <tbody>
-          {bookings.map((booking) => (
-            <tr key={booking._id}>
-              <td>{booking._id}</td>
-              <td>{typeof booking.customerId === "object" ? booking.customerId._id : booking.customerId}</td>
-              <td>{typeof booking.customerId === "object" ? booking.customerId.name : customerDetails[booking.customerId]?.name || 'N/A'}</td>
-              <td>{typeof booking.customerId === "object" ? booking.customerId.email : customerDetails[booking.customerId]?.email || 'N/A'}</td>
-              <td>{typeof booking.customerId === "object" ? booking.customerId.phone : customerDetails[booking.customerId]?.phone || 'N/A'}</td>
-              <td>{booking.packageId ? booking.packageId.packageName : 'N/A'}</td>
-              <td>{booking.packageId ? `$${booking.packageId.price}` : 'N/A'}</td>
-              <td>{new Date(booking.bookingDate).toLocaleDateString()}</td>
-              <td>{booking.status}</td>
-              <td>${booking.totalPrice}</td>
-              <td>{booking.additionalNotes || 'N/A'}</td>
-              <td>
-                {booking.status !== 'Confirmed' && (
-                  <button onClick={() => handleUpdateStatus(booking._id, 'Confirmed')}>
-                    Confirm
-                  </button>
-                )}
-                {booking.status !== 'Cancelled' && (
-                  <button onClick={() => handleUpdateStatus(booking._id, 'Cancelled')}>
-                    Cancel
-                  </button>
-                )}
-              </td>
+    <div className="max-w-[95%] mx-auto px-4 py-8">
+      <h2 className="text-3xl font-semibold text-center text-slate-800 mb-8">All Bookings</h2>
+
+      {/* ✅ Responsive table container — scrolls only on small screens */}
+      <div className="w-full overflow-auto">
+        <table className="w-full text-sm bg-white border border-slate-200 rounded-lg shadow-sm">
+          <thead className="bg-slate-100 text-slate-700">
+            <tr>
+              {[
+                "Booking ID",
+                "Customer ID",
+                "Name",
+                "Email",
+                "Phone",
+                "Package",
+                "Price",
+                "Date",
+                "Status",
+                "Total",
+                "Notes",
+                "Actions",
+              ].map((head) => (
+                <th key={head} className="px-4 py-3 border-b text-left whitespace-nowrap">
+                  {head}
+                </th>
+              ))}
             </tr>
-          ))}
-        </tbody>
-      </table>
+          </thead>
+          <tbody>
+            {bookings.map((booking) => {
+              const customerId = typeof booking.customerId === "object"
+                ? booking.customerId._id
+                : booking.customerId;
+
+              const customer = typeof booking.customerId === "object"
+                ? booking.customerId
+                : customerDetails[booking.customerId];
+
+              return (
+                <tr key={booking._id} className="hover:bg-slate-50 border-b transition">
+                  <td className="px-4 py-2">{booking._id}</td>
+                  <td className="px-4 py-2">{customerId}</td>
+                  <td className="px-4 py-2">{customer?.name || "N/A"}</td>
+                  <td className="px-4 py-2">{customer?.email || "N/A"}</td>
+                  <td className="px-4 py-2">{customer?.phone || "N/A"}</td>
+                  <td className="px-4 py-2">{booking.packageId?.packageName || "N/A"}</td>
+                  <td className="px-4 py-2">{booking.packageId ? `$${booking.packageId.price}` : "N/A"}</td>
+                  <td className="px-4 py-2">{new Date(booking.bookingDate).toLocaleDateString()}</td>
+                  <td className="px-4 py-2 capitalize">{booking.status}</td>
+                  <td className="px-4 py-2">${booking.totalPrice}</td>
+                  <td className="px-4 py-2">{booking.additionalNotes || "N/A"}</td>
+                  <td className="px-4 py-2 flex flex-wrap gap-2">
+                    {booking.status !== 'Confirmed' && (
+                      <button
+                        onClick={() => handleUpdateStatus(booking._id, 'Confirmed')}
+                        className="px-3 py-1 bg-emerald-100 text-emerald-700 text-xs rounded border border-emerald-300 hover:bg-emerald-200"
+                      >
+                        Confirm
+                      </button>
+                    )}
+                    {booking.status !== 'Cancelled' && (
+                      <button
+                        onClick={() => handleUpdateStatus(booking._id, 'Cancelled')}
+                        className="px-3 py-1 bg-rose-100 text-rose-700 text-xs rounded border border-rose-300 hover:bg-rose-200"
+                      >
+                        Cancel
+                      </button>
+                    )}
+                  </td>
+                </tr>
+              );
+            })}
+          </tbody>
+        </table>
+      </div>
     </div>
   );
 }

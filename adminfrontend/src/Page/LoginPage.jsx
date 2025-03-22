@@ -20,7 +20,7 @@ const LoginPage = () => {
 
       
       const adminEmails = [
-        "packageadmin@gmail.com",
+        "packageadmin@skwphotography.com",
         "resourceadmin@skwphotography.com",
         "hradmin@gmail.com",
         "admin4@example.com",
