@@ -1,6 +1,6 @@
 import React from "react";
-import Navbar from "../../components/AdminP&B/Navbar.jsx";
-import Sidebar from "../../components/AdminP&B/Sidebar.jsx";
+import Navbar from "../../components/AdminR&T/Navbar.jsx";
+import Sidebar from "../../components/AdminR&T/Sidebar.jsx";
 
 function Dashboard() {
   return (

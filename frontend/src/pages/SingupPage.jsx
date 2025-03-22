@@ -2,8 +2,9 @@ import React, { useState } from "react";
 import { signup } from "../Api/AuthAPI.js";  
 import { useNavigate } from "react-router-dom";
 import logo from "../components/images/logo.png";
+import Swal from "sweetalert2"; // Import SweetAlert2
 
-function SignupPage({ setIsLoggedIn }) {
+function SignupPage() {
   const [userData, setUserData] = useState({
     name: "",
     nic: "",
@@ -21,18 +22,45 @@ function SignupPage({ setIsLoggedIn }) {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      await signup(userData);
-      setIsLoggedIn(true);  
-      navigate("/login");  
+      const response = await signup(userData);
+  
+      // Check if the response contains success data (no errors thrown)
+      if (response && response.message === "Customer registered successfully") {
+        // Show SweetAlert for success
+        Swal.fire({
+          title: "Success!",
+          text: "You have registered successfully.",
+          icon: "success",
+          confirmButtonText: "OK",
+        }).then(() => {
+          // Redirect to login page after success
+          navigate("/login");
+        });
+      } else {
+        setError("Signup failed. Please try again.");
+        Swal.fire({
+          title: "Error!",
+          text: "Signup failed. Please try again.",
+          icon: "error",
+          confirmButtonText: "OK",
+        });
+      }
     } catch (err) {
-      setError("Signup failed. Please try again.");
+      // Log the error and display the error message
+      console.error("Signup error:", err);
+      setError(err.message || "Signup failed. Please try again.");
+      Swal.fire({
+        title: "Error!",
+        text: err.message || "Signup failed. Please try again.",
+        icon: "error",
+        confirmButtonText: "OK",
+      });
     }
   };
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-[#0D1117] p-6">
       <div className="w-full max-w-4xl bg-[#161B22] p-8 rounded-2xl shadow-lg">
-        {/* Logo with fixed height */}
         <div className="flex justify-center mb-4">
           <img src={logo} alt="Logo" className="h-16 w-auto object-contain" />
         </div>

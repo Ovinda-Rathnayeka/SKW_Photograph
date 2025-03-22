@@ -1,8 +1,9 @@
 import { useEffect, useState } from "react";
-import { fetchPhotoPackages } from "../Api/PackageAPI.js"; 
-import { fetchUserDetails } from "../Api/AuthAPI.js"; 
-import dot from "../components/images/dot.jpg"; 
-import BookingPage from "./BookingPage"; 
+import { fetchPhotoPackages } from "../Api/PackageAPI.js";
+import { fetchUserDetails } from "../Api/AuthAPI.js";
+import dot from "../components/images/dot.jpg";
+import BookingPage from "./BookingPage";
+import { useNavigate } from "react-router-dom"; // Import useNavigate from React Router
 
 const PackagePage = () => {
   const [packages, setPackages] = useState([]);
@@ -12,7 +13,9 @@ const PackagePage = () => {
 
   const categories = ["Wedding", "Pre-Shoot", "Pre-Shoot + Wedding", "Party", "Normal"];
 
-  
+  // Initialize navigate hook
+  const navigate = useNavigate();
+
   useEffect(() => {
     const getUser = async () => {
       try {
@@ -25,7 +28,6 @@ const PackagePage = () => {
     getUser();
   }, []);
 
-  
   useEffect(() => {
     const getPackages = async () => {
       try {
@@ -39,12 +41,11 @@ const PackagePage = () => {
     getPackages();
   }, []);
 
-  
   const handleBookNow = (pkg) => {
     console.log("📦 Selected Package (Before Fix):", pkg);
-  
+
     setSelectedPackage({
-      _id: pkg._id, 
+      _id: pkg._id,
       packageName: pkg.packageName,
       category: pkg.category,
       price: pkg.price,
@@ -54,16 +55,21 @@ const PackagePage = () => {
       deliveryTime: pkg.deliveryTime,
       additionalServices: pkg.additionalServices,
       image: pkg.image,
-      description: pkg.description
+      description: pkg.description,
     });
-  
+
     console.log("Selected Package (After Fix):", selectedPackage);
     setIsBookingOpen(true);
   };
-  
+
   const closeBookingModal = () => {
     setIsBookingOpen(false);
     setSelectedPackage(null);
+  };
+
+  const handleCreateCustomizationPackage = () => {
+    console.log("Redirecting to the page where users can create a custom package...");
+    navigate("/customization");  // Navigate to CustomizationPage
   };
 
   return (
@@ -82,6 +88,16 @@ const PackagePage = () => {
         <p className="text-gray-400 text-sm mt-1">Choose a package that fits your needs.</p>
       </div>
 
+      {/* Create Customization Package Button */}
+      <div className="text-center mb-8">
+        <button
+          onClick={handleCreateCustomizationPackage}  // Calls the function to navigate to the customization page
+          className="w-64 mx-auto bg-gradient-to-r from-red-500 via-red-600 to-red-700 text-white font-semibold text-lg py-3 rounded-md shadow-lg hover:scale-105 transform transition-all duration-300"
+        >
+          Create Customization Package
+        </button>
+      </div>
+
       <div className="flex-grow">
         {categories.map((category) => {
           const categoryPackages = packages.filter((pkg) => pkg.category === category);
@@ -96,7 +112,7 @@ const PackagePage = () => {
               <div className="grid sm:grid-cols-2 md:grid-cols-3 gap-6">
                 {categoryPackages.map((pkg) => (
                   <div
-                    key={pkg._id} 
+                    key={pkg._id}
                     className="bg-[#1B242C] rounded-lg p-4 shadow-md transform hover:scale-105 transition duration-300"
                   >
                     <h3
@@ -146,7 +162,7 @@ const PackagePage = () => {
         <BookingPage
           selectedPackage={selectedPackage}
           user={user}
-          onClose={closeBookingModal} 
+          onClose={closeBookingModal}
         />
       )}
 
