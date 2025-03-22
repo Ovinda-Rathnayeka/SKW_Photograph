@@ -8,16 +8,27 @@ const isValidObjectId = (id) => mongoose.Types.ObjectId.isValid(id);
 // Create Product
 const createProduct = async (req, res) => {
   try {
+    let imageUrl = "";
+
     if (req.file) {
       const cloudinaryResult = await cloudinary.uploader.upload(req.file.path, {
         folder: "skw-photography/products",
         allowed_formats: ["jpg", "jpeg", "png"],
       });
 
-      req.body.image = cloudinaryResult.secure_url;
+      imageUrl = cloudinaryResult.secure_url;
     }
 
-    const newProduct = new Product(req.body);
+    // Explicitly create product object
+    const newProduct = new Product({
+      name: req.body.name,
+      category: req.body.category,
+      price: req.body.price,
+      quantity: req.body.quantity,
+      description: req.body.description,
+      image: imageUrl, // ✅ Save Cloudinary image URL
+    });
+
     const savedProduct = await newProduct.save();
 
     res.status(201).json(savedProduct);
@@ -80,16 +91,18 @@ const updateProductById = async (req, res) => {
   }
 
   try {
+    const updateData = { ...req.body };
+
     if (req.file) {
       const cloudinaryResult = await cloudinary.uploader.upload(req.file.path, {
         folder: "skw-photography/products",
         allowed_formats: ["jpg", "jpeg", "png"],
       });
 
-      req.body.image = cloudinaryResult.secure_url;
+      updateData.image = cloudinaryResult.secure_url; // ✅ Set image URL
     }
 
-    const updatedProduct = await Product.findByIdAndUpdate(id, req.body, {
+    const updatedProduct = await Product.findByIdAndUpdate(id, updateData, {
       new: true,
     });
 
@@ -103,6 +116,7 @@ const updateProductById = async (req, res) => {
     res.status(500).json({ message: "Error updating product", error });
   }
 };
+
 
 // Delete Product By ID
 const deleteProductById = async (req, res) => {
