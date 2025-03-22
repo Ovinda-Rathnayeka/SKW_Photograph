@@ -23,13 +23,11 @@ function AdminOrderManagement() {
     fetchAllOrders();
   }, []);
 
-  const handleAcceptOrder = async (orderId) => {
-    console.log("Sending PATCH to backend for ID:", orderId);
-
+  const handleUpdateStatus = async (orderId, status) => {
     try {
       const res = await axios.patch(
         `http://localhost:5000/cart-payment/${orderId}/status`,
-        {},
+        { status },
         { withCredentials: true }
       );
 
@@ -37,14 +35,12 @@ function AdminOrderManagement() {
 
       setOrders((prevOrders) =>
         prevOrders.map((order) =>
-          order._id === orderId
-            ? { ...order, paymentStatus: "Accepted" }
-            : order
+          order._id === orderId ? { ...order, paymentStatus: status } : order
         )
       );
     } catch (error) {
-      console.error("Failed to accept order:", error.response?.data || error.message);
-      alert("Failed to accept order.");
+      console.error("Failed to update order status:", error.response?.data || error.message);
+      alert("Failed to update order status.");
     }
   };
 
@@ -88,7 +84,15 @@ function AdminOrderManagement() {
                     </ul>
                   </td>
                   <td className="px-4 py-2">
-                    <span className="px-2 py-1 rounded text-sm bg-yellow-100 text-yellow-800">
+                    <span
+                      className={`px-2 py-1 rounded text-sm ${
+                        order.paymentStatus === "Accepted"
+                          ? "bg-green-100 text-green-800"
+                          : order.paymentStatus === "Denied"
+                          ? "bg-red-100 text-red-800"
+                          : "bg-yellow-100 text-yellow-800"
+                      }`}
+                    >
                       {order.paymentStatus}
                     </span>
                   </td>
@@ -107,15 +111,31 @@ function AdminOrderManagement() {
                     )}
                   </td>
                   <td className="px-4 py-2">
-                    {order.paymentStatus !== "Accepted" ? (
-                      <button
-                        onClick={() => handleAcceptOrder(order._id.toString())}
-                        className="bg-green-500 text-white px-3 py-1 rounded hover:bg-green-600"
-                      >
-                        Accept
-                      </button>
+                    {order.paymentStatus === "Pending" ? (
+                      <div className="flex gap-2">
+                        <button
+                          onClick={() => handleUpdateStatus(order._id.toString(), "Accepted")}
+                          className="bg-green-500 text-white px-3 py-1 rounded hover:bg-green-600"
+                        >
+                          Accept
+                        </button>
+                        <button
+                          onClick={() => handleUpdateStatus(order._id.toString(), "Denied")}
+                          className="bg-red-500 text-white px-3 py-1 rounded hover:bg-red-600"
+                        >
+                          Deny
+                        </button>
+                      </div>
                     ) : (
-                      <span className="text-green-600 font-semibold">Accepted</span>
+                      <span
+                        className={
+                          order.paymentStatus === "Accepted"
+                            ? "text-green-600 font-semibold"
+                            : "text-red-600 font-semibold"
+                        }
+                      >
+                        {order.paymentStatus}
+                      </span>
                     )}
                   </td>
                 </tr>

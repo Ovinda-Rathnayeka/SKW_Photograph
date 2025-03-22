@@ -62,27 +62,31 @@ export const getAllCartPayments = async (req, res) => {
   }
 };
 
-// Accept cart payment (update status)
-export const acceptCartPayment = async (req, res) => {
+// Update payment status (Accept or Deny)
+export const updateCartPaymentStatus = async (req, res) => {
   const { id } = req.params;
-  console.log("Accepting order ID:", id);
+  const { status } = req.body;
+
+  console.log(`Updating order ID: ${id} to status: ${status}`);
+
+  if (!["Accepted", "Denied"].includes(status)) {
+    return res.status(400).json({ message: "Invalid status value" });
+  }
 
   try {
     const updated = await CartPayment.findByIdAndUpdate(
       id,
-      { paymentStatus: "Accepted" },
+      { paymentStatus: status },
       { new: true }
     );
 
     if (!updated) {
-      console.log("Order not found:", id);
       return res.status(404).json({ message: "Order not found" });
     }
 
-    console.log("Order accepted:", updated._id);
-    res.json({ message: "Order accepted successfully." });
+    res.json({ message: `Order ${status.toLowerCase()} successfully.` });
   } catch (error) {
-    console.error("Error updating status:", error);
-    res.status(500).json({ message: "Failed to accept order" });
+    console.error("Error updating order status:", error);
+    res.status(500).json({ message: "Failed to update order status" });
   }
 };
