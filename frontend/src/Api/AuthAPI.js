@@ -5,6 +5,8 @@ const api = axios.create({
   withCredentials: true,
 });
 
+
+
 export const signup = async (userData) => {
   try {
     const response = await api.post("/signup", userData);
@@ -53,6 +55,27 @@ export const fetchUserDetails = async () => {
     throw new Error(
       error.response?.data?.message || "Error fetching user details"
     );
+  }
+};
+
+export const updateUserProfile = async (userId, updatedData) => {
+  const userData = JSON.parse(sessionStorage.getItem("user"));
+  const token = userData ? userData.token : null;
+
+  if (!token) {
+    throw new Error("Token not found");
+  }
+
+  try {
+    const response = await api.put(`/me`, updatedData, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+    return response.data; // Return updated user data from the backend
+  } catch (error) {
+    console.error("Error updating user details:", error.response?.data || error.message);
+    throw new Error(error.response?.data?.message || "Error updating user details");
   }
 };
 

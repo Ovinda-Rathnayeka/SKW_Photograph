@@ -3,8 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { FaUserCircle, FaEnvelope, FaPhone, FaIdCard, FaHome, FaEdit, FaSave, FaTimes } from "react-icons/fa";
 import Swal from "sweetalert2"; 
 import dot from "../components/images/dot.jpg"; 
-import { fetchUserDetails } from "../Api/AuthAPI";
-import { updateUserProfile } from "../Api/CustomerAPI"
+import { fetchUserDetails, updateUserProfile } from "../Api/AuthAPI";
 
 const UserProfile = () => {
   const navigate = useNavigate();
@@ -46,7 +45,7 @@ const UserProfile = () => {
   };
 
   const handleSave = async () => {
-    const userId = await fetchUserDetails();
+    const userId = sessionStorage.getItem("_id")
     try {
       const updatedData = {
         name: user.name,
@@ -56,8 +55,8 @@ const UserProfile = () => {
         nic : user.nic
       };
   
-      const updatedUser = await updateUserProfile(userId._id, updatedData); 
-      setUser(updatedUser.customer);
+      const updatedUser = await updateUserProfile(userId, updatedData); 
+      setUser(updatedUser);
       Swal.fire({
         title: "Success!",
         text: "Your profile has been updated.",
@@ -137,6 +136,7 @@ const UserProfile = () => {
                 )}
               </p>
             ))}
+            <p className="text-gray-700 font-semibold">Customer ID: {user.customerId}</p>
             <p className="text-gray-700 font-semibold">Joined: {user.createdAt}</p>
             <p className={`text-sm font-semibold ${user.otpVerified ? "text-green-600" : "text-red-600"}`}>
               OTP Verified: {user.otpVerified ? "Yes" : "No"}

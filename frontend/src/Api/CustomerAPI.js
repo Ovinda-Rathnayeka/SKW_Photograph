@@ -1,21 +1,24 @@
-import axios from "axios";
+import axios from 'axios';
 
-const API_URL = "http://localhost:5000/customer";
 
-export const updateUserProfile = async (id, user) => {
+const API_URL = 'http://localhost:5000/customer'; 
+
+export const getCustomerById = async (_id) => {
   try {
-    const response = await axios.put(`${API_URL}/${id}`, user);
-    console.log(`This is response ${response}`);
+    const response = await axios.get(`${API_URL}/customer/${_id}`);
     return response.data;
   } catch (error) {
-    console.error(
-      "Error updating user details:",
-      error.response?.data || error.message
-    );
-    console.log(error)
-    throw new Error(
-      error.response?.data?.message || "Error updating user details"
-    );
+    console.error('Error fetching customer data:', error);
+    throw error;
   }
 };
-  
+
+export const updateCustomer = async (_id, updatedData) => {
+  try {
+    const response = await axios.put(`${API_URL}/update/${_id}`, updatedData);
+    return response.data;
+  } catch (error) {
+    console.error('Error updating customer data:', error);
+    throw error;
+  }
+};

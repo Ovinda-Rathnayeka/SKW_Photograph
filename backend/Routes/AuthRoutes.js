@@ -8,5 +8,5 @@ router.post("/login", Auth.login);
 router.post("/verify-otp", Auth.verifyOTP);
 router.post("/logout", Auth.logout);
 router.get("/me", Auth.verifyToken, Auth.profile);
-
+router.put("/me", Auth.verifyToken, Auth.updateProfile);
 export default router;
