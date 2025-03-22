@@ -1,6 +1,7 @@
 import bcrypt from "bcryptjs";
 import Customer from "../Models/CustomerModel.js";
 import sendOTP from "../Middleware/Auth.js";
+import { Types } from 'mongoose';
 
 const createCustomer = async (req, res) => {
   try {
@@ -74,22 +75,20 @@ const getCustomerById = async (req, res) => {
 const updateCustomer = async (req, res) => {
   try {
     const { id } = req.params;
+    console.log(id)
+  
+    const _id = new Types.ObjectId(id.replace(/"/g, ''));
     const updateData = { ...req.body };
 
-    // Ensure sensitive fields are handled properly
     if (updateData.password) {
       updateData.password = await bcrypt.hash(updateData.password, 10);
     }
 
-    // Prevent email from being updated (optional security measure)
-    // if (updateData.email) {
-    //   return res.status(400).json({ message: "Email cannot be updated" });
-    // }
-
-    const updatedCustomer = await Customer.findByIdAndUpdate(id, updateData, {
-      new: true,
-      runValidators: true, // Ensures updated data conforms to schema validation
-    });
+    const updatedCustomer = await Customer.findOneAndUpdate(
+      { _id },
+      updateData,
+      { new: true, runValidators: true }
+    );
 
     if (!updatedCustomer) {
       return res.status(404).json({ message: "Customer not found" });
@@ -100,8 +99,8 @@ const updateCustomer = async (req, res) => {
       customer: updatedCustomer,
     });
   } catch (error) {
-    res.status(500).json({ error: error.message });
     console.log(error);
+    res.status(500).json({ error: error.message });
   }
 };
 
