@@ -92,9 +92,9 @@ const SectionAnimation = ({ children }) => {
 };
 
 const HomePage = () => {
-  // Initialize smooth scrolling
+  
   useEffect(() => {
-    // Add smooth scrolling behavior
+   
     document.documentElement.style.scrollBehavior = "smooth";
     
     return () => {
@@ -104,7 +104,7 @@ const HomePage = () => {
 
   return (
     <div className="relative w-full font-['Poppins'] overflow-hidden">
-      {/* Hero Section with Parallax Effect */}
+     
       <div className="relative w-full h-screen overflow-hidden">
         <motion.div
           className="absolute inset-0 bg-cover bg-center bg-no-repeat"
@@ -116,7 +116,7 @@ const HomePage = () => {
           <div className="absolute inset-0 bg-black/50"></div>
         </motion.div>
 
-        {/* Text Section */}
+      
         <div className="relative z-10 flex flex-col items-start justify-center h-full px-10 md:px-20">
           <motion.h1 
             className="text-4xl md:text-6xl font-bold leading-tight text-transparent bg-clip-text bg-gradient-to-r from-orange-400 to-red-500"
@@ -130,7 +130,7 @@ const HomePage = () => {
             at a time
           </motion.h1>
 
-          {/* Enquiry Button */}
+    
           <motion.button 
             className="mt-5 px-6 py-3 bg-orange-500 text-white font-semibold rounded-lg shadow-lg hover:bg-orange-600 transition-all duration-300 transform hover:scale-105"
             initial={{ opacity: 0, y: 20 }}
@@ -143,7 +143,7 @@ const HomePage = () => {
           </motion.button>
         </div>
 
-        {/* Small Box Image - Rotated & Positioned with Animation */}
+        
         <motion.div 
           className="absolute right-20 md:right-40 top-1/3 transform -translate-y-1/2 rotate-6 w-72 md:w-96 shadow-lg"
           initial={{ opacity: 0, y: 100, rotate: 0 }}

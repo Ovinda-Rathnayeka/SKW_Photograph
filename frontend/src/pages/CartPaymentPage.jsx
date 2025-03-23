@@ -22,12 +22,12 @@ function CartPaymentPage() {
         setCustomerId(user._id);
 
         const items = await fetchCartItems(user._id);
-        setCartItems(items);
+        setCartItems(items || []);
 
-        const total = items.reduce(
-          (acc, item) => acc + item.price * item.quantity,
-          0
-        );
+        const total = Array.isArray(items)
+          ? items.reduce((acc, item) => acc + item.price * item.quantity, 0)
+          : 0;
+
         setTotalAmount(total);
       } catch (err) {
         console.error("Error loading cart and user:", err);
@@ -76,13 +76,13 @@ function CartPaymentPage() {
 
         {customerId && (
           <div className="mb-3 text-sm text-gray-700">
-            <strong>🧑 Customer ID:</strong>{" "}
+            <strong> Customer ID:</strong>{" "}
             <span className="text-blue-600">{customerId}</span>
           </div>
         )}
 
         <div className="mb-4">
-          <label className="font-semibold text-gray-700">🏠 Address:</label>
+          <label className="font-semibold text-gray-700">Address:</label>
           <textarea
             className="w-full p-2 border rounded"
             rows="3"
@@ -94,7 +94,7 @@ function CartPaymentPage() {
 
         <div className="mb-4">
           <label className="font-semibold text-gray-700">
-            📸 Upload Payment Slip <span className="text-gray-500">(optional)</span>:
+             Upload Payment Slip <span className="text-gray-500">(optional)</span>:
           </label>
           <div className="flex items-center gap-2 mt-2">
             <FaUpload className="text-gray-700" />
@@ -103,13 +103,13 @@ function CartPaymentPage() {
         </div>
 
         <div className="bg-gray-100 p-4 rounded mb-4">
-          <h3 className="font-semibold text-gray-800 mb-2">🛒 Cart Summary</h3>
+          <h3 className="font-semibold text-gray-800 mb-2"> Cart Summary</h3>
           {cartItems.length === 0 ? (
             <p>No items in your cart.</p>
           ) : (
             cartItems.map((item) => (
               <div key={item._id} className="text-sm text-gray-700">
-                {item.productId.name} × {item.quantity} — ${item.price * item.quantity}
+                {item.productId?.name || "Unknown Product"} × {item.quantity} — ${item.price * item.quantity}
               </div>
             ))
           )}
