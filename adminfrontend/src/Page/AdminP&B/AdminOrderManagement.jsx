@@ -44,14 +44,14 @@ function AdminOrderManagement() {
     }
   };
 
-  if (loading) return <div className="text-center mt-10">Loading orders...</div>;
+  const pendingOrders = orders.filter(order => order.paymentStatus === "Pending");
+  const processedOrders = orders.filter(order => order.paymentStatus !== "Pending");
 
-  return (
-    <div className="p-6 max-w-7xl mx-auto">
-      <h1 className="text-3xl font-bold mb-6 text-center">Order Management</h1>
-
-      {orders.length === 0 ? (
-        <p className="text-center text-gray-600">No orders found.</p>
+  const renderTable = (title, orderList) => (
+    <div className="mb-10">
+      <h2 className="text-2xl font-semibold mb-4">{title}</h2>
+      {orderList.length === 0 ? (
+        <p className="text-gray-600">No orders found.</p>
       ) : (
         <div className="overflow-x-auto">
           <table className="min-w-full bg-white shadow-md rounded-lg overflow-hidden">
@@ -62,13 +62,14 @@ function AdminOrderManagement() {
                 <th className="px-4 py-3 text-left">Address</th>
                 <th className="px-4 py-3 text-left">Total</th>
                 <th className="px-4 py-3 text-left">Items</th>
+                <th className="px-4 py-3 text-left">Quantity</th>
                 <th className="px-4 py-3 text-left">Status</th>
                 <th className="px-4 py-3 text-left">Proof</th>
                 <th className="px-4 py-3 text-left">Action</th>
               </tr>
             </thead>
             <tbody>
-              {orders.map((order) => (
+              {orderList.map((order) => (
                 <tr key={order._id} className="border-b">
                   <td className="px-4 py-2">{order.customerId?.name || "Unknown"}</td>
                   <td className="px-4 py-2">{order.customerId?.email || "-"}</td>
@@ -77,9 +78,14 @@ function AdminOrderManagement() {
                   <td className="px-4 py-2">
                     <ul className="list-disc pl-4">
                       {order.cartItems.map((item, idx) => (
-                        <li key={idx}>
-                          {item.productId?.name || "Product"} × {item.quantity}
-                        </li>
+                        <li key={idx}>{item.productId?.name || "Product"}</li>
+                      ))}
+                    </ul>
+                  </td>
+                  <td className="px-4 py-2">
+                    <ul className="list-disc pl-4">
+                      {order.cartItems.map((item, idx) => (
+                        <li key={idx}>{item.quantity}</li>
                       ))}
                     </ul>
                   </td>
@@ -144,6 +150,16 @@ function AdminOrderManagement() {
           </table>
         </div>
       )}
+    </div>
+  );
+
+  if (loading) return <div className="text-center mt-10">Loading orders...</div>;
+
+  return (
+    <div className="p-6 max-w-7xl mx-auto">
+      <h1 className="text-3xl font-bold mb-6 text-center">Order Management</h1>
+      {renderTable("Pending Orders", pendingOrders)}
+      {renderTable("Processed Orders", processedOrders)}
     </div>
   );
 }

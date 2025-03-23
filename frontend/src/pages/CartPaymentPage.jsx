@@ -45,6 +45,11 @@ function CartPaymentPage() {
       return;
     }
 
+    if (!proofImage) {
+      alert("Please upload your payment slip.");
+      return;
+    }
+
     setIsSubmitting(true);
 
     const paymentData = {
@@ -94,7 +99,7 @@ function CartPaymentPage() {
 
         <div className="mb-4">
           <label className="font-semibold text-gray-700">
-             Upload Payment Slip <span className="text-gray-500">(optional)</span>:
+             Upload Payment Slip <span className="text-red-500">*</span>:
           </label>
           <div className="flex items-center gap-2 mt-2">
             <FaUpload className="text-gray-700" />

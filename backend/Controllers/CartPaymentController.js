@@ -3,6 +3,7 @@ import Cart from "../Models/CartModel.js";
 import Customer from "../Models/CustomerModel.js";
 import cloudinary from "../Middleware/CloudinaryConfig.js";
 import nodemailer from "nodemailer";
+import Product from "../Models/ProductModel.js"; // ✅ Added import
 
 const generateTransactionId = () => `TRCART${Math.floor(Math.random() * 1000000)}`;
 
@@ -76,7 +77,6 @@ export const updateCartPaymentStatus = async (req, res) => {
   }
 
   try {
-    // Update the payment status and get customer info
     const updated = await CartPayment.findByIdAndUpdate(
       id,
       { paymentStatus: status },
@@ -87,13 +87,22 @@ export const updateCartPaymentStatus = async (req, res) => {
       return res.status(404).json({ message: "Order not found" });
     }
 
-    // Fetch customer email
+    // ✅ Decrease product quantity only when accepted
+    if (status === "Accepted") {
+      for (const item of updated.cartItems) {
+        const product = await Product.findById(item.productId);
+        if (product) {
+          product.quantity = Math.max(0, product.quantity - item.quantity);
+          await product.save();
+        }
+      }
+    }
+
     const customer = updated.customerId;
     if (!customer || !customer.email) {
       return res.status(400).json({ message: "Customer email not found" });
     }
 
-    // Setup nodemailer
     const transporter = nodemailer.createTransport({
       service: "gmail",
       auth: {
@@ -102,7 +111,6 @@ export const updateCartPaymentStatus = async (req, res) => {
       },
     });
 
-    // Email content
     const subject = `Your Order Has Been ${status}`;
 
     const htmlContent = `
@@ -126,7 +134,6 @@ export const updateCartPaymentStatus = async (req, res) => {
       </div>
     `;
 
-    // Send email
     await transporter.sendMail({
       from: `"SKW Photography" <${process.env.EMAIL_USER}>`,
       to: customer.email,

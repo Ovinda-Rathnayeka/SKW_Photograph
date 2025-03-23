@@ -28,8 +28,9 @@ function Sidebar() {
         <SidebarItem icon={<FaCog />} text="Payment" link="/payment" />
         <SidebarItem icon={<FaBox />} text="Add Package" link="/add-package" />
         <SidebarItem icon={<FaEye />} text="View Packages" link="/packagedisplay" />*/}  
-        <SidebarItem icon={<FaEye />} text="Sales Admin" link="/AdminProduct" />
+        <SidebarItem icon={<FaEye />} text="Add Product" link="/AdminProduct" />
         <SidebarItem icon={<FaEye />} text="Order Management" link="/AdminOrder" />
+        <SidebarItem icon={<FaEye />} text="Product List" link="/ProductTable" />
       </ul>
 
       {/* Logout Button */}
