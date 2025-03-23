@@ -11,6 +11,7 @@ import DisplayBooking from "./Page/AdminP&B/DisplayBooking.jsx";
 import AdminProductPage from "./Page/AdminP&B/AdminProductPage.jsx";
 import AdminOrderManagement from "./Page/AdminP&B/AdminOrderManagement.jsx";
 import ProductTablePage from "./Page/AdminP&B/ProductTablePage.jsx";
+import Analytics from "./Page/AdminP&B/Analytics.jsx";
 
 function App() {
   return (
@@ -36,7 +37,7 @@ function App() {
               <Route path="/AdminProduct" element={<AdminProductPage />} />
               <Route path="/AdminOrder" element={<AdminOrderManagement />} />
               <Route path="/ProductTable" element={<ProductTablePage />} />
-
+              <Route path="/analytics" element={<Analytics/>} />
             </Routes>
           </div>
         </div>

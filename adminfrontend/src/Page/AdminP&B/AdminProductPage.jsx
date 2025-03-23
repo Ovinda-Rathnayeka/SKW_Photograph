@@ -11,6 +11,8 @@ const AdminProductPage = () => {
     image: null,
   });
 
+  const [successMessage, setSuccessMessage] = useState(""); // ✅ New state
+
   const handleInputChange = (e) => {
     const { name, value, files } = e.target;
 
@@ -72,6 +74,8 @@ const AdminProductPage = () => {
         description: "",
         image: null,
       });
+      setSuccessMessage("Product added successfully!"); // ✅ Show success
+      setTimeout(() => setSuccessMessage(""), 3000);     // ✅ Hide after 3s
     } catch (err) {
       console.error("Error adding product", err);
     }
@@ -80,6 +84,11 @@ const AdminProductPage = () => {
   return (
     <div className="max-w-4xl mx-auto p-4">
       <h1 className="text-3xl font-bold mb-6">Add New Product</h1>
+
+      {successMessage && ( 
+        <div className="alert alert-success mb-4">{successMessage}</div>
+      )}
+
       <form onSubmit={handleSubmit} className="space-y-4 bg-white p-6 rounded shadow">
         <input
           type="text"

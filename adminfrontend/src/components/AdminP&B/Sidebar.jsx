@@ -31,6 +31,7 @@ function Sidebar() {
         <SidebarItem icon={<FaEye />} text="Add Product" link="/AdminProduct" />
         <SidebarItem icon={<FaEye />} text="Order Management" link="/AdminOrder" />
         <SidebarItem icon={<FaEye />} text="Product List" link="/ProductTable" />
+        <SidebarItem icon={<FaEye />} text="analytics" link="/analytics" />
       </ul>
 
       {/* Logout Button */}
