@@ -1,8 +1,8 @@
 import React, { useState } from "react";
-import { signup } from "../Api/AuthAPI.js";  
+import { signup } from "../Api/AuthAPI.js";
 import { useNavigate } from "react-router-dom";
 import logo from "../components/images/logo.png";
-import Swal from "sweetalert2"; // Import SweetAlert2
+import Swal from "sweetalert2";
 
 function SignupPage() {
   const [userData, setUserData] = useState({
@@ -23,17 +23,14 @@ function SignupPage() {
     e.preventDefault();
     try {
       const response = await signup(userData);
-  
-      // Check if the response contains success data (no errors thrown)
+
       if (response && response.message === "Customer registered successfully") {
-        // Show SweetAlert for success
         Swal.fire({
           title: "Success!",
           text: "You have registered successfully.",
           icon: "success",
           confirmButtonText: "OK",
         }).then(() => {
-          // Redirect to login page after success
           navigate("/login");
         });
       } else {
@@ -46,7 +43,6 @@ function SignupPage() {
         });
       }
     } catch (err) {
-      // Log the error and display the error message
       console.error("Signup error:", err);
       setError(err.message || "Signup failed. Please try again.");
       Swal.fire({

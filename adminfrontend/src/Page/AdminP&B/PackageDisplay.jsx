@@ -239,7 +239,7 @@ function PackageDisplay() {
                 value={updatedPackageData.additionalServices}
                 onChange={handleChange}
               />
-              {/* Description */}
+              
               <div>
                 <label className="block text-sm font-medium text-slate-700 mb-1">
                   Description
@@ -258,7 +258,7 @@ function PackageDisplay() {
                 )}
               </div>
 
-              {/* Image Preview */}
+              
               {updatedPackageData.image && (
                 <div>
                   <label className="block text-sm font-medium text-slate-700 mb-1">
@@ -272,7 +272,7 @@ function PackageDisplay() {
                 </div>
               )}
 
-              {/* Upload New Image */}
+              
               <div>
                 <label className="block text-sm font-medium text-slate-700 mb-1">
                   Upload New Image
@@ -286,7 +286,7 @@ function PackageDisplay() {
                 />
               </div>
 
-              {/* Action Buttons */}
+             
               <div className="flex justify-end pt-4 space-x-2">
                 <button
                   type="button"
@@ -310,7 +310,7 @@ function PackageDisplay() {
   );
 }
 
-// 🔹 Reusable Input Field with Error Support
+
 const FormField = ({ label, name, type = "text", value, onChange, error }) => (
   <div>
     <label className="block text-sm font-medium text-slate-700 mb-1">

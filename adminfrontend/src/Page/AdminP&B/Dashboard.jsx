@@ -4,7 +4,7 @@ import Sidebar from "../../components/AdminP&B/Sidebar.jsx";
 import { fetchAllBookings } from "../../API/UserAPI/BookingAPI.js";
 import { fetchAllPayments } from "../../API/PaymentAPI.js";
 
-// Chart packages
+
 import {
   Chart as ChartJS,
   BarElement,
@@ -29,12 +29,12 @@ function Dashboard() {
       try {
         const bookings = await fetchAllBookings();
 
-        // 🔢 Booking Stats
+       
         const pending = bookings.filter((b) => b.status === "Pending").length;
         const confirmed = bookings.filter((b) => b.status === "Confirmed").length;
         setBookingStats({ pending, confirmed });
 
-        // 💳 Payment Stats
+       
         const payments = await fetchAllPayments();
         const paymentCounts = {
           pending: payments.filter((p) => p.paymentStatus === "Pending").length,
@@ -43,10 +43,10 @@ function Dashboard() {
         };
         setPaymentStats(paymentCounts);
 
-        // 📊 Bookings by Date (group & count)
+       
         const dateCounts = {};
         bookings.forEach((b) => {
-          const date = new Date(b.bookingDate).toLocaleDateString(); // Format: MM/DD/YYYY
+          const date = new Date(b.bookingDate).toLocaleDateString(); 
           dateCounts[date] = (dateCounts[date] || 0) + 1;
         });
 
@@ -59,7 +59,7 @@ function Dashboard() {
             {
               label: "Bookings",
               data: counts,
-              backgroundColor: "#3b82f6", // Tailwind blue-500
+              backgroundColor: "#3b82f6", 
               borderRadius: 6,
               barThickness: 24,
             },
@@ -75,13 +75,13 @@ function Dashboard() {
     loadDashboardStats();
   }, []);
 
-  // Pie Chart Data
+  
   const bookingPieData = {
     labels: ["Pending", "Confirmed"],
     datasets: [
       {
         data: [bookingStats.pending, bookingStats.confirmed],
-        backgroundColor: ["#3b82f6", "#10b981"], // blue, green
+        backgroundColor: ["#3b82f6", "#10b981"], 
         borderWidth: 1,
       },
     ],
@@ -104,22 +104,22 @@ function Dashboard() {
         <div className="p-6 bg-gray-100 min-h-screen">
           <h2 className="text-2xl font-bold mb-6">📊 Dashboard Overview</h2>
 
-          {/* Booking Stats */}
+         
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 mb-10">
             <StatCard color="bg-blue-500" label="Pending Bookings" value={bookingStats.pending} />
             <StatCard color="bg-green-500" label="Confirmed Bookings" value={bookingStats.confirmed} />
           </div>
 
-          {/* Payment Stats */}
+          
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 mb-10">
             <StatCard color="bg-indigo-500" label="Pending Payments" value={paymentStats.pending} />
             <StatCard color="bg-emerald-500" label="Completed Payments" value={paymentStats.completed} />
             <StatCard color="bg-rose-500" label="Failed Payments" value={paymentStats.failed} />
           </div>
 
-          {/* Chart Row */}
+          
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            {/* Small Bar Chart */}
+            
             <div className="bg-white p-4 rounded-lg shadow-md h-72">
               <h3 className="text-base font-semibold mb-3 text-slate-700">📅 Bookings by Date</h3>
               {bookingChartData.labels.length === 0 ? (
@@ -156,7 +156,7 @@ function Dashboard() {
               )}
             </div>
 
-            {/* Compact Pie Chart */}
+           
             <div className="bg-white p-4 rounded-lg shadow-md flex flex-col items-center justify-center h-72">
               <h3 className="text-base font-semibold mb-3 text-slate-700">📊 Booking Status Ratio</h3>
               <div className="w-40 h-40">
@@ -181,7 +181,7 @@ function Dashboard() {
   );
 }
 
-// ✅ Reusable Stat Card
+
 const StatCard = ({ color, label, value }) => (
   <div className={`${color} text-white p-5 rounded-lg shadow-md`}>
     <h3 className="text-lg font-semibold">{label}</h3>

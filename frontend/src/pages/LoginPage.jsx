@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { login, verifyOTP } from "../Api/AuthAPI.js"; 
 import { useNavigate } from "react-router-dom";
 import logo from "../components/images/logo.png";
-import Swal from "sweetalert2"; // Import SweetAlert2
+import Swal from "sweetalert2"; 
 
 function LoginPage({ setIsLoggedIn }) {
   const [credentials, setCredentials] = useState({ email: "", password: "" });
@@ -27,7 +27,7 @@ function LoginPage({ setIsLoggedIn }) {
       setIsOtpSent(true); 
       setError(""); 
       
-      // Show SweetAlert for OTP sent
+      
       Swal.fire({
         title: 'OTP Sent!',
         text: 'An OTP has been sent to your email. Please enter it to continue.',
@@ -51,7 +51,7 @@ function LoginPage({ setIsLoggedIn }) {
       navigate("/Home"); 
     } catch (err) {
       setError("Invalid OTP");
-      // Show SweetAlert for invalid OTP
+      
       Swal.fire({
         title: 'Error!',
         text: 'Invalid OTP. Please try again.',

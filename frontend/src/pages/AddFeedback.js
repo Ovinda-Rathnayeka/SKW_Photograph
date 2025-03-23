@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
-import feedbackAPI from "../Api/FeedbackAPI"; // Import the feedback API methods
-import { fetchUserDetails } from "../Api/AuthAPI"; // Import the fetchUserDetails method for fetching customer details
+import feedbackAPI from "../Api/FeedbackAPI";
+import { fetchUserDetails } from "../Api/AuthAPI";
 
 function AddFeedback() {
   const [feedbackData, setFeedbackData] = useState({
@@ -15,13 +15,12 @@ function AddFeedback() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
 
-  // Fetch user details (customer email and customerId)
   useEffect(() => {
     const fetchUser = async () => {
       try {
-        const userDetails = await fetchUserDetails(); // Fetch customer details
-        setCustomerEmail(userDetails.email); // Set email
-        setCustomerId(userDetails._id); // Set customerId
+        const userDetails = await fetchUserDetails();
+        setCustomerEmail(userDetails.email);
+        setCustomerId(userDetails._id);
       } catch (err) {
         setError("Error fetching customer details.");
       }
@@ -29,7 +28,6 @@ function AddFeedback() {
     fetchUser();
   }, []);
 
-  // Handle form data change
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFeedbackData({
@@ -38,17 +36,14 @@ function AddFeedback() {
     });
   };
 
-  // Handle image change
   const handleImageChange = (e) => {
     setImages([...e.target.files]);
   };
 
-  // Handle form submit
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
 
-    // Log the feedback data to the console before sending it
     console.log("Feedback Data: ", {
       ...feedbackData,
       customerEmail,
@@ -56,21 +51,18 @@ function AddFeedback() {
     });
 
     try {
-      // Ensure customerId is set before submitting the feedback
       if (!customerId) {
         setError("Customer ID is missing.");
         setLoading(false);
         return;
       }
 
-      // Add customer email and customerId to the form data
       const feedbackWithCustomer = {
         ...feedbackData,
         customerEmail,
         customerId,
       };
 
-      // Send feedback data and images to the backend
       await feedbackAPI.createFeedback(feedbackWithCustomer, images);
       setLoading(false);
       alert("Feedback added successfully!");

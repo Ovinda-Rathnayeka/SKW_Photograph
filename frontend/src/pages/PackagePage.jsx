@@ -3,7 +3,7 @@ import { fetchPhotoPackages } from "../Api/PackageAPI.js";
 import { fetchUserDetails } from "../Api/AuthAPI.js";
 import dot from "../components/images/dot.jpg";
 import BookingPage from "./BookingPage";
-import { useNavigate } from "react-router-dom"; // Import useNavigate from React Router
+import { useNavigate } from "react-router-dom"; 
 
 const PackagePage = () => {
   const [packages, setPackages] = useState([]);
@@ -13,7 +13,7 @@ const PackagePage = () => {
 
   const categories = ["Wedding", "Pre-Shoot", "Pre-Shoot + Wedding", "Party", "Normal"];
 
-  // Initialize navigate hook
+  
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -69,7 +69,7 @@ const PackagePage = () => {
 
   const handleCreateCustomizationPackage = () => {
     console.log("Redirecting to the page where users can create a custom package...");
-    navigate("/customization");  // Navigate to CustomizationPage
+    navigate("/customization");  
   };
 
   return (
@@ -82,16 +82,16 @@ const PackagePage = () => {
         backgroundAttachment: "fixed",
       }}
     >
-      {/* Page Title */}
+      
       <div className="text-center py-8">
         <h2 className="text-3xl font-bold text-red-500 tracking-wide">Packages</h2>
         <p className="text-gray-400 text-sm mt-1">Choose a package that fits your needs.</p>
       </div>
 
-      {/* Create Customization Package Button */}
+      
       <div className="text-center mb-8">
         <button
-          onClick={handleCreateCustomizationPackage}  // Calls the function to navigate to the customization page
+          onClick={handleCreateCustomizationPackage}  
           className="w-64 mx-auto bg-gradient-to-r from-red-500 via-red-600 to-red-700 text-white font-semibold text-lg py-3 rounded-md shadow-lg hover:scale-105 transform transition-all duration-300"
         >
           Create Customization Package
@@ -157,7 +157,7 @@ const PackagePage = () => {
         })}
       </div>
 
-      {/* Booking Modal */}
+      
       {isBookingOpen && (
         <BookingPage
           selectedPackage={selectedPackage}

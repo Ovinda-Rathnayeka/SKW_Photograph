@@ -2,7 +2,6 @@ import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 import Employee from "../Models/EmployeeModel.js";
 
-// Create a new employee
 export const createEmployee = async (req, res) => {
   const { name, nic, phone, address, email, password, jobRole } = req.body;
 
@@ -48,7 +47,6 @@ export const createEmployee = async (req, res) => {
   }
 };
 
-// Get all employees
 export const getEmployees = async (req, res) => {
   try {
     const employees = await Employee.find();
@@ -59,7 +57,6 @@ export const getEmployees = async (req, res) => {
   }
 };
 
-// Get employee by ID
 export const getEmployeeById = async (req, res) => {
   const { id } = req.params;
 
@@ -77,7 +74,6 @@ export const getEmployeeById = async (req, res) => {
   }
 };
 
-// Update an employee
 export const updateEmployee = async (req, res) => {
   const { id } = req.params;
   const { name, nic, phone, address, email, jobRole } = req.body;
@@ -110,7 +106,6 @@ export const updateEmployee = async (req, res) => {
   }
 };
 
-// Delete an employee
 export const deleteEmployee = async (req, res) => {
   const { id } = req.params;
 
@@ -128,30 +123,26 @@ export const deleteEmployee = async (req, res) => {
   }
 };
 
-// Login an employee
 export const loginEmployee = async (req, res) => {
   const { email, password } = req.body;
 
   try {
-    // Find employee by email
     const employee = await Employee.findOne({ email });
 
     if (!employee) {
       return res.status(401).json({ message: "Invalid credentials" });
     }
 
-    // Check if the entered password matches the hashed password in the database
     const isMatch = await bcrypt.compare(password, employee.password);
 
     if (!isMatch) {
       return res.status(401).json({ message: "Invalid credentials" });
     }
 
-    // Generate a JWT token
     const token = jwt.sign(
-      { id: employee._id, role: employee.jobRole }, // Payload containing employee ID and role
-      process.env.JWT_SECRET, // JWT secret (make sure it's in your .env file)
-      { expiresIn: "1h" } // Token expires in 1 hour
+      { id: employee._id, role: employee.jobRole },
+      process.env.JWT_SECRET,
+      { expiresIn: "1h" }
     );
 
     res.status(200).json({

@@ -8,7 +8,7 @@ function DisplayBooking() {
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(true);
 
-  // ✅ Function to fetch bookings + customer info
+  
   const getBookings = async () => {
     try {
       setLoading(true);
@@ -47,11 +47,11 @@ function DisplayBooking() {
     getBookings();
   }, []);
 
-  // ✅ Refresh bookings after status update
+ 
   const handleUpdateStatus = async (bookingId, newStatus) => {
     try {
       await updateBookingStatus(bookingId, newStatus);
-      await getBookings(); // Refetch updated data
+      await getBookings(); 
     } catch (err) {
       setError(err.message);
     }
@@ -65,7 +65,7 @@ function DisplayBooking() {
     <div className="max-w-[95%] mx-auto px-4 py-8">
       <h2 className="text-3xl font-semibold text-center text-slate-800 mb-8">All Bookings</h2>
 
-      {/* ✅ Responsive table container — scrolls only on small screens */}
+      
       <div className="w-full overflow-auto">
         <table className="w-full text-sm bg-white border border-slate-200 rounded-lg shadow-sm">
           <thead className="bg-slate-100 text-slate-700">

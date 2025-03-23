@@ -129,7 +129,7 @@ function PackageAdd() {
           <InputField label="Delivery Time" name="deliveryTime" value={packageData.deliveryTime} onChange={handleChange} error={errors.deliveryTime} />
         </div>
 
-        {/* Photo Editing */}
+       
         <div>
           <label className="block text-sm font-medium text-slate-700 mb-1">Photo Editing</label>
           <select
@@ -144,7 +144,7 @@ function PackageAdd() {
           </select>
         </div>
 
-        {/* Additional Services */}
+        
         <InputField
           label="Additional Services (comma-separated)"
           name="additionalServices"
@@ -152,7 +152,7 @@ function PackageAdd() {
           onChange={handleServiceChange}
         />
 
-        {/* Description */}
+        
         <div>
           <label className="block text-sm font-medium text-slate-700 mb-1">Description</label>
           <textarea
@@ -166,7 +166,7 @@ function PackageAdd() {
           {errors.description && <p className="text-red-500 text-xs mt-1">{errors.description}</p>}
         </div>
 
-        {/* Image Upload */}
+        
         <div>
           <label className="block text-sm font-medium text-slate-700 mb-2">Upload Image</label>
           <label className="flex flex-col items-center justify-center px-4 py-6 bg-gray-50 border-2 border-dashed border-gray-300 rounded-lg cursor-pointer hover:bg-gray-100 transition">
@@ -184,7 +184,7 @@ function PackageAdd() {
           )}
         </div>
 
-        {/* Submit */}
+       
         <div className="pt-4">
           <button
             type="submit"
@@ -195,7 +195,7 @@ function PackageAdd() {
         </div>
       </form>
 
-      {/* Success Modal */}
+      
       {showSuccessModal && (
         <div className="fixed inset-0 z-50 bg-black bg-opacity-50 flex justify-center items-center">
           <div className="bg-white p-6 rounded-lg shadow-xl text-center max-w-sm w-full">
@@ -215,7 +215,7 @@ function PackageAdd() {
   );
 }
 
-// 🧩 Input Field with error
+
 const InputField = ({ label, name, type = "text", value, onChange, error }) => (
   <div>
     <label className="block text-sm font-medium text-slate-700 mb-1">{label}</label>

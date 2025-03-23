@@ -46,9 +46,9 @@ function PaymentPage() {
   const handleViewDetails = async (paymentId) => {
     try {
       const details = await getPaymentWithDetails(paymentId);
-      console.log("Fetched payment details:", details); // 👀 Debug line
+      console.log("Fetched payment details:", details); 
 
-      // ✅ Ensure response has all required fields
+      
       if (
         details &&
         details.payment &&
@@ -188,7 +188,7 @@ function PaymentPage() {
         </table>
       </div>
 
-      {/* Payment Details Modal */}
+     
       {showModal && paymentDetails && paymentDetails.payment && (
         <div className="fixed inset-0 z-50 bg-black bg-opacity-40 flex items-center justify-center p-4">
           <div className="bg-white rounded-lg shadow-md w-full max-w-md p-6">
@@ -225,7 +225,7 @@ function PaymentPage() {
         </div>
       )}
 
-      {/* Proof Image Modal */}
+      
       {showImageModal && selectedImage && (
         <div className="fixed inset-0 z-50 bg-black bg-opacity-40 flex items-center justify-center p-4">
           <div className="bg-white rounded-lg shadow-md max-w-2xl w-full p-6">
