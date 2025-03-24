@@ -10,8 +10,13 @@ import SignupPage from "./pages/SignupPage.jsx";
 import Feedbacks from "./pages/FeedbackDetails.js";
 import AddFeedback from "./pages/AddFeedback.js";
 import UpdateFeedback from "./pages/UpdateFeedback.js";
+
 import Profile from "./pages/ProfilePage.jsx";
 import BookingHistory from "./pages/BookignHistory.jsx";
+
+import Product from "./pages/ProductDisplay.jsx";
+import Cart from "./pages/CartDisplay.js";
+import DisplayRental from "./pages/DisplayRental.jsx";
 
 function App() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
@@ -51,8 +56,12 @@ function App() {
         <Route path="/feedbacks" element={<Feedbacks />} />
         <Route path="/add-feedback" element={<AddFeedback />} />
         <Route path="/feedbacks/:id" element={<UpdateFeedback />} />
+
         <Route path="/profile" element={<Profile />} />
         <Route path="/booking-history" element={<BookingHistory />} />
+=======
+        <Route path="/product" element={<Cart />} />
+        <Route path="/rental" element={<DisplayRental/>}/>
       </Routes>
     </Router>
   );

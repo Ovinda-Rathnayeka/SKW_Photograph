@@ -2,6 +2,9 @@ import axios from "axios";
 
 const API_URL = "http://localhost:5000/resource";
 
+
+// Create a new resource
+
 export const createResource = async (formData) => {
   try {
     const response = await axios.post(API_URL, formData, {
@@ -56,6 +59,9 @@ export const updateResourceStockAndRentalStock = async (
       `Updating resource: ${id}, stock: ${stock}, rentalStock: ${rentalStock}`
     );
 
+// Update resource stock by ID
+export const updateResourceStockAndRentalStock = async (id, stock, rentalStock) => {
+  try {
     const response = await axios.put(`${API_URL}/${id}/stockAndRental`, {
       stock,
       rentalStock,
@@ -65,10 +71,7 @@ export const updateResourceStockAndRentalStock = async (
 
     return response.data;
   } catch (error) {
-    console.error(
-      "Error updating resource stock and rentalStock:",
-      error.response || error
-    );
+    console.error("Error updating resource stock and rentalStock:", error.response || error);
     throw error;
   }
 };
@@ -81,6 +84,34 @@ export const updateResourceAvailability = async (id, availabilityStatus) => {
     return response.data;
   } catch (error) {
     console.error("Error updating resource availability:", error);
+    throw error;
+  }
+};
+
+// ✅ NEW: Reduce stock quantity of a resource
+export const deleteResourceStock = async (id, quantity) => {
+  try {
+    const response = await axios.put(`${API_URL}/${id}/reduce-stock`, {
+      quantity,
+    });
+    return response.data;
+  } catch (error) {
+    console.error("Error reducing resource stock:", error);
+    throw error;
+  }
+};
+
+// ✅ Full update: Update all fields of a resource
+export const updateResource = async (id, resourceData) => {
+  try {
+    const response = await axios.put(`${API_URL}/${id}/update`, resourceData, {
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
+    return response.data;
+  } catch (error) {
+    console.error("Error updating full resource:", error);
     throw error;
   }
 };
