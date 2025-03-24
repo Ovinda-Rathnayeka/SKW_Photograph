@@ -83,17 +83,58 @@ const deleteResourceById = async (req, res) => {
   }
 };
 
-// Update resource stock
-const updateResourceStockAndRentalStock = async (req, res) => {
+// ✅ Full update of all resource fields
+const updateResource = async (req, res) => {
   const { id } = req.params;
-  const { stock, rentalStock } = req.body;
+  const {
+    name,
+    category,
+    description,
+    stock,
+    rentalStock,
+    condition,
+    availabilityStatus,
+  } = req.body;
 
-  // Validate the resource ID
   if (!mongoose.Types.ObjectId.isValid(id)) {
     return res.status(400).json({ message: "Invalid resource ID format" });
   }
 
-  // Validate that both stock and rentalStock are numbers
+  try {
+    const updated = await Resource.findByIdAndUpdate(
+      id,
+      {
+        name,
+        category,
+        description,
+        stock,
+        rentalStock,
+        condition,
+        availabilityStatus,
+      },
+      { new: true }
+    );
+
+    if (!updated) {
+      return res.status(404).json({ message: "Resource not found" });
+    }
+
+    res.status(200).json(updated);
+  } catch (error) {
+    console.error("Error updating resource:", error);
+    res.status(500).json({ message: "Failed to update resource", error });
+  }
+};
+
+// ✅ Stock-only update (rename this back)
+const updateResourceStockAndRentalStock = async (req, res) => {
+  const { id } = req.params;
+  const { stock, rentalStock } = req.body;
+
+  if (!mongoose.Types.ObjectId.isValid(id)) {
+    return res.status(400).json({ message: "Invalid resource ID format" });
+  }
+
   if (
     typeof stock !== "number" ||
     stock < 0 ||
@@ -116,20 +157,17 @@ const updateResourceStockAndRentalStock = async (req, res) => {
       return res.status(404).json({ message: "Resource not found" });
     }
 
-    // Return updated resource data
     res.status(200).json(updatedResource);
   } catch (error) {
-    console.error("Error updating resource stock and rentalStock:", error);
+    console.error("Error updating stock and rentalStock:", error);
     res
       .status(500)
-      .json({
-        message: "Error updating resource stock and rentalStock",
-        error,
-      });
+      .json({ message: "Error updating stock and rentalStock", error });
   }
 };
 
-// Update resource availability
+
+// Update availability
 const updateResourceAvailability = async (req, res) => {
   const { id } = req.params;
   const { availabilityStatus } = req.body;
@@ -154,10 +192,45 @@ const updateResourceAvailability = async (req, res) => {
     }
     res.status(200).json(updatedResource);
   } catch (error) {
-    console.error("Error updating resource availability:", error);
-    res
-      .status(500)
-      .json({ message: "Error updating resource availability", error });
+    console.error("Error updating availability:", error);
+    res.status(500).json({ message: "Error updating availability", error });
+  }
+};
+
+// ✅ NEW: Reduce resource stock only
+const reduceResourceStock = async (req, res) => {
+  const { id } = req.params;
+  const { quantity } = req.body;
+
+  if (!mongoose.Types.ObjectId.isValid(id)) {
+    return res.status(400).json({ message: "Invalid resource ID format" });
+  }
+
+  if (typeof quantity !== "number" || quantity <= 0) {
+    return res.status(400).json({ message: "Invalid quantity" });
+  }
+
+  try {
+    const resource = await Resource.findById(id);
+    if (!resource) {
+      return res.status(404).json({ message: "Resource not found" });
+    }
+
+    if (quantity > resource.stock) {
+      return res.status(400).json({ message: "Quantity exceeds available stock" });
+    }
+
+    resource.stock -= quantity;
+
+    if (resource.stock === 0) {
+      resource.availabilityStatus = "Unavailable";
+    }
+
+    await resource.save();
+    res.status(200).json(resource);
+  } catch (error) {
+    console.error("Error reducing resource stock:", error);
+    res.status(500).json({ message: "Error reducing resource stock", error });
   }
 };
 
@@ -166,6 +239,8 @@ export default {
   getResourceById,
   getAllResources,
   deleteResourceById,
-  updateResourceStockAndRentalStock,
+  updateResource, // full resource update
+  updateResourceStockAndRentalStock, // stock-only update
   updateResourceAvailability,
+  reduceResourceStock,
 };

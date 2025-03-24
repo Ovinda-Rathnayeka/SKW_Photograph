@@ -8,34 +8,51 @@ const Displayrental = () => {
   const [selectedItem, setSelectedItem] = useState(null);
   const [quantity, setQuantity] = useState(1);
   const [startDate, setStartDate] = useState('');
-  const [endDate, setEndDate] = useState('');
+  const [rentalDays, setRentalDays] = useState(1);
   const [totalPrice, setTotalPrice] = useState(0);
 
-  // New customer fields
   const [customerName, setCustomerName] = useState('');
   const [phone, setPhone] = useState('');
   const [address, setAddress] = useState('');
+  const [quantityError, setQuantityError] = useState(false);
+
+  const userId = "6602aa6e77c72d5d9c431234"; // 🔧 TEMP: Hardcoded userId
 
   useEffect(() => {
-    axios.get('http://Localhost:5000/rental')
-      .then(res => setItems(res.data))
+    axios.get('http://localhost:5000/rental')
+      .then(res => {
+        const rawItems = res.data;
+        const merged = {};
+
+        rawItems.forEach(item => {
+          const key = item.productName;
+          if (!merged[key]) {
+            merged[key] = { ...item };
+          } else {
+            merged[key].rentalStock += item.rentalStock;
+          }
+        });
+
+        setItems(Object.values(merged));
+      })
       .catch(err => console.error('Error loading rental items:', err));
   }, []);
 
   useEffect(() => {
     if (selectedItem) {
-      setTotalPrice(quantity * selectedItem.price);
+      setTotalPrice(quantity * selectedItem.price * rentalDays);
     }
-  }, [quantity, selectedItem]);
+  }, [quantity, selectedItem, rentalDays]);
 
   const openForm = (item) => {
     setSelectedItem(item);
     setQuantity(1);
+    setRentalDays(1);
     setStartDate('');
-    setEndDate('');
     setCustomerName('');
     setPhone('');
     setAddress('');
+    setQuantityError(false);
     setShowForm(true);
   };
 
@@ -44,37 +61,57 @@ const Displayrental = () => {
     setSelectedItem(null);
   };
 
-  const handleAddToCart = () => {
-    if (!startDate || !endDate) {
-      Swal.fire('Please select rental dates.');
+  const handleAddToCart = async () => {
+    if (!startDate) {
+      Swal.fire('Please select a rental start date.');
+      return;
+    }
+
+    if (quantity > selectedItem.rentalStock) {
+      Swal.fire(`Cannot rent more than ${selectedItem.rentalStock} units.`);
       return;
     }
 
     const rentalDetails = {
-      itemId: selectedItem._id,
-      productName: selectedItem.productName,
-      price: selectedItem.price,
+      rentalId: selectedItem._id,
+      userId,
       quantity,
+      price: selectedItem.price,
       startDate,
-      endDate,
-      customerName,
-      phone,
-      address
+      rentalDays,
+      totalPrice: quantity * selectedItem.price * rentalDays,
     };
 
-    console.log('Added to cart:', rentalDetails);
-    Swal.fire('Added to cart successfully!', '', 'success');
-    closeForm();
+    try {
+      await axios.post("http://localhost:5000/rental", rentalDetails);
+
+      Swal.fire('Added to cart successfully!', '', 'success');
+
+      setItems(prevItems =>
+        prevItems.map(item =>
+          item._id === selectedItem._id
+            ? { ...item, rentalStock: item.rentalStock - quantity }
+            : item
+        )
+      );
+      closeForm();
+    } catch (error) {
+      console.error("Error adding to rental cart:", error);
+      Swal.fire('Failed to add to cart. Try again.', '', 'error');
+    }
   };
 
   return (
     <div className="p-6 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
       {items.map(item => (
-        <div key={item._id} className="border rounded-2xl p-4 shadow-md">
+        <div key={item._id || item.productName} className="border rounded-2xl p-4 shadow-md">
           <img src={item.images?.[0]} alt={item.productName} className="h-48 w-full object-cover rounded-xl mb-4" />
           <h2 className="text-xl font-semibold">{item.productName}</h2>
           <p className="text-gray-500">{item.category}</p>
           <p className="text-sm mt-2">{item.description}</p>
+          <div className="mt-2 text-sm text-gray-600">
+            Available to rent: <strong>{item.rentalStock}</strong>
+          </div>
           <div className="mt-4 flex justify-between items-center">
             <span className="text-lg font-bold text-blue-600">Rs. {item.price} /day</span>
             <button
@@ -87,10 +124,9 @@ const Displayrental = () => {
         </div>
       ))}
 
-      {/* Rental Form Modal */}
       {showForm && selectedItem && (
-        <div className="fixed inset-0 bg-black bg-opacity-40 flex items-center justify-center z-50">
-          <div className="bg-white p-6 rounded-2xl shadow-xl w-full max-w-md max-h-screen overflow-y-auto">
+        <div className="fixed inset-0 bg-black bg-opacity-40 flex items-center justify-center z-50 py-10">
+          <div className="bg-white p-6 shadow-xl w-[600px] max-h-full overflow-y-auto rounded-2xl">
             <h2 className="text-xl font-bold mb-4">Rent: {selectedItem.productName}</h2>
 
             <div className="mb-3">
@@ -104,14 +140,24 @@ const Displayrental = () => {
             </div>
 
             <div className="mb-3">
-              <label className="block font-medium">Quantity</label>
+              <label className="block font-medium">Quantity (Max: {selectedItem.rentalStock})</label>
               <input
                 type="number"
                 value={quantity}
                 min={1}
-                onChange={(e) => setQuantity(parseInt(e.target.value))}
+                max={selectedItem.rentalStock}
+                onChange={(e) => {
+                  const val = parseInt(e.target.value);
+                  setQuantity(val);
+                  setQuantityError(val > selectedItem.rentalStock || val < 1);
+                }}
                 className="w-full p-2 border rounded-lg"
               />
+              {quantityError && (
+                <p className="text-sm text-red-600 mt-1">
+                  Quantity must be between 1 and {selectedItem.rentalStock}
+                </p>
+              )}
             </div>
 
             <div className="mb-3">
@@ -125,16 +171,16 @@ const Displayrental = () => {
             </div>
 
             <div className="mb-3">
-              <label className="block font-medium">End Date</label>
+              <label className="block font-medium">Number of Days</label>
               <input
-                type="date"
-                value={endDate}
-                onChange={(e) => setEndDate(e.target.value)}
+                type="number"
+                min={1}
+                value={rentalDays}
+                onChange={(e) => setRentalDays(parseInt(e.target.value) || 1)}
                 className="w-full p-2 border rounded-lg"
               />
             </div>
 
-            {/* Total Price */}
             <div className="mb-3">
               <label className="block font-medium">Total Price</label>
               <input
@@ -142,39 +188,6 @@ const Displayrental = () => {
                 value={`Rs. ${totalPrice}`}
                 readOnly
                 className="w-full p-2 border rounded-lg bg-gray-100"
-              />
-            </div>
-
-            {/* Customer Info */}
-            <div className="mb-3">
-              <label className="block font-medium">Customer Name</label>
-              <input
-                type="text"
-                value={customerName}
-                onChange={(e) => setCustomerName(e.target.value)}
-                placeholder="Enter your name"
-                className="w-full p-2 border rounded-lg"
-              />
-            </div>
-
-            <div className="mb-3">
-              <label className="block font-medium">Phone Number</label>
-              <input
-                type="text"
-                value={phone}
-                onChange={(e) => setPhone(e.target.value)}
-                placeholder="Enter your phone number"
-                className="w-full p-2 border rounded-lg"
-              />
-            </div>
-
-            <div className="mb-3">
-              <label className="block font-medium">Address</label>
-              <textarea
-                value={address}
-                onChange={(e) => setAddress(e.target.value)}
-                placeholder="Enter your address"
-                className="w-full p-2 border rounded-lg"
               />
             </div>
 
@@ -187,7 +200,12 @@ const Displayrental = () => {
               </button>
               <button
                 onClick={handleAddToCart}
-                className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
+                disabled={quantityError || quantity < 1}
+                className={`px-4 py-2 text-white rounded-lg ${
+                  quantityError || quantity < 1
+                    ? "bg-gray-400 cursor-not-allowed"
+                    : "bg-blue-600 hover:bg-blue-700"
+                }`}
               >
                 Add to Cart
               </button>

@@ -10,11 +10,12 @@ const Navbar = ({ isLoggedIn, onLogout }) => {
       </div>
       <div className="hidden md:flex space-x-8">
         <Link to="/Home" className="text-[#8f8888] font-bold hover:text-[#747c7c]">Home</Link>
-        <a href="#about" className="text-[#8f8888] font-bold hover:text-[#747c7c]">About Us</a>
         <a href="#video" className="text-[#8f8888] font-bold hover:text-[#747c7c]">Video Gallery</a>
         <Link to="/packages" className="text-[#8f8888] font-bold hover:text-[#747c7c]">Packages</Link>
         <Link to="/product" className="text-[#8f8888] font-bold hover:text-[#747c7c]">Store</Link>
+        <a href="/rental" className="text-[#8f8888] font-bold hover:text-[#747c7c]">Rental</a>
         <Link to="/feedbacks" className="text-[#8f8888] font-bold hover:text-[#747c7c]">Feedbacks</Link>
+        <a href="#about" className="text-[#8f8888] font-bold hover:text-[#747c7c]">About Us</a>
         <a href="#contact" className="text-[#8f8888] font-bold hover:text-[#747c7c]">Contact Us</a>
       </div>
       <div className="flex space-x-4 mt-4">
