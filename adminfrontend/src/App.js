@@ -8,6 +8,8 @@ import Navbar from "./components/AdminP&B/Navbar.jsx";
 import Sidebar from "./components/AdminP&B/Sidebar.jsx";
 import PaymentPage from "./Page/AdminP&B/PaymentPage.jsx";
 import DisplayBooking from "./Page/AdminP&B/DisplayBooking.jsx";
+import Feedbacks from "./Page/AdminF/Feedbacks.jsx";
+import FeedbackDashboard from "./Page/AdminF/Dashboard.jsx";
 
 function App() {
   return (
@@ -24,12 +26,13 @@ function App() {
           {/* Page Content */}
           <div className="flex-1 overflow-auto p-6">
             <Routes>
-              <Route path="/" element={<Dashboard />} />
+              <Route path="/" element={<FeedbackDashboard />} />
               <Route path="/login" element={<LoginPage />} />
               <Route path="/add-package" element={<PackageAdd />} />
               <Route path="/packagedisplay" element={<PackageDisplay />} />
               <Route path="/payment" element={<PaymentPage />} />
               <Route path="/displaybooking" element={<DisplayBooking />} />
+              <Route path="/feedbacks" element={<Feedbacks />} />
             </Routes>
           </div>
         </div>

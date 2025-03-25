@@ -6,6 +6,7 @@ import {
   FaCog,
   FaBox,
   FaEye,
+  FaComments,
   FaSignOutAlt,
 } from "react-icons/fa";
 import logo from "../images/logo.png";
@@ -24,10 +25,7 @@ function Sidebar() {
       {/* Sidebar Links */}
       <ul className="space-y-3 flex-1">
         <SidebarItem icon={<FaTachometerAlt />} text="Dashboard" link="/" />
-        <SidebarItem icon={<FaUser />} text="Bookings" link="/displaybooking" />
-        <SidebarItem icon={<FaCog />} text="Payment" link="/payment" />
-        <SidebarItem icon={<FaBox />} text="Add Package" link="/add-package" />
-        <SidebarItem icon={<FaEye />} text="View Packages" link="/packagedisplay" />
+        <SidebarItem icon={<FaComments />} text="Feedbacks" link="/feedbacks" />
       </ul>
 
       {/* Logout Button */}

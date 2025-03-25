@@ -6,7 +6,7 @@ function Navbar() {
     <div className="flex justify-between items-center bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500 shadow-md p-4">
       {/* Multi-Color Text for "Package & Booking Management" */}
       <h2 className="text-xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-yellow-300 to-white">
-        Package & Booking Management
+        Feedback Management
       </h2>
 
       {/* Right Side Icons */}
