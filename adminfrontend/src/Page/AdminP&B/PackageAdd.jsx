@@ -25,7 +25,9 @@ function PackageAdd() {
     const temp = { ...errors };
 
     if ("packageName" in fieldValues)
-      temp.packageName = fieldValues.packageName ? "" : "Package name is required.";
+      temp.packageName = fieldValues.packageName
+        ? ""
+        : "Package name is required.";
 
     if ("category" in fieldValues)
       temp.category = fieldValues.category ? "" : "Category is required.";
@@ -46,7 +48,9 @@ function PackageAdd() {
           : "Enter number of photos.";
 
     if ("deliveryTime" in fieldValues)
-      temp.deliveryTime = fieldValues.deliveryTime ? "" : "Delivery time is required.";
+      temp.deliveryTime = fieldValues.deliveryTime
+        ? ""
+        : "Delivery time is required.";
 
     if ("description" in fieldValues)
       temp.description =
@@ -54,8 +58,7 @@ function PackageAdd() {
           ? ""
           : "Description must be at least 10 characters.";
 
-    if ("image" in fieldValues)
-      temp.image = image ? "" : "Image is required.";
+    if ("image" in fieldValues) temp.image = image ? "" : "Image is required.";
 
     setErrors({ ...temp });
 
@@ -121,17 +124,70 @@ function PackageAdd() {
 
       <form onSubmit={handleSubmit} className="space-y-4">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <InputField label="Package Name" name="packageName" value={packageData.packageName} onChange={handleChange} error={errors.packageName} />
-          <InputField label="Category" name="category" value={packageData.category} onChange={handleChange} error={errors.category} />
-          <InputField label="Price ($)" name="price" type="number" value={packageData.price} onChange={handleChange} error={errors.price} />
-          <InputField label="Duration" name="duration" value={packageData.duration} onChange={handleChange} error={errors.duration} />
-          <InputField label="Number of Photos" name="numberOfPhotos" type="number" value={packageData.numberOfPhotos} onChange={handleChange} error={errors.numberOfPhotos} />
-          <InputField label="Delivery Time" name="deliveryTime" value={packageData.deliveryTime} onChange={handleChange} error={errors.deliveryTime} />
+          <InputField
+            label="Package Name"
+            name="packageName"
+            value={packageData.packageName}
+            onChange={handleChange}
+            error={errors.packageName}
+          />
+          <div>
+            <label className="block text-sm font-medium text-slate-700 mb-1">
+              Category
+            </label>
+            <select
+              name="category"
+              value={packageData.category}
+              onChange={handleChange}
+              className="w-full px-3 py-2 rounded-md border border-gray-300 text-sm focus:ring-2 focus:ring-blue-400"
+            >
+              <option value="">Select Category</option>
+              <option value="Wedding">Wedding</option>
+              <option value="Pre-Shoot">Pre-Shoot</option>
+              <option value="Pre-Shoot + Wedding">Pre-Shoot + Wedding</option>
+              <option value="Party">Party</option>
+              <option value="Normal">Normal</option>
+            </select>
+            {errors.category && (
+              <p className="text-red-500 text-xs mt-1">{errors.category}</p>
+            )}
+          </div>
+          <InputField
+            label="Price ($)"
+            name="price"
+            type="number"
+            value={packageData.price}
+            onChange={handleChange}
+            error={errors.price}
+          />
+          <InputField
+            label="Duration"
+            name="duration"
+            value={packageData.duration}
+            onChange={handleChange}
+            error={errors.duration}
+          />
+          <InputField
+            label="Number of Photos"
+            name="numberOfPhotos"
+            type="number"
+            value={packageData.numberOfPhotos}
+            onChange={handleChange}
+            error={errors.numberOfPhotos}
+          />
+          <InputField
+            label="Delivery Time"
+            name="deliveryTime"
+            value={packageData.deliveryTime}
+            onChange={handleChange}
+            error={errors.deliveryTime}
+          />
         </div>
 
-       
         <div>
-          <label className="block text-sm font-medium text-slate-700 mb-1">Photo Editing</label>
+          <label className="block text-sm font-medium text-slate-700 mb-1">
+            Photo Editing
+          </label>
           <select
             name="photoEditing"
             value={packageData.photoEditing}
@@ -144,7 +200,6 @@ function PackageAdd() {
           </select>
         </div>
 
-        
         <InputField
           label="Additional Services (comma-separated)"
           name="additionalServices"
@@ -152,9 +207,10 @@ function PackageAdd() {
           onChange={handleServiceChange}
         />
 
-        
         <div>
-          <label className="block text-sm font-medium text-slate-700 mb-1">Description</label>
+          <label className="block text-sm font-medium text-slate-700 mb-1">
+            Description
+          </label>
           <textarea
             name="description"
             value={packageData.description}
@@ -163,18 +219,28 @@ function PackageAdd() {
             className="w-full px-3 py-2 border border-gray-300 rounded-md text-sm focus:ring-2 focus:ring-blue-400"
             placeholder="Short description of the package"
           ></textarea>
-          {errors.description && <p className="text-red-500 text-xs mt-1">{errors.description}</p>}
+          {errors.description && (
+            <p className="text-red-500 text-xs mt-1">{errors.description}</p>
+          )}
         </div>
 
-        
         <div>
-          <label className="block text-sm font-medium text-slate-700 mb-2">Upload Image</label>
+          <label className="block text-sm font-medium text-slate-700 mb-2">
+            Upload Image
+          </label>
           <label className="flex flex-col items-center justify-center px-4 py-6 bg-gray-50 border-2 border-dashed border-gray-300 rounded-lg cursor-pointer hover:bg-gray-100 transition">
             <FaCloudUploadAlt className="text-3xl text-blue-500 mb-2" />
             <span className="text-sm text-gray-600">Click to upload</span>
-            <input type="file" className="hidden" accept="image/*" onChange={handleFileChange} />
+            <input
+              type="file"
+              className="hidden"
+              accept="image/*"
+              onChange={handleFileChange}
+            />
           </label>
-          {errors.image && <p className="text-red-500 text-xs mt-1">{errors.image}</p>}
+          {errors.image && (
+            <p className="text-red-500 text-xs mt-1">{errors.image}</p>
+          )}
           {preview && (
             <img
               src={preview}
@@ -184,7 +250,6 @@ function PackageAdd() {
           )}
         </div>
 
-       
         <div className="pt-4">
           <button
             type="submit"
@@ -195,13 +260,14 @@ function PackageAdd() {
         </div>
       </form>
 
-      
       {showSuccessModal && (
         <div className="fixed inset-0 z-50 bg-black bg-opacity-50 flex justify-center items-center">
           <div className="bg-white p-6 rounded-lg shadow-xl text-center max-w-sm w-full">
             <FaCheckCircle className="text-green-500 text-5xl mx-auto mb-3" />
             <h2 className="text-xl font-semibold text-gray-800">Success!</h2>
-            <p className="text-gray-600 mt-1">Package has been created successfully.</p>
+            <p className="text-gray-600 mt-1">
+              Package has been created successfully.
+            </p>
             <button
               onClick={() => setShowSuccessModal(false)}
               className="mt-4 bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600 text-sm"
@@ -215,10 +281,11 @@ function PackageAdd() {
   );
 }
 
-
 const InputField = ({ label, name, type = "text", value, onChange, error }) => (
   <div>
-    <label className="block text-sm font-medium text-slate-700 mb-1">{label}</label>
+    <label className="block text-sm font-medium text-slate-700 mb-1">
+      {label}
+    </label>
     <input
       type={type}
       name={name}
