@@ -1,8 +1,6 @@
 import axios from "axios";
 
-
-const BASE_URL = "http://localhost:5000/package"; 
-
+const BASE_URL = "http://localhost:5000/package";
 
 export const createPackage = async (packageData, imageFile) => {
   try {
@@ -14,67 +12,72 @@ export const createPackage = async (packageData, imageFile) => {
 
     const response = await axios.post(BASE_URL, formData, {
       headers: {
-        "Content-Type": "multipart/form-data", 
+        "Content-Type": "multipart/form-data",
       },
     });
-    return response.data; 
+    return response.data;
   } catch (error) {
     console.error("Error creating package:", error);
-    throw error; 
+    throw error;
   }
 };
-
 
 export const getAllPackages = async () => {
   try {
     const response = await axios.get(BASE_URL);
-    return response.data; 
+    return response.data;
   } catch (error) {
     console.error("Error fetching packages:", error);
-    throw error; 
+    throw error;
   }
 };
-
 
 export const getPackageById = async (id) => {
   try {
     const response = await axios.get(`${BASE_URL}/${id}`);
-    return response.data; 
+    return response.data;
   } catch (error) {
     console.error("Error fetching package by ID:", error);
-    throw error; 
+    throw error;
   }
 };
-
 
 export const updatePackageById = async (id, packageData, imageFile) => {
   try {
     const formData = new FormData();
-    if (imageFile) {
+
+    // Append the image file if it exists
+    if (imageFile && imageFile instanceof File) {
       formData.append("image", imageFile);
     }
+
+    // Append the package data (excluding image)
     for (const key in packageData) {
-      formData.append(key, packageData[key]); 
+      if (packageData.hasOwnProperty(key)) {
+        formData.append(key, packageData[key]);
+      }
     }
 
+    // Send the PUT request to update the package
     const response = await axios.put(`${BASE_URL}/${id}`, formData, {
       headers: {
-        "Content-Type": "multipart/form-data", 
+        "Content-Type": "multipart/form-data", // Set the proper header for FormData
       },
     });
-    return response.data; 
+
+    return response.data; // Return the updated package data
   } catch (error) {
     console.error("Error updating package:", error);
-    throw error; 
+    throw error; // Rethrow the error so it can be handled elsewhere
   }
 };
 
 export const deletePackageById = async (id) => {
   try {
     const response = await axios.delete(`${BASE_URL}/${id}`);
-    return response.data; 
+    return response.data;
   } catch (error) {
     console.error("Error deleting package:", error);
-    throw error; 
+    throw error;
   }
 };

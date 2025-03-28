@@ -73,7 +73,7 @@ function PackageDisplay() {
     if (file) {
       setUpdatedPackageData((prev) => ({
         ...prev,
-        image: URL.createObjectURL(file),
+        image: file,
       }));
     }
   };
@@ -103,7 +103,9 @@ function PackageDisplay() {
           : "Number of photos must be greater than 0.";
 
     if ("deliveryTime" in fields)
-      temp.deliveryTime = fields.deliveryTime ? "" : "Delivery time is required.";
+      temp.deliveryTime = fields.deliveryTime
+        ? ""
+        : "Delivery time is required.";
 
     if ("description" in fields)
       temp.description =
@@ -120,15 +122,33 @@ function PackageDisplay() {
     e.preventDefault();
     if (validate()) {
       try {
+        const formData = new FormData();
+
+        if (
+          updatedPackageData.image &&
+          updatedPackageData.image instanceof File
+        ) {
+          formData.append("image", updatedPackageData.image);
+        }
+
+        for (const key in updatedPackageData) {
+          if (updatedPackageData.hasOwnProperty(key) && key !== "image") {
+            formData.append(key, updatedPackageData[key]);
+          }
+        }
+
         const updatedPackage = await updatePackageById(
           selectedPackage._id,
-          updatedPackageData
+          updatedPackageData,
+          formData
         );
+
         setPackages((prev) =>
           prev.map((pkg) =>
             pkg._id === selectedPackage._id ? updatedPackage : pkg
           )
         );
+
         setIsPopupOpen(false);
       } catch (error) {
         console.error("Error updating package:", error);
@@ -184,11 +204,11 @@ function PackageDisplay() {
       {/* Popup Form */}
       {isPopupOpen && (
         <div className="fixed inset-0 z-50 bg-black bg-opacity-50 flex items-center justify-center px-4">
-          <div className="bg-white w-full max-w-lg max-h-[90vh] overflow-y-auto rounded-lg shadow-xl p-6">
+          <div className="bg-white w-full max-w-lg rounded-lg shadow-xl p-6 max-h-[85vh] overflow-y-auto">
             <h2 className="text-xl font-semibold text-slate-800 mb-4">
               ✏️ Update Package
             </h2>
-            <form onSubmit={handleSubmitUpdate} className="space-y-4">
+            <form onSubmit={handleSubmitUpdate} className="space-y-4 text-sm">
               <FormField
                 label="Package Name"
                 name="packageName"
@@ -239,7 +259,8 @@ function PackageDisplay() {
                 value={updatedPackageData.additionalServices}
                 onChange={handleChange}
               />
-              
+
+              {/* Description */}
               <div>
                 <label className="block text-sm font-medium text-slate-700 mb-1">
                   Description
@@ -258,35 +279,76 @@ function PackageDisplay() {
                 )}
               </div>
 
-              
-              {updatedPackageData.image && (
-                <div>
-                  <label className="block text-sm font-medium text-slate-700 mb-1">
-                    Preview Image
-                  </label>
-                  <img
-                    src={updatedPackageData.image}
-                    alt="Preview"
-                    className="w-full h-48 object-cover rounded border border-gray-300"
-                  />
-                </div>
-              )}
+              {/* Existing Image */}
+              {selectedPackage?.image &&
+                typeof selectedPackage.image === "string" && (
+                  <div>
+                    <label className="text-sm font-medium text-slate-700 mb-1 block">
+                      Existing Image
+                    </label>
+                    <img
+                      src={selectedPackage.image}
+                      alt="Current"
+                      className="w-28 h-20 object-cover rounded border border-gray-300"
+                    />
+                  </div>
+                )}
 
-              
-              <div>
-                <label className="block text-sm font-medium text-slate-700 mb-1">
+              {/* Preview New Image */}
+              {updatedPackageData.image &&
+                updatedPackageData.image instanceof File && (
+                  <div>
+                    <label className="text-sm font-medium text-slate-700 mb-1 block">
+                      Preview New Image
+                    </label>
+                    <img
+                      src={URL.createObjectURL(updatedPackageData.image)}
+                      alt="Preview"
+                      className="w-28 h-20 object-cover rounded border border-gray-300"
+                    />
+                  </div>
+                )}
+
+              {/* Upload Button */}
+              <div className="flex flex-col space-y-2">
+                <label className="text-sm font-medium text-slate-700">
                   Upload New Image
                 </label>
+                <div className="flex items-center space-x-4">
+                  <label
+                    htmlFor="image-upload"
+                    className="cursor-pointer inline-flex items-center px-3 py-2 bg-blue-100 hover:bg-blue-200 text-blue-700 rounded-md text-sm transition"
+                  >
+                    <svg
+                      className="w-4 h-4 mr-2"
+                      fill="none"
+                      stroke="currentColor"
+                      strokeWidth="2"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        d="M4 16l4-4a3 3 0 014 0l4 4M12 12V4m8 16H4"
+                      />
+                    </svg>
+                    Choose Image
+                  </label>
+                  <span className="text-xs text-slate-600 truncate max-w-[200px]">
+                    {updatedPackageData.image?.name || "No file selected"}
+                  </span>
+                </div>
                 <input
+                  id="image-upload"
                   type="file"
                   name="image"
                   accept="image/*"
                   onChange={handleFileChange}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md text-sm"
+                  className="hidden"
                 />
               </div>
 
-             
+              {/* Action Buttons */}
               <div className="flex justify-end pt-4 space-x-2">
                 <button
                   type="button"
@@ -309,7 +371,6 @@ function PackageDisplay() {
     </div>
   );
 }
-
 
 const FormField = ({ label, name, type = "text", value, onChange, error }) => (
   <div>
