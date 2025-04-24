@@ -23,6 +23,9 @@ function Feedbacks() {
   const [filterRating, setFilterRating] = useState("");
   const [filterDate, setFilterDate] = useState("");
   const [filterCategory, setFilterCategory] = useState("");
+  const [viewModal, setViewModal] = useState(false);
+  const [selectedFeedback, setSelectedFeedback] = useState(null);
+
 
   useEffect(() => {
     const fetchData = async () => {
@@ -265,6 +268,16 @@ function Feedbacks() {
                         </span>
                       )}
                       <button
+                        onClick={() => {
+                          setSelectedFeedback(fb);
+                          setViewModal(true);
+                        }}
+                        className="bg-blue-500 text-white px-4 py-1 rounded hover:bg-blue-600 transition w-full mb-1"
+                      >
+                        View
+                      </button>
+
+                      <button
                         onClick={() => handleDelete(fb._id)}
                         className="bg-red-500 text-white px-4 py-1 rounded hover:bg-red-600 transition w-full"
                       >
@@ -276,6 +289,59 @@ function Feedbacks() {
               })}
             </tbody>
           </table>
+
+          {viewModal && selectedFeedback && (
+            <div className="fixed inset-0 bg-black bg-opacity-40 flex items-center justify-center z-50">
+              <div className="bg-white p-6 rounded-lg shadow-xl w-[90%] max-w-3xl">
+                <h2 className="text-xl font-bold mb-4">Feedback Details</h2>
+                <p>
+                  <strong>Customer ID:</strong> {selectedFeedback.customerId}
+                </p>
+                <p>
+                  <strong>Title:</strong> {selectedFeedback.title}
+                </p>
+                <p>
+                  <strong>Comment:</strong> {selectedFeedback.comment}
+                </p>
+                <p>
+                  <strong>Category:</strong> {selectedFeedback.category}
+                </p>
+                <p>
+                  <strong>Rating:</strong> {selectedFeedback.rating} ★
+                </p>
+                <p>
+                  <strong>Date:</strong>{" "}
+                  {new Date(selectedFeedback.createdAt).toLocaleDateString()}
+                </p>
+
+                <div className="mt-4">
+                  <strong>Images:</strong>
+                  <div className="grid grid-cols-2 gap-4 mt-2">
+                    {selectedFeedback.images?.map((img, idx) => (
+                      <img
+                        key={idx}
+                        src={img}
+                        alt={`feedback-${idx}`}
+                        className="w-full h-48 object-cover border rounded"
+                      />
+                    ))}
+                  </div>
+                </div>
+
+                <div className="mt-6 text-right">
+                  <button
+                    onClick={() => {
+                      setSelectedFeedback(null);
+                      setViewModal(false);
+                    }}
+                    className="px-4 py-2 bg-gray-600 text-white rounded hover:bg-gray-800"
+                  >
+                    Close
+                  </button>
+                </div>
+              </div>
+            </div>
+          )}
         </div>
       ) : (
         <p className="text-center text-gray-500">No feedbacks found.</p>
