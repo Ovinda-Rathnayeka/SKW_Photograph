@@ -25,7 +25,7 @@ function Feedbacks() {
   const [filterCategory, setFilterCategory] = useState("");
   const [viewModal, setViewModal] = useState(false);
   const [selectedFeedback, setSelectedFeedback] = useState(null);
-
+  const [filterApproval, setFilterApproval] = useState("");
 
   useEffect(() => {
     const fetchData = async () => {
@@ -78,11 +78,29 @@ function Feedbacks() {
 
       const matchCategory = !filterCategory || fb.category === filterCategory;
 
-      return matchSearch && matchRating && matchDate && matchCategory;
+      const matchApproval =
+        !filterApproval ||
+        (filterApproval === "approved" && fb.isApproved) ||
+        (filterApproval === "pending" && !fb.isApproved);
+
+      return (
+        matchSearch &&
+        matchRating &&
+        matchDate &&
+        matchCategory &&
+        matchApproval
+      );
     });
 
     setFilteredFeedbacks(filtered);
-  }, [searchTerm, feedbacks, filterRating, filterDate, filterCategory]);
+  }, [
+    searchTerm,
+    feedbacks,
+    filterRating,
+    filterDate,
+    filterCategory,
+    filterApproval,
+  ]);
 
   const handleDelete = async (id) => {
     const confirm = window.confirm(
@@ -133,6 +151,16 @@ function Feedbacks() {
       <div className="flex flex-col md:flex-row gap-4 mb-6">
         <select
           className="px-4 py-2 border border-gray-300 rounded shadow-sm focus:outline-none focus:ring"
+          value={filterApproval}
+          onChange={(e) => setFilterApproval(e.target.value)}
+        >
+          <option value="">All Status</option>
+          <option value="approved">Approved</option>
+          <option value="pending">Pending</option>
+        </select>
+
+        <select
+          className="px-4 py-2 border border-gray-300 rounded shadow-sm focus:outline-none focus:ring"
           value={filterCategory}
           onChange={(e) => setFilterCategory(e.target.value)}
         >
@@ -169,6 +197,7 @@ function Feedbacks() {
               setFilterRating("");
               setFilterDate("");
               setFilterCategory("");
+              setFilterApproval("");
             }}
             className="px-4 py-2 bg-gray-200 text-gray-700 rounded hover:bg-gray-300"
           >
