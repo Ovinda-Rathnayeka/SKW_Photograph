@@ -1,6 +1,42 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { fetchCustomerById } from "../../API/UserAPI/CustomerAPI.js";
+import Swal from "sweetalert2";
+
+const isSpamComment = (text) => {
+  if (!text || text.length < 3) return false;
+
+  const cleanedText = text.toLowerCase().replace(/\s/g, "");
+
+  // Detect gibberish: mostly non-alphabetic or symbol-heavy
+  const symbolPattern = /[^a-zA-Z0-9\s]{3,}/.test(text); // symbols like ;o/o;
+  const gibberishPattern = /^[bcdfghjklmnpqrstvwxyz]{6,}$/i.test(cleanedText); // consonant-heavy
+
+  // Detect profanity
+  const badWords = [
+    "fuck",
+    "shit",
+    "bitch",
+    "asshole",
+    "bastard",
+    "damn",
+    "crap",
+    "dick",
+    "piss",
+    "slut",
+    "idiot",
+    "stupid",
+    "moron",
+    "retard",
+    "suck",
+    "nigger",
+    "whore",
+    "cunt",
+  ];
+  const containsBadWord = badWords.some((word) => cleanedText.includes(word));
+
+  return symbolPattern || gibberishPattern || containsBadWord;
+};
 
 // Skeleton row component
 const FeedbackSkeletonRow = () => (
@@ -33,8 +69,12 @@ function Feedbacks() {
         const response = await axios.get("http://localhost:5000/feedbacks");
         const data = response.data.feedbacks || response.data || [];
 
-        setFeedbacks(data);
-        setFilteredFeedbacks(data);
+        const sortedData = [...data].sort(
+          (a, b) => new Date(b.createdAt) - new Date(a.createdAt)
+        );
+
+        setFeedbacks(sortedData);
+        setFilteredFeedbacks(sortedData);
 
         const customerIds = [
           ...new Set(data.map((fb) => fb.customerId).filter(Boolean)),
@@ -103,20 +143,33 @@ function Feedbacks() {
   ]);
 
   const handleDelete = async (id) => {
-    const confirm = window.confirm(
-      "Are you sure you want to delete this feedback?"
-    );
-    if (!confirm) return;
+    Swal.fire({
+      title: "Are you sure?",
+      text: "You won't be able to revert this!",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#3085d6",
+      cancelButtonColor: "#d33",
+      confirmButtonText: "Yes, delete it!",
+    }).then(async (result) => {
+      if (result.isConfirmed) {
+        try {
+          await axios.delete(`http://localhost:5000/feedbacks/${id}`);
+          const updated = feedbacks.filter((fb) => fb._id !== id);
+          setFeedbacks(updated);
+          setFilteredFeedbacks(updated);
 
-    try {
-      await axios.delete(`http://localhost:5000/feedbacks/${id}`);
-      const updated = feedbacks.filter((fb) => fb._id !== id);
-      setFeedbacks(updated);
-      setFilteredFeedbacks(updated);
-    } catch (err) {
-      console.error("Delete failed:", err);
-      alert("Failed to delete feedback.");
-    }
+          Swal.fire({
+            title: "Deleted!",
+            text: "Feedback has been deleted.",
+            icon: "success",
+          });
+        } catch (err) {
+          console.error("Delete failed:", err);
+          Swal.fire("Error", "Failed to delete feedback.", "error");
+        }
+      }
+    });
   };
 
   const handleApprove = async (id) => {
@@ -127,6 +180,16 @@ function Feedbacks() {
       );
       setFeedbacks(updated);
       setFilteredFeedbacks(updated);
+
+      // ✅ SweetAlert success message
+      Swal.fire({
+        title: "Approved!",
+        text: "Feedback has been successfully approved.",
+        icon: "success",
+        confirmButtonText: "OK",
+        allowOutsideClick: true,
+        draggable: true, // This doesn't make the modal draggable by itself
+      });
     } catch (err) {
       console.error("Approval failed:", err);
       alert("Failed to approve feedback.");
@@ -264,8 +327,20 @@ function Feedbacks() {
             <tbody className="divide-y divide-gray-100 text-gray-800">
               {filteredFeedbacks.map((fb) => {
                 const customer = customerMap[fb.customerId];
+                const isSpam =
+                  isSpamComment(fb.comment) || isSpamComment(fb.title);
                 return (
-                  <tr key={fb._id} className="hover:bg-gray-50 transition">
+                  <tr
+                    key={fb._id}
+                    className={`transition relative ${
+                      isSpam
+                        ? "bg-red-100 hover:bg-red-200"
+                        : "hover:bg-gray-50"
+                    }`}
+                    style={
+                      isSpam ? { boxShadow: "inset 4px 0 0 0 #f87171" } : {}
+                    }
+                  >
                     <td className="px-6 py-4 text-sm">
                       {fb.customerId || "N/A"}
                     </td>
@@ -274,9 +349,15 @@ function Feedbacks() {
                     </td>
                     <td className="px-6 py-4 text-sm">{fb.category}</td>
                     <td className="px-6 py-4 text-sm">{fb.title}</td>
-                    <td className="px-6 py-4 text-sm max-w-xs truncate">
-                      {fb.comment}
+                    <td className="px-6 py-4 text-sm max-w-xs">
+                      <p className="truncate">{fb.comment}</p>
+                      {isSpam && (
+                        <p className="text-xs text-red-600 mt-1">
+                          Spam feedback detected
+                        </p>
+                      )}
                     </td>
+
                     <td className="px-6 py-4 text-sm">{fb.rating} ★</td>
                     <td className="px-6 py-4 text-sm">
                       {fb.createdAt

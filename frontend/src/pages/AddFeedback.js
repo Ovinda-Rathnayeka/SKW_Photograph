@@ -127,7 +127,7 @@ function AddFeedback() {
       Swal.fire({
         position: "center",
         icon: "success",
-        title: "Your feedback has been submitted!",
+        title: "Your feedback will approve soon!",
         showConfirmButton: false,
         timer: 1500,
       });
