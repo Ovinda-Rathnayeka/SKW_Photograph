@@ -13,7 +13,47 @@ import {
   Legend,
 } from "recharts";
 
-const COLORS = ["bg-purple-600", "bg-indigo-600", "bg-yellow-500", "bg-rose-500"];
+const isSpamComment = (text) => {
+  if (!text || text.length < 3) return false;
+
+  const cleanedText = text.toLowerCase().replace(/\s/g, "");
+
+  // Detect gibberish: mostly non-alphabetic or symbol-heavy
+  const symbolPattern = /[^a-zA-Z0-9\s]{3,}/.test(text); // symbols like ;o/o;
+  const gibberishPattern = /^[bcdfghjklmnpqrstvwxyz]{6,}$/i.test(cleanedText); // consonant-heavy
+
+  // Detect profanity
+  const badWords = [
+    "fuck",
+    "shit",
+    "bitch",
+    "asshole",
+    "bastard",
+    "damn",
+    "crap",
+    "dick",
+    "piss",
+    "slut",
+    "idiot",
+    "stupid",
+    "moron",
+    "retard",
+    "suck",
+    "nigger",
+    "whore",
+    "cunt",
+  ];
+  const containsBadWord = badWords.some((word) => cleanedText.includes(word));
+
+  return symbolPattern || gibberishPattern || containsBadWord;
+};
+
+const COLORS = [
+  "bg-purple-600",
+  "bg-indigo-600",
+  "bg-yellow-500",
+  "bg-rose-500",
+];
 const CHART_COLORS = ["#8b5cf6", "#6366f1", "#f59e0b", "#f43f5e"];
 
 function Dashboard() {
@@ -37,7 +77,10 @@ function Dashboard() {
       name: cat,
       value: categoryCount(cat),
     }));
-    return counts.reduce((max, curr) => (curr.value > max.value ? curr : max), counts[0]);
+    return counts.reduce(
+      (max, curr) => (curr.value > max.value ? curr : max),
+      counts[0]
+    );
   };
 
   const positiveFeedbackPercent = () => {
@@ -81,7 +124,9 @@ function Dashboard() {
         {categories.map((cat, i) => (
           <div
             key={cat}
-            className={`text-white p-6 rounded-lg shadow-md ${COLORS[i % COLORS.length]}`}
+            className={`text-white p-6 rounded-lg shadow-md ${
+              COLORS[i % COLORS.length]
+            }`}
           >
             <h3 className="text-lg font-semibold">{cat}</h3>
             <p className="text-3xl font-bold">{categoryCount(cat)}</p>
@@ -90,8 +135,44 @@ function Dashboard() {
         ))}
       </div>
 
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mb-10">
+        <div className="text-white p-6 rounded-lg shadow-md bg-orange-500">
+          <h3 className="text-lg font-semibold">Pending Approval</h3>
+          <p className="text-3xl font-bold">
+            {feedbacks.filter((fb) => !fb.isApproved).length}
+          </p>
+          <span className="text-sm">Feedbacks</span>
+        </div>
+
+        <div className="text-white p-6 rounded-lg shadow-md bg-green-500">
+          <h3 className="text-lg font-semibold">Approved</h3>
+          <p className="text-3xl font-bold">
+            {feedbacks.filter((fb) => fb.isApproved).length}
+          </p>
+          <span className="text-sm">Feedbacks</span>
+        </div>
+
+        <div className="text-white p-6 rounded-lg shadow-md bg-red-500">
+          <h3 className="text-lg font-semibold">Spam Detected</h3>
+          <p className="text-3xl font-bold">
+            {
+              feedbacks.filter((fb) => {
+                const cleanedTitle = fb.title?.toLowerCase() || "";
+                const cleanedComment = fb.comment?.toLowerCase() || "";
+                return (
+                  isSpamComment(cleanedTitle) || isSpamComment(cleanedComment)
+                );
+              }).length
+            }
+          </p>
+          <span className="text-sm">Feedbacks</span>
+        </div>
+      </div>
+
       <div className="bg-white rounded-lg p-6 shadow-md mb-10">
-        <h3 className="text-lg font-semibold mb-4">Positive Feedback by Users</h3>
+        <h3 className="text-lg font-semibold mb-4">
+          Positive Feedback by Users
+        </h3>
         <div className="w-full bg-gray-200 rounded-full h-4 overflow-hidden">
           <div
             className="h-4 rounded-full transition-all duration-1000 ease-out"
@@ -108,7 +189,9 @@ function Dashboard() {
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-10">
         <div className="bg-white rounded-lg p-6 shadow-md">
-          <h3 className="text-lg font-bold mb-4">Feedback Category Distribution</h3>
+          <h3 className="text-lg font-bold mb-4">
+            Feedback Category Distribution
+          </h3>
           <ResponsiveContainer width="100%" height={250}>
             <PieChart>
               <Pie

@@ -172,7 +172,26 @@ function Feedbacks() {
     });
   };
 
-  const handleApprove = async (id) => {
+  const handleApprove = async (id, isSpam) => {
+    if (isSpam) {
+      const result = await Swal.fire({
+        title: "Are you sure?",
+        text: "This feedback looks like spam. Are you sure you want to approve it for public view?",
+        icon: "warning",
+        width: 600,
+        padding: "2em",
+        color: "#b91c1c",
+        backdrop: `rgba(210, 105, 105, 0.47)`,
+        showCancelButton: true,
+        confirmButtonText: "Yes, I'm sure",
+        cancelButtonText: "Cancel",
+        confirmButtonColor: "#dc2626",
+        cancelButtonColor: "#6b7280",
+      });
+
+      if (!result.isConfirmed) return;
+    }
+
     try {
       await axios.patch(`http://localhost:5000/feedbacks/${id}/approve`);
       const updated = feedbacks.map((fb) =>
@@ -181,18 +200,15 @@ function Feedbacks() {
       setFeedbacks(updated);
       setFilteredFeedbacks(updated);
 
-      // ✅ SweetAlert success message
       Swal.fire({
         title: "Approved!",
         text: "Feedback has been successfully approved.",
         icon: "success",
         confirmButtonText: "OK",
-        allowOutsideClick: true,
-        draggable: true, // This doesn't make the modal draggable by itself
       });
     } catch (err) {
       console.error("Approval failed:", err);
-      alert("Failed to approve feedback.");
+      Swal.fire("Error", "Failed to approve feedback.", "error");
     }
   };
 
@@ -367,7 +383,7 @@ function Feedbacks() {
                     <td className="px-6 py-4 text-sm space-y-2">
                       {!fb.isApproved ? (
                         <button
-                          onClick={() => handleApprove(fb._id)}
+                          onClick={() => handleApprove(fb._id, isSpam)}
                           className="bg-green-500 text-white px-4 py-1 rounded hover:bg-green-600 transition w-full"
                         >
                           Approve
