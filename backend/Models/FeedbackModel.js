@@ -12,18 +12,36 @@ const feedbackSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
-  rating: {
-    type: Number,
-    min: 1,
-    max: 5,
-    required: true,
-  },
   title: {
     type: String,
     required: true,
   },
   comment: {
     type: String,
+    required: true,
+  },
+  serviceQuality: {
+    type: Number,
+    min: 0,
+    max: 5,
+    required: true,
+  },
+  responseTime: {
+    type: Number,
+    min: 0,
+    max: 5,
+    required: true,
+  },
+  valueForMoney: {
+    type: Number,
+    min: 0,
+    max: 5,
+    required: true,
+  },
+  overallExperience: {
+    type: Number,
+    min: 0,
+    max: 5,
     required: true,
   },
   images: [

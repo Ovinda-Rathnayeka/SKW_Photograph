@@ -70,41 +70,80 @@ const getFeedbackById = async (req, res) => {
 };
 
 // Update feedback
-const updateFeedbackById = async (req, res) => {
-  const { id } = req.params;
+const updateFeedbackById = [
+  uploadMultiple.array("images"), // <-- handles form-data (images and text fields)
+  async (req, res) => {
+    const { id } = req.params;
 
-  if (!isValidObjectId(id)) {
-    return res.status(400).json({ message: "Invalid feedback ID format" });
-  }
-
-  try {
-    const imageUrls = [];
-
-    if (req.files && req.files.length > 0) {
-      for (const file of req.files) {
-        const cloudinaryResult = await cloudinary.uploader.upload(file.path, {
-          folder: "skw-photography",
-          allowed_formats: ["jpg", "jpeg", "png"],
-        });
-        imageUrls.push(cloudinaryResult.secure_url);
+    try {
+      const existing = await Feedback.findById(id);
+      if (!existing) {
+        return res.status(404).json({ message: "Feedback not found" });
       }
-      req.body.images = imageUrls;
+
+      // Extract from FormData
+      const {
+        title = existing.title,
+        comment = existing.comment,
+        category,
+        customerId,
+        serviceQuality,
+        responseTime,
+        valueForMoney,
+        overallExperience,
+      } = req.body;
+
+      // Handle images
+      const imageUrls = [];
+      if (req.files && req.files.length > 0) {
+        for (const file of req.files) {
+          const cloudinaryResult = await cloudinary.uploader.upload(file.path, {
+            folder: "skw-photography",
+            allowed_formats: ["jpg", "jpeg", "png"],
+          });
+          imageUrls.push(cloudinaryResult.secure_url);
+        }
+      }
+
+      // Spam check logic
+      const isSpamComment = (text) => {
+        const cleaned = text?.toLowerCase().replace(/\s/g, "") || "";
+        const symbolPattern = /[^a-zA-Z0-9\s]{3,}/.test(cleaned);
+        const gibberishPattern = /^[bcdfghjklmnpqrstvwxyz]{6,}$/i.test(cleaned);
+        const badWords = [
+          "fuck", "shit", "bitch", "asshole", "bastard", "damn", "crap", "dick",
+          "piss", "slut", "idiot", "stupid", "moron", "retard", "suck", "nigger",
+          "whore", "cunt"
+        ];
+        return symbolPattern || gibberishPattern || badWords.some((word) => cleaned.includes(word));
+      };
+
+      const isSpam = isSpamComment(title) || isSpamComment(comment);
+
+      const updateData = {
+        title,
+        comment,
+        category,
+        customerId,
+        serviceQuality,
+        responseTime,
+        valueForMoney,
+        overallExperience,
+        images: imageUrls.length > 0 ? imageUrls : existing.images,
+        isApproved: false, // Always require re-approval
+      };
+
+      const updatedFeedback = await Feedback.findByIdAndUpdate(id, updateData, {
+        new: true,
+      });
+
+      res.status(200).json(updatedFeedback);
+    } catch (err) {
+      console.error("Error updating feedback:", err);
+      res.status(500).json({ message: "Error updating feedback" });
     }
-
-    const updatedFeedback = await Feedback.findByIdAndUpdate(id, req.body, {
-      new: true,
-    });
-
-    if (!updatedFeedback) {
-      return res.status(404).json({ message: "Feedback not found" });
-    }
-
-    res.status(200).json(updatedFeedback);
-  } catch (error) {
-    console.error("Error updating feedback:", error);
-    res.status(500).json({ message: "Error updating feedback", error });
-  }
-};
+  },
+];
 
 // Delete feedback
 const deleteFeedbackById = async (req, res) => {
