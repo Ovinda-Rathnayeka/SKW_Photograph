@@ -27,7 +27,8 @@ function FeedbackList() {
     const fetchAllFeedbacks = async () => {
       try {
         const feedbackData = await feedbackAPI.getAllFeedback();
-        setFeedbacks(feedbackData);
+        const approved = feedbackData.filter((f) => f.isApproved); // ✅ Only show approved feedbacks
+        setFeedbacks(approved);
         setLoading(false);
       } catch {
         setError("Error fetching feedbacks.");
@@ -237,7 +238,6 @@ function FeedbackList() {
           </Link>
         )}
 
-        {/* Navigation Buttons */}
         <div className="flex justify-center gap-4 mb-10 flex-wrap">
           {["Package", "Purchase", "Rental", "Service"].map((type) => (
             <button
@@ -255,7 +255,7 @@ function FeedbackList() {
         {renderFeedbackSection("Rental", rentals)}
         {renderFeedbackSection("Service", services)}
 
-        {/* Modal for Update */}
+        {/* Modal for update */}
         {showModal && feedbackToUpdate && (
           <div className="fixed inset-0 bg-gray-500 bg-opacity-75 flex items-center justify-center z-50">
             <div className="bg-white p-8 rounded-lg w-[600px]">

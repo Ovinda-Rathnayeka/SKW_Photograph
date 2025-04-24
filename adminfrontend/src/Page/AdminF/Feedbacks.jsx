@@ -20,6 +20,9 @@ function Feedbacks() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const [searchTerm, setSearchTerm] = useState("");
+  const [filterRating, setFilterRating] = useState("");
+  const [filterDate, setFilterDate] = useState("");
+  const [filterCategory, setFilterCategory] = useState("");
 
   useEffect(() => {
     const fetchData = async () => {
@@ -57,19 +60,26 @@ function Feedbacks() {
 
   useEffect(() => {
     const keyword = searchTerm.trim().toLowerCase();
-    if (!keyword) {
-      setFilteredFeedbacks(feedbacks);
-      return;
-    }
 
-    const filtered = feedbacks.filter(
-      (fb) =>
+    const filtered = feedbacks.filter((fb) => {
+      const matchSearch =
+        !keyword ||
         fb.title.toLowerCase().includes(keyword) ||
-        fb.comment.toLowerCase().includes(keyword)
-    );
+        fb.comment.toLowerCase().includes(keyword);
+
+      const matchRating = !filterRating || fb.rating === parseInt(filterRating);
+
+      const matchDate =
+        !filterDate ||
+        (fb.createdAt && fb.createdAt.slice(0, 10) === filterDate);
+
+      const matchCategory = !filterCategory || fb.category === filterCategory;
+
+      return matchSearch && matchRating && matchDate && matchCategory;
+    });
 
     setFilteredFeedbacks(filtered);
-  }, [searchTerm, feedbacks]);
+  }, [searchTerm, feedbacks, filterRating, filterDate, filterCategory]);
 
   const handleDelete = async (id) => {
     const confirm = window.confirm(
@@ -88,6 +98,20 @@ function Feedbacks() {
     }
   };
 
+  const handleApprove = async (id) => {
+    try {
+      await axios.patch(`http://localhost:5000/feedbacks/${id}/approve`);
+      const updated = feedbacks.map((fb) =>
+        fb._id === id ? { ...fb, isApproved: true } : fb
+      );
+      setFeedbacks(updated);
+      setFilteredFeedbacks(updated);
+    } catch (err) {
+      console.error("Approval failed:", err);
+      alert("Failed to approve feedback.");
+    }
+  };
+
   return (
     <div className="max-w-7xl mx-auto px-4 py-10">
       <h1 className="text-3xl font-bold mb-6 text-blue-800">All Feedbacks</h1>
@@ -102,38 +126,70 @@ function Feedbacks() {
         />
       </div>
 
+      {/* Filters */}
+      <div className="flex flex-col md:flex-row gap-4 mb-6">
+        <select
+          className="px-4 py-2 border border-gray-300 rounded shadow-sm focus:outline-none focus:ring"
+          value={filterCategory}
+          onChange={(e) => setFilterCategory(e.target.value)}
+        >
+          <option value="">All Categories</option>
+          <option value="Package">Package</option>
+          <option value="Rental">Rental</option>
+          <option value="Purchase">Purchase</option>
+          <option value="Service">Service</option>
+        </select>
+
+        <select
+          className="px-4 py-2 border border-gray-300 rounded shadow-sm focus:outline-none focus:ring"
+          value={filterRating}
+          onChange={(e) => setFilterRating(e.target.value)}
+        >
+          <option value="">All Ratings</option>
+          {[5, 4, 3, 2, 1].map((r) => (
+            <option key={r} value={r}>
+              {r} ★
+            </option>
+          ))}
+        </select>
+
+        <input
+          type="date"
+          value={filterDate}
+          onChange={(e) => setFilterDate(e.target.value)}
+          className="px-4 py-2 border border-gray-300 rounded shadow-sm focus:outline-none focus:ring"
+        />
+
+        {(filterRating || filterDate) && (
+          <button
+            onClick={() => {
+              setFilterRating("");
+              setFilterDate("");
+              setFilterCategory("");
+            }}
+            className="px-4 py-2 bg-gray-200 text-gray-700 rounded hover:bg-gray-300"
+          >
+            Clear Filters
+          </button>
+        )}
+      </div>
+
       {loading ? (
         <div className="overflow-x-auto bg-white shadow-lg rounded-xl">
           <table className="min-w-full divide-y divide-gray-200">
             <thead className="bg-blue-600 text-white">
               <tr>
-                <th className="px-6 py-3 text-left text-sm font-semibold">
-                  Customer ID
-                </th>
-                <th className="px-6 py-3 text-left text-sm font-semibold">
-                  Customer Email
-                </th>
-                <th className="px-6 py-3 text-left text-sm font-semibold">
-                  Category
-                </th>
-                <th className="px-6 py-3 text-left text-sm font-semibold">
-                  Title
-                </th>
-                <th className="px-6 py-3 text-left text-sm font-semibold">
-                  Comment
-                </th>
-                <th className="px-6 py-3 text-left text-sm font-semibold">
-                  Rating
-                </th>
-                <th className="px-6 py-3 text-left text-sm font-semibold">
-                  Date
-                </th>
-                <th className="px-6 py-3 text-left text-sm font-semibold">
-                  Actions
-                </th>
+                {[...Array(8)].map((_, i) => (
+                  <th
+                    key={i}
+                    className="px-6 py-3 text-left text-sm font-semibold"
+                  >
+                    Loading...
+                  </th>
+                ))}
               </tr>
             </thead>
-            <tbody className="divide-y divide-gray-100 text-gray-800">
+            <tbody>
               {[...Array(5)].map((_, i) => (
                 <FeedbackSkeletonRow key={i} />
               ))}
@@ -195,10 +251,22 @@ function Feedbacks() {
                         ? new Date(fb.createdAt).toLocaleDateString()
                         : "N/A"}
                     </td>
-                    <td className="px-6 py-4 text-sm">
+                    <td className="px-6 py-4 text-sm space-y-2">
+                      {!fb.isApproved ? (
+                        <button
+                          onClick={() => handleApprove(fb._id)}
+                          className="bg-green-500 text-white px-4 py-1 rounded hover:bg-green-600 transition w-full"
+                        >
+                          Approve
+                        </button>
+                      ) : (
+                        <span className="text-green-600 font-medium block text-center">
+                          Approved
+                        </span>
+                      )}
                       <button
                         onClick={() => handleDelete(fb._id)}
-                        className="bg-red-500 text-white px-4 py-1 rounded hover:bg-red-600 transition"
+                        className="bg-red-500 text-white px-4 py-1 rounded hover:bg-red-600 transition w-full"
                       >
                         Delete
                       </button>
@@ -213,7 +281,6 @@ function Feedbacks() {
         <p className="text-center text-gray-500">No feedbacks found.</p>
       )}
     </div>
-    
   );
 }
 

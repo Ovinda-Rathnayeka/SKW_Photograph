@@ -31,6 +31,10 @@ const feedbackSchema = new mongoose.Schema({
       type: String,
     },
   ],
+  isApproved: {
+    type: Boolean,
+    default: false,
+  },
   createdAt: {
     type: Date,
     default: Date.now,
@@ -41,5 +45,4 @@ const feedbackSchema = new mongoose.Schema({
 });
 
 const FeedbackModel = mongoose.model("Feedback", feedbackSchema);
-// Creating a model for the feedback schema and exporting it
 export default FeedbackModel;
