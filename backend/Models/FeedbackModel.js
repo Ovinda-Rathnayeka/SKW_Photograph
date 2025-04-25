@@ -18,8 +18,6 @@ const feedbackSchema = new mongoose.Schema({
     max: 5,
     required: true,
   },
-<<<<<<< HEAD
-=======
   serviceQuality: {
     type: Number,
     min: 1,
@@ -44,7 +42,6 @@ const feedbackSchema = new mongoose.Schema({
     max: 5,
     required: true,
   },
->>>>>>> pinidu_backup
   title: {
     type: String,
     required: true,
