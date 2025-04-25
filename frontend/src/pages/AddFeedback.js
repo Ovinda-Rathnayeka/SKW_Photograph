@@ -9,15 +9,6 @@ function AddFeedback() {
   const history = useNavigate();
   const [feedbackData, setFeedbackData] = useState({
     category: "",
-<<<<<<< HEAD
-    rating: 1,
-    title: "",
-    comment: "",
-    responseTime: 1,
-    workQuality: 1,
-    satisfaction: 1,
-  });
-=======
     rating: "",
     title: "",
     comment: "",
@@ -27,7 +18,6 @@ function AddFeedback() {
     overallExperience: "",
   });
 
->>>>>>> pinidu_backup
   const [images, setImages] = useState([]);
   const [customerEmail, setCustomerEmail] = useState("");
   const [customerId, setCustomerId] = useState("");
@@ -71,16 +61,8 @@ function AddFeedback() {
         plainText.length > 100 ? "Comment must not exceed 100 letters." : "";
     }
 
-<<<<<<< HEAD
-    if (name === "rating") {
-      const valid = /^[1-5]$/.test(value);
-      errors.rating = valid
-        ? ""
-        : "Rating must be a whole number between 1 and 5.";
-=======
     if (["rating", "serviceQuality", "responseTime", "valueForMoney", "overallExperience"].includes(name)) {
       errors[name] = !/^[1-5]$/.test(value) ? "Please select a rating between 1 and 5." : "";
->>>>>>> pinidu_backup
     }
 
     setValidationErrors(errors);
@@ -110,24 +92,15 @@ function AddFeedback() {
   const isFormValid = () => {
     const letterCount = feedbackData.comment.replace(/[^a-zA-Z]/g, "").length;
 
-<<<<<<< HEAD
-=======
     const allRatingsValid = ["rating", "serviceQuality", "responseTime", "valueForMoney", "overallExperience"]
       .every((field) => /^[1-5]$/.test(feedbackData[field]));
 
->>>>>>> pinidu_backup
     return (
       feedbackData.category &&
       feedbackData.title &&
-      /^[1-5]$/.test(feedbackData.rating) &&
       letterCount > 0 &&
       letterCount <= 100 &&
-<<<<<<< HEAD
-      (validationErrors.images === undefined ||
-        validationErrors.images === "") &&
-=======
       allRatingsValid &&
->>>>>>> pinidu_backup
       Object.values(validationErrors).every((err) => err === "")
     );
   };
@@ -159,9 +132,6 @@ function AddFeedback() {
         timer: 1500,
       });
 
-<<<<<<< HEAD
-      setFeedbackData({ category: "", rating: 1, title: "", comment: "" });
-=======
       setFeedbackData({
         category: "",
         rating: "",
@@ -172,7 +142,6 @@ function AddFeedback() {
         valueForMoney: "",
         overallExperience: "",
       });
->>>>>>> pinidu_backup
       setImages([]);
       history("/feedbacks");
     } catch (err) {
@@ -255,24 +224,6 @@ function AddFeedback() {
             )}
           </div>
 
-<<<<<<< HEAD
-          <div className="mb-4">
-            <label className="block mb-2">Rating</label>
-            <input
-              type="number"
-              name="rating"
-              value={feedbackData.rating}
-              onChange={handleChange}
-              min="1"
-              max="5"
-              className="w-full p-2 border border-gray-300 rounded-md focus:outline-none focus:border-gray-300"
-              required
-            />
-            {validationErrors.rating && (
-              <p className="text-red-500 text-sm">{validationErrors.rating}</p>
-            )}
-          </div>
-=======
           {/* Ratings */}
           {[
             { key: "rating", label: "Overall Rating" },
@@ -301,7 +252,6 @@ function AddFeedback() {
               )}
             </div>
           ))}
->>>>>>> pinidu_backup
 
           {/* Image Upload */}
           <div className="mb-4">
