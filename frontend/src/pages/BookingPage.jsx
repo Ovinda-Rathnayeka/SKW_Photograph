@@ -1,7 +1,8 @@
 import React, { useEffect, useState } from "react";
 import { fetchUserDetails } from "../Api/AuthAPI.js";
 import { createBooking } from "../Api/BookingAPI.js";
-import PaymentPage from "./PaymentPage";                                                                                         
+import PaymentPage from "./PaymentPage";
+import Swal from "sweetalert2";
 
 const BookingPage = ({ selectedPackage, onClose }) => {
   const [user, setUser] = useState(null);
@@ -12,8 +13,8 @@ const BookingPage = ({ selectedPackage, onClose }) => {
   const [selectedAdditions, setSelectedAdditions] = useState([]);
   const [date, setDate] = useState("");
   const [time, setTime] = useState("");
-  const [isPaymentModalOpen, setIsPaymentModalOpen] = useState(false); 
-  const [bookingResult, setBookingResult] = useState(null); 
+  const [isPaymentModalOpen, setIsPaymentModalOpen] = useState(false);
+  const [bookingResult, setBookingResult] = useState(null);
 
   const additions = [
     { id: 1, name: "Professional Makeup", price: 50 },
@@ -39,9 +40,13 @@ const BookingPage = ({ selectedPackage, onClose }) => {
   if (!selectedPackage) return null;
 
   const handleToggleAddition = (addition) => {
-    const isSelected = selectedAdditions.some((item) => item.id === addition.id);
+    const isSelected = selectedAdditions.some(
+      (item) => item.id === addition.id
+    );
     if (isSelected) {
-      setSelectedAdditions(selectedAdditions.filter((item) => item.id !== addition.id));
+      setSelectedAdditions(
+        selectedAdditions.filter((item) => item.id !== addition.id)
+      );
       setTotalPrice(totalPrice - addition.price);
     } else {
       setSelectedAdditions([...selectedAdditions, addition]);
@@ -50,8 +55,26 @@ const BookingPage = ({ selectedPackage, onClose }) => {
   };
 
   const handleConfirmBooking = async () => {
+    
+    const today = new Date();
+    const selectedDate = new Date(date);
+    const selectedTime = new Date(`${date}T${time}`);
+
     if (!date || !time) {
       alert("Please select both date and time.");
+      return;
+    }
+
+    if (selectedDate < today) {
+      alert("The selected date cannot be in the past.");
+      return;
+    }
+
+    if (
+      selectedDate.toDateString() === today.toDateString() &&
+      selectedTime < today
+    ) {
+      alert("The selected time cannot be in the past.");
       return;
     }
 
@@ -63,19 +86,32 @@ const BookingPage = ({ selectedPackage, onClose }) => {
       bookingDate: date,
       bookingTime: time,
       totalPrice,
-      additionalNotes: selectedAdditions.map(addition => addition.name).join(", "),
+      additionalNotes: selectedAdditions
+        .map((addition) => addition.name)
+        .join(", "),
     };
 
     try {
-      
       const result = await createBooking(bookingData);
-      console.log(result); 
+      console.log(result);
 
-      
       if (result && result.booking && result.booking._id) {
-        setBookingResult(result.booking); 
-        alert("Booking Confirmed! ID: " + result.booking._id);
-        setIsPaymentModalOpen(true); 
+        setBookingResult(result.booking);
+
+        
+        Swal.fire({
+          title: "Booking Confirmed!",
+          text: `Booking ID: ${result.booking._id}`,
+          icon: "success",
+          timer: 2000, 
+          timerProgressBar: true,
+          didOpen: () => {
+            Swal.showLoading();
+          },
+        }).then(() => {
+         
+          setIsPaymentModalOpen(true);
+        });
       } else {
         alert("Booking Confirmation Failed");
       }
@@ -87,7 +123,11 @@ const BookingPage = ({ selectedPackage, onClose }) => {
   };
 
   return (
-    <div className={`fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 p-4 z-50 ${isPaymentModalOpen ? 'backdrop-blur-lg' : ''}`}>
+    <div
+      className={`fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 p-4 z-50 ${
+        isPaymentModalOpen ? "backdrop-blur-lg" : ""
+      }`}
+    >
       <div className="bg-[#1B242C] p-6 rounded-lg shadow-lg w-[95%] max-w-[900px] text-white flex flex-col">
         <h2 className="text-xl font-bold text-red-500 mb-4 text-center flex items-center justify-center">
           📸 Confirm Your Booking
@@ -96,21 +136,22 @@ const BookingPage = ({ selectedPackage, onClose }) => {
         <div className="grid grid-cols-2 gap-4 mb-4">
           <div>
             <label className="text-yellow-400">📅 Date:</label>
-            <input 
-              type="date" 
-              className="w-full p-2 bg-gray-800 text-white rounded-md mt-1" 
-              value={date} 
-              onChange={(e) => setDate(e.target.value)} 
+            <input
+              type="date"
+              className="w-full p-2 bg-gray-800 text-white rounded-md mt-1"
+              value={date}
+              onChange={(e) => setDate(e.target.value)}
               required
+              min={new Date().toISOString().split("T")[0]} 
             />
           </div>
           <div>
             <label className="text-yellow-400">⏰ Time:</label>
-            <input 
-              type="time" 
-              className="w-full p-2 bg-gray-800 text-white rounded-md mt-1" 
-              value={time} 
-              onChange={(e) => setTime(e.target.value)} 
+            <input
+              type="time"
+              className="w-full p-2 bg-gray-800 text-white rounded-md mt-1"
+              value={time}
+              onChange={(e) => setTime(e.target.value)}
               required
             />
           </div>
@@ -118,30 +159,54 @@ const BookingPage = ({ selectedPackage, onClose }) => {
 
         <div className="grid grid-cols-2 gap-4">
           <div className="bg-[#2A3A45] p-4 rounded-lg">
-            <h3 className="text-md font-semibold text-gray-300">🧑‍💼 Customer Info</h3>
+            <h3 className="text-md font-semibold text-gray-300">
+              🧑‍💼 Customer Info
+            </h3>
             {loading ? (
               <p className="text-gray-400 text-center">Loading...</p>
             ) : error ? (
               <p className="text-red-400 text-center">{error}</p>
             ) : (
               <div className="mt-2 space-y-1 text-sm">
-                <p><strong>Name:</strong> {user.name}</p>
-                <p><strong>Email:</strong> {user.email}</p>
-                <p><strong>Phone:</strong> {user.phone}</p>
+                <p>
+                  <strong>Name:</strong> {user.name}
+                </p>
+                <p>
+                  <strong>Email:</strong> {user.email}
+                </p>
+                <p>
+                  <strong>Phone:</strong> {user.phone}
+                </p>
               </div>
             )}
           </div>
 
           <div className="bg-[#2A3A45] p-4 rounded-lg">
-            <h3 className="text-md font-semibold text-yellow-400">{selectedPackage.packageName}</h3>
-            <p className="text-xs text-gray-300">{selectedPackage.description}</p>
+            <h3 className="text-md font-semibold text-yellow-400">
+              {selectedPackage.packageName}
+            </h3>
+            <p className="text-xs text-gray-300">
+              {selectedPackage.description}
+            </p>
             <div className="space-y-1 mt-2 text-sm">
-              <p><strong>📂 Category:</strong> {selectedPackage.category}</p>
-              <p><strong>⌛ Duration:</strong> {selectedPackage.duration}</p>
-              <p><strong>📸 Photos:</strong> {selectedPackage.numberOfPhotos}</p>
-              <p><strong>🎨 Editing:</strong> {selectedPackage.photoEditing}</p>
-              <p><strong>🚚 Delivery:</strong> {selectedPackage.deliveryTime}</p>
-              <p className="text-red-400 font-bold">Base Price: ${selectedPackage.price}</p>
+              <p>
+                <strong>📂 Category:</strong> {selectedPackage.category}
+              </p>
+              <p>
+                <strong>⌛ Duration:</strong> {selectedPackage.duration}
+              </p>
+              <p>
+                <strong>📸 Photos:</strong> {selectedPackage.numberOfPhotos}
+              </p>
+              <p>
+                <strong>🎨 Editing:</strong> {selectedPackage.photoEditing}
+              </p>
+              <p>
+                <strong>🚚 Delivery:</strong> {selectedPackage.deliveryTime}
+              </p>
+              <p className="text-red-400 font-bold">
+                Base Price: ${selectedPackage.price}
+              </p>
             </div>
           </div>
         </div>
@@ -150,11 +215,16 @@ const BookingPage = ({ selectedPackage, onClose }) => {
           <h3 className="text-md font-semibold text-yellow-400">✨ Add-ons</h3>
           <div className="grid grid-cols-4 gap-2 mt-2 text-sm">
             {additions.map((addition) => (
-              <label key={addition.id} className="flex items-center justify-between bg-[#1F2937] p-2 rounded-md cursor-pointer hover:bg-[#374151]">
-                <input 
-                  type="checkbox" 
-                  checked={selectedAdditions.some((item) => item.id === addition.id)} 
-                  onChange={() => handleToggleAddition(addition)} 
+              <label
+                key={addition.id}
+                className="flex items-center justify-between bg-[#1F2937] p-2 rounded-md cursor-pointer hover:bg-[#374151]"
+              >
+                <input
+                  type="checkbox"
+                  checked={selectedAdditions.some(
+                    (item) => item.id === addition.id
+                  )}
+                  onChange={() => handleToggleAddition(addition)}
                 />
                 <span className="text-gray-300">{addition.name}</span>
                 <span className="text-yellow-400">${addition.price}</span>
@@ -163,15 +233,19 @@ const BookingPage = ({ selectedPackage, onClose }) => {
           </div>
 
           <div className="mt-4 text-lg font-bold text-gray-300 text-center">
-            💰 Total Price: <span className="text-green-400">${totalPrice}</span>
+            💰 Total Price:{" "}
+            <span className="text-green-400">${totalPrice}</span>
           </div>
 
           <div className="flex justify-between mt-4">
-            <button className="bg-gray-600 text-white px-4 py-2 rounded-md hover:bg-gray-700" onClick={onClose}>
+            <button
+              className="bg-gray-600 text-white px-4 py-2 rounded-md hover:bg-gray-700"
+              onClick={onClose}
+            >
               Cancel
             </button>
-            <button 
-              className="bg-red-500 text-white px-4 py-2 rounded-md hover:bg-red-600" 
+            <button
+              className="bg-red-500 text-white px-4 py-2 rounded-md hover:bg-red-600"
               onClick={handleConfirmBooking}
               disabled={isSubmitting}
             >
@@ -181,14 +255,14 @@ const BookingPage = ({ selectedPackage, onClose }) => {
         </div>
       </div>
 
-      {/* Open Payment Modal after successful booking */}
+     
       {isPaymentModalOpen && bookingResult && (
-        <PaymentPage 
-          bookingId={bookingResult._id} 
-          customerId={user._id} 
-          packageId={selectedPackage._id} 
-          totalPrice={totalPrice} 
-          onClose={() => setIsPaymentModalOpen(false)} 
+        <PaymentPage
+          bookingId={bookingResult._id}
+          customerId={user._id}
+          packageId={selectedPackage._id}
+          totalPrice={totalPrice}
+          onClose={() => setIsPaymentModalOpen(false)}
         />
       )}
     </div>

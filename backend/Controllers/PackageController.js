@@ -8,20 +8,18 @@ const isValidObjectId = (id) => mongoose.Types.ObjectId.isValid(id);
 const createPackage = async (req, res) => {
   try {
     if (req.file) {
-    
       const cloudinaryResult = await cloudinary.uploader.upload(req.file.path, {
         folder: "skw-photography",
         allowed_formats: ["jpg", "jpeg", "png"],
       });
 
-      
       req.body.image = cloudinaryResult.secure_url;
     }
 
     const newPackage = new PhotoPackage(req.body);
     const savedPackage = await newPackage.save();
 
-    res.status(201).json(savedPackage); 
+    res.status(201).json(savedPackage);
   } catch (error) {
     console.error("Error creating package:", error);
     res.status(500).json({ message: "Error creating package", error });
@@ -83,22 +81,18 @@ const updatePackageById = async (req, res) => {
   }
 
   try {
-    
     if (req.file) {
-      
-      const cloudinaryResult = await cloudinary.v2.uploader.upload(
-        req.file.path,
-        {
-          folder: "skw-photography",
-          allowed_formats: ["jpg", "jpeg", "png"],
-        }
-      );
+      // Upload the file to Cloudinary
+      const cloudinaryResult = await cloudinary.uploader.upload(req.file.path, {
+        folder: "skw-photography",
+        allowed_formats: ["jpg", "jpeg", "png"],
+      });
 
-      
-      req.body.image = cloudinaryResult.secure_url;
+      // Save the Cloudinary URL in the database
+      req.body.image = cloudinaryResult.secure_url; // Store Cloudinary URL
     }
 
-    
+    // Update the package in the database
     const updatedPackage = await PhotoPackage.findByIdAndUpdate(id, req.body, {
       new: true,
     });
@@ -107,7 +101,8 @@ const updatePackageById = async (req, res) => {
       return res.status(404).json({ message: "Package not found" });
     }
 
-    res.status(200).json(updatedPackage); 
+    // Return the updated package data
+    res.status(200).json(updatedPackage);
   } catch (error) {
     console.error("Error updating package:", error);
     res.status(500).json({ message: "Error updating package", error });

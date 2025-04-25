@@ -92,9 +92,9 @@ const SectionAnimation = ({ children }) => {
 };
 
 const HomePage = () => {
-  // Initialize smooth scrolling
+  
   useEffect(() => {
-    // Add smooth scrolling behavior
+    
     document.documentElement.style.scrollBehavior = "smooth";
     
     return () => {
@@ -104,7 +104,7 @@ const HomePage = () => {
 
   return (
     <div className="relative w-full font-['Poppins'] overflow-hidden">
-      {/* Hero Section with Parallax Effect */}
+     
       <div className="relative w-full h-screen overflow-hidden">
         <motion.div
           className="absolute inset-0 bg-cover bg-center bg-no-repeat"
@@ -116,7 +116,7 @@ const HomePage = () => {
           <div className="absolute inset-0 bg-black/50"></div>
         </motion.div>
 
-        {/* Text Section */}
+       
         <div className="relative z-10 flex flex-col items-start justify-center h-full px-10 md:px-20">
           <motion.h1 
             className="text-4xl md:text-6xl font-bold leading-tight text-transparent bg-clip-text bg-gradient-to-r from-orange-400 to-red-500"
@@ -130,7 +130,7 @@ const HomePage = () => {
             at a time
           </motion.h1>
 
-          {/* Enquiry Button */}
+         
           <motion.button 
             className="mt-5 px-6 py-3 bg-orange-500 text-white font-semibold rounded-lg shadow-lg hover:bg-orange-600 transition-all duration-300 transform hover:scale-105"
             initial={{ opacity: 0, y: 20 }}
@@ -143,7 +143,7 @@ const HomePage = () => {
           </motion.button>
         </div>
 
-        {/* Small Box Image - Rotated & Positioned with Animation */}
+       
         <motion.div 
           className="absolute right-20 md:right-40 top-1/3 transform -translate-y-1/2 rotate-6 w-72 md:w-96 shadow-lg"
           initial={{ opacity: 0, y: 100, rotate: 0 }}
@@ -154,7 +154,7 @@ const HomePage = () => {
         <img src={box} alt="Small Box" className="rounded-lg shadow-2xl" />
         </motion.div>
 
-        {/* Scroll Down Indicator */}
+        
         <motion.div 
           className="absolute bottom-10 left-1/2 transform -translate-x-1/2 text-white flex flex-col items-center"
           initial={{ opacity: 0 }}
@@ -177,7 +177,7 @@ const HomePage = () => {
         </motion.div>
       </div>
 
-      {/* Who We Are Section */}
+      
   <SectionAnimation>
     <div
       className="relative w-full min-h-screen flex flex-col md:flex-row items-center justify-center px-10 md:px-20 py-20"
@@ -190,10 +190,10 @@ const HomePage = () => {
       }}
       id="about"
     >
-      {/* Dark Overlay */}
+      
       <div className="absolute inset-0 bg-black/50"></div>
 
-      {/* Left Side: Photographer's Image */}
+      
       <motion.div 
         className="relative w-full md:w-1/3 z-10 flex justify-center md:justify-end"
         variants={fadeInUp}
@@ -213,9 +213,9 @@ const HomePage = () => {
         />
       </motion.div>
 
-      {/* Right Side: Text Section */}
+      
       <div className="relative w-full md:w-2/3 z-10 flex flex-col items-center md:items-start md:pl-10">
-        {/* Title */}
+        
         <motion.h2 
           className="text-4xl md:text-5xl font-bold text-center md:text-left mt-[-100px]"
           variants={fadeInUp}
@@ -229,7 +229,7 @@ const HomePage = () => {
         </motion.h2>
 
 
-      {/* Curved Text Box */}
+      
       <motion.div 
         className="relative mt-5 p-8 md:p-10 bg-green-200 text-gray-900 max-w-2xl custom-shape shadow-lg"
         variants={fadeInUp}
@@ -257,16 +257,16 @@ const HomePage = () => {
   </SectionAnimation>
 
 
-      {/* Our Services Section */}
+      
       <div
         className="relative w-full min-h-screen text-white py-20 px-10 md:px-20 bg-cover bg-center bg-no-repeat"
         style={{ backgroundImage: `url(${dot})` }}
         id="services"
       >
-        {/* Dark Overlay for Better Text Visibility */}
+        
         <div className="absolute inset-0 bg-black/50"></div>
 
-        {/* Content Container */}
+        
         <div className="relative z-10">
           <motion.h2 
             className="text-center text-4xl md:text-5xl font-bold mb-10"
@@ -278,7 +278,7 @@ const HomePage = () => {
             Our <span className="text-orange-500">Services</span>
           </motion.h2>
 
-          {/* Services Grid */}
+          
           <motion.div 
             className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6"
             variants={staggerContainer}
@@ -363,18 +363,18 @@ const HomePage = () => {
         </div>
       </div>
 
-      {/* Latest Work Gallery Section */}
+      
       <div 
         className="relative w-full min-h-[600px] flex flex-col items-center justify-center py-20 px-10 md:px-20 bg-[#0a0a0a]"
         id="gallery"
       >
-        {/* Background Image */}
+        
         <div
           className="absolute inset-0 bg-cover bg-center opacity-50 rounded-lg"
           style={{ backgroundImage: `url(${dot})` }}
         ></div>
 
-        {/* Section Heading */}
+        
         <motion.h2 
           className="relative text-center text-4xl md:text-5xl font-bold text-white mb-16 -mt-10 z-20"
           variants={fadeInUp}
@@ -385,9 +385,9 @@ const HomePage = () => {
           Latest Work <span className="text-orange-500">Gallery</span>
         </motion.h2>
 
-        {/* Images Group with Animation */}
+       
         <div className="relative w-full max-w-6xl mx-auto mt-20">
-          {/* Background Horizontal Image */}
+         
           <motion.div 
             className="w-full h-100 md:h-80 bg-gray-800 rounded-lg overflow-hidden shadow-xl"
             variants={fadeInUp}
@@ -406,9 +406,9 @@ const HomePage = () => {
             />
           </motion.div>
           
-          {/* Floating Images */}
+          
           <div className="absolute top-[-15%] left-1/2 transform -translate-x-1/2 flex gap-6 z-10">
-            {/* Left Image */}
+           
             <motion.div 
               className="w-40 md:w-52 h-52 bg-gray-800 rounded-lg overflow-hidden shadow-lg"
               variants={photoAnimation}
@@ -429,7 +429,7 @@ const HomePage = () => {
               />
             </motion.div>
 
-            {/* Center Image (Bigger & Even Higher) */}
+           
             <motion.div 
               className="w-48 md:w-60 h-60 bg-gray-800 rounded-lg overflow-hidden shadow-xl"
               variants={photoAnimation}
@@ -449,7 +449,7 @@ const HomePage = () => {
               />
             </motion.div>
 
-            {/* Right Image */}
+           
             <motion.div 
               className="w-40 md:w-52 h-52 bg-gray-800 rounded-lg overflow-hidden shadow-lg"
               variants={photoAnimation}
@@ -472,7 +472,7 @@ const HomePage = () => {
           </div>
         </div>
 
-        {/* View All Button */}
+       
         <motion.button 
           className="relative mt-8 px-6 py-3 bg-orange-500 text-white font-semibold rounded-full shadow-lg hover:bg-orange-600 transition-all duration-300 z-10"
           whileHover={{ scale: 1.1 }}
@@ -486,18 +486,18 @@ const HomePage = () => {
         </motion.button>
       </div>
 
-      {/* Video Section with Background Image */}
+    
       <div
         className="relative w-full flex flex-col items-center justify-center py-20 px-6 md:px-12 bg-cover bg-center"
         style={{ backgroundImage: `url(${dot})` }}
         id="videos"
       >
-        {/* Dark Overlay */}
+       
         <div className="absolute inset-0 bg-black opacity-50"></div>
 
-        {/* Section Content */}
+        
         <div className="relative z-10 w-full max-w-6xl text-center">
-          {/* Section Title */}
+          
           <motion.h2 
             className="text-3xl md:text-4xl font-bold text-white mb-8"
             variants={fadeInUp}
@@ -508,7 +508,7 @@ const HomePage = () => {
             Our <span className="text-orange-500">Videos</span>
           </motion.h2>
 
-          {/* Video Grid */}
+          
           <motion.div 
             className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6"
             variants={staggerContainer}
@@ -516,7 +516,7 @@ const HomePage = () => {
             whileInView="visible"
             viewport={{ once: true }}
           >
-            {/* Video Cards */}
+           
             {[
               videoThumbnail1,
               videoThumbnail2,
@@ -564,10 +564,10 @@ const HomePage = () => {
         </div>
       </div>
 
-      {/* Footer Section */}
+     
       <footer className="bg-[#10202B] text-white py-8" id="contact">
         <div className="max-w-6xl mx-auto px-6 grid grid-cols-1 md:grid-cols-3 gap-8">
-          {/* Contact Us */}
+         
           <motion.div 
             className="space-y-4"
             initial={{ opacity: 0, y: 30 }}
@@ -580,7 +580,7 @@ const HomePage = () => {
             <p className="text-gray-300 text-sm">+07123456789</p>
             <p className="text-gray-300 text-sm">sahanovrids@gmail.com</p>
 
-            {/* Contact Form */}
+           
             <form className="space-y-3">
               <motion.input
                 type="text"
@@ -615,7 +615,7 @@ const HomePage = () => {
             </form>
           </motion.div>
 
-          {/* Quick Links */}
+        
           <motion.div 
             className="space-y-4"
             initial={{ opacity: 0, y: 30 }}
@@ -648,7 +648,7 @@ const HomePage = () => {
             </ul>
           </motion.div>
 
-          {/* Company Info */}
+          
           <motion.div 
             className="space-y-4"
             initial={{ opacity: 0, y: 30 }}
@@ -681,7 +681,7 @@ const HomePage = () => {
           </motion.div>
         </div>
 
-        {/* Copyright */}
+       
         <motion.div 
           className="text-center text-gray-400 text-xs mt-6"
           initial={{ opacity: 0 }}

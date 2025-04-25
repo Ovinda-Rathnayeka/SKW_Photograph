@@ -1,36 +1,51 @@
-import React, { useState } from "react";
-import { createPayment } from "../Api/PaymentAPI.js"; 
-import { FaUpload } from "react-icons/fa"; 
-import { FaMoneyBillAlt } from "react-icons/fa"; 
+import React, { useState, useEffect } from "react";
+import { createPayment } from "../Api/PaymentAPI.js";
+import { FaUpload } from "react-icons/fa";
+import { FaMoneyBillAlt } from "react-icons/fa";
+import Swal from "sweetalert2";
 
-function PaymentPage({ bookingId, customerId, packageId, totalPrice, onClose }) {
+function PaymentPage({
+  bookingId,
+  customerId,
+  packageId,
+  totalPrice,
+  onClose,
+}) {
   const [paymentMethod, setPaymentMethod] = useState("Bank Transfer");
-  const [paymentType, setPaymentType] = useState("full"); // 'full' or 'half'
-  const [halfPaymentAmount, setHalfPaymentAmount] = useState(""); // Store half payment amount
-  const [proofImage, setProofImage] = useState(null); // Store proof image
-  const [isSubmitting, setIsSubmitting] = useState(false); // To handle form submission
+  const [paymentType, setPaymentType] = useState("full");
+  const [halfPaymentAmount, setHalfPaymentAmount] = useState("");
+  const [proofImage, setProofImage] = useState(null);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
+  useEffect(() => {
+    if (paymentType === "half") {
+      setHalfPaymentAmount(totalPrice / 2);
+    } else {
+      setHalfPaymentAmount("");
+    }
+  }, [paymentType, totalPrice]);
 
   const handleFileChange = (e) => {
-    setProofImage(e.target.files[0]); // Set proof image when file is uploaded
+    setProofImage(e.target.files[0]);
   };
 
   const handleHalfPaymentChange = (e) => {
     const value = e.target.value;
-    // Only allow the half payment amount to be less than or equal to total price
+
     if (value <= totalPrice) {
       setHalfPaymentAmount(value);
     }
   };
 
   const handlePaymentTypeChange = (e) => {
-    setPaymentType(e.target.value); // Switch between full and half payment
-    setHalfPaymentAmount(""); // Reset half payment amount when switching to full payment
+    setPaymentType(e.target.value);
+    setHalfPaymentAmount("");
   };
 
   const handleClear = () => {
-    setHalfPaymentAmount(""); // Clear half payment amount
-    setProofImage(null); // Clear proof of payment image
-    setPaymentMethod("Bank Transfer"); // Reset payment method
+    setHalfPaymentAmount("");
+    setProofImage(null);
+    setPaymentMethod("Bank Transfer");
   };
 
   const handleConfirmPayment = async () => {
@@ -39,7 +54,6 @@ function PaymentPage({ bookingId, customerId, packageId, totalPrice, onClose }) 
       return;
     }
 
-    // Validate half payment amount is not greater than total price
     if (paymentType === "half" && halfPaymentAmount > totalPrice) {
       alert("Half payment amount cannot be greater than total price.");
       return;
@@ -47,22 +61,32 @@ function PaymentPage({ bookingId, customerId, packageId, totalPrice, onClose }) 
 
     setIsSubmitting(true);
 
-    
     const paymentData = {
       bookingId,
       customerId,
       packageId,
       amount: totalPrice,
-      halfPaymentAmount: paymentType === "half" ? halfPaymentAmount : 0, 
+      halfPaymentAmount: paymentType === "half" ? halfPaymentAmount : 0,
       paymentMethod,
-      paymentType, 
-      paymentStatus: "Pending", 
+      paymentType,
+      paymentStatus: "Pending",
     };
 
     try {
-      const result = await createPayment(paymentData, proofImage); 
-      alert("Payment Confirmed! Transaction ID: " + result.transactionId);
-      onClose(); 
+      const result = await createPayment(paymentData, proofImage);
+
+      Swal.fire({
+        title: "Payment Confirmed!",
+        text: `Transaction ID: ${result.transactionId}`,
+        icon: "success",
+        timer: 2000,
+        timerProgressBar: true,
+        didOpen: () => {
+          Swal.showLoading();
+        },
+      }).then(() => {
+        onClose();
+      });
     } catch (error) {
       console.error("Payment error:", error);
       alert("Payment failed: " + error.message);
@@ -74,22 +98,28 @@ function PaymentPage({ bookingId, customerId, packageId, totalPrice, onClose }) 
   return (
     <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 p-4 z-50">
       <div className="bg-[#1B242C] p-6 rounded-lg shadow-lg w-[95%] max-w-[900px] text-white">
-        {/* Header */}
-        <h2 className="text-xl font-bold text-red-500 text-center mb-4">💳 Complete Your Payment</h2>
+        <h2 className="text-xl font-bold text-red-500 text-center mb-4">
+          💳 Complete Your Payment
+        </h2>
 
         <div className="flex flex-col md:flex-row gap-6">
-          {/* Left Section */}
           <div className="md:w-1/2 space-y-4">
-            {/* Booking Details */}
             <div className="bg-[#2A3A45] p-4 rounded-lg">
-              <h3 className="text-md font-semibold text-yellow-400">📦 Booking Details</h3>
-              <p className="text-sm text-gray-300"><strong>Booking ID:</strong> {bookingId}</p>
-              <p className="text-sm text-gray-300"><strong>Total Price:</strong> ${totalPrice}</p>
+              <h3 className="text-md font-semibold text-yellow-400">
+                📦 Booking Details
+              </h3>
+              <p className="text-sm text-gray-300">
+                <strong>Booking ID:</strong> {bookingId}
+              </p>
+              <p className="text-sm text-gray-300">
+                <strong>Total Price:</strong> ${totalPrice}
+              </p>
             </div>
 
-            {/* Payment Type */}
             <div className="bg-[#2A3A45] p-4 rounded-lg">
-              <h3 className="text-md font-semibold text-yellow-400">💳 Select Payment Type</h3>
+              <h3 className="text-md font-semibold text-yellow-400">
+                💳 Select Payment Type
+              </h3>
               <select
                 value={paymentType}
                 onChange={handlePaymentTypeChange}
@@ -100,12 +130,13 @@ function PaymentPage({ bookingId, customerId, packageId, totalPrice, onClose }) 
               </select>
             </div>
 
-            {/* Half Payment Amount */}
             {paymentType === "half" && (
               <div className="bg-[#2A3A45] p-4 rounded-lg">
-                <h3 className="text-md font-semibold text-yellow-400">💸 Half Payment</h3>
+                <h3 className="text-md font-semibold text-yellow-400">
+                  💸 Half Payment
+                </h3>
                 <div className="flex items-center gap-2">
-                  <FaMoneyBillAlt className="text-yellow-400" /> {/* Icon for half payment */}
+                  <FaMoneyBillAlt className="text-yellow-400" />{" "}
                   <input
                     type="number"
                     value={halfPaymentAmount}
@@ -118,11 +149,12 @@ function PaymentPage({ bookingId, customerId, packageId, totalPrice, onClose }) 
               </div>
             )}
 
-            {/* Upload Proof of Payment */}
             <div className="bg-[#2A3A45] p-4 rounded-lg">
-              <h3 className="text-md font-semibold text-yellow-400">📸 Upload Proof of Payment</h3>
+              <h3 className="text-md font-semibold text-yellow-400">
+                📸 Upload Proof of Payment
+              </h3>
               <div className="flex items-center gap-2">
-                <FaUpload className="text-yellow-400" /> {/* Icon for upload */}
+                <FaUpload className="text-yellow-400" />
                 <input
                   type="file"
                   onChange={handleFileChange}
@@ -131,18 +163,19 @@ function PaymentPage({ bookingId, customerId, packageId, totalPrice, onClose }) 
               </div>
             </div>
 
-            {/* Total Amount */}
             <div className="bg-[#2A3A45] p-4 rounded-lg">
-              <h3 className="text-md font-semibold text-yellow-400">💰 Total Amount</h3>
+              <h3 className="text-md font-semibold text-yellow-400">
+                💰 Total Amount
+              </h3>
               <p className="text-lg text-green-400 font-bold">${totalPrice}</p>
             </div>
           </div>
 
-          {/* Right Section */}
           <div className="md:w-1/2 space-y-4">
-            {/* Payment Method */}
             <div className="bg-[#2A3A45] p-4 rounded-lg">
-              <h3 className="text-md font-semibold text-yellow-400">💳 Select Payment Method</h3>
+              <h3 className="text-md font-semibold text-yellow-400">
+                💳 Select Payment Method
+              </h3>
               <select
                 value={paymentMethod}
                 onChange={(e) => setPaymentMethod(e.target.value)}
@@ -152,17 +185,23 @@ function PaymentPage({ bookingId, customerId, packageId, totalPrice, onClose }) 
               </select>
             </div>
 
-            {/* Bank Details */}
             <div className="bg-[#2A3A45] p-4 rounded-lg">
-              <h3 className="text-md font-semibold text-yellow-400">🏦 Bank Details</h3>
-              <p className="text-sm text-gray-300"><strong>Bank Name:</strong> Example Bank</p>
-              <p className="text-sm text-gray-300"><strong>Branch:</strong> Main Branch</p>
-              <p className="text-sm text-gray-300"><strong>Account Number:</strong> 1234567890</p>
+              <h3 className="text-md font-semibold text-yellow-400">
+                🏦 Bank Details
+              </h3>
+              <p className="text-sm text-gray-300">
+                <strong>Bank Name:</strong> Example Bank
+              </p>
+              <p className="text-sm text-gray-300">
+                <strong>Branch:</strong> Main Branch
+              </p>
+              <p className="text-sm text-gray-300">
+                <strong>Account Number:</strong> 1234567890
+              </p>
             </div>
           </div>
         </div>
 
-        {/* Buttons */}
         <div className="flex justify-between mt-6">
           <button
             className="bg-gray-600 text-white px-4 py-2 rounded-md hover:bg-gray-700"

@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { login, verifyOTP } from "../Api/AuthAPI.js"; 
 import { useNavigate } from "react-router-dom";
 import logo from "../components/images/logo.png";
+import Swal from "sweetalert2"; 
 
 function LoginPage({ setIsLoggedIn }) {
   const [credentials, setCredentials] = useState({ email: "", password: "" });
@@ -21,11 +22,18 @@ function LoginPage({ setIsLoggedIn }) {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      
       const user = await login(credentials);
       sessionStorage.setItem("user", JSON.stringify(user)); 
       setIsOtpSent(true); 
       setError(""); 
+      
+      
+      Swal.fire({
+        title: 'OTP Sent!',
+        text: 'An OTP has been sent to your email. Please enter it to continue.',
+        icon: 'success',
+        confirmButtonText: 'OK'
+      });
     } catch (err) {
       setError("Invalid email or password");
     }
@@ -34,7 +42,6 @@ function LoginPage({ setIsLoggedIn }) {
   const handleOtpSubmit = async (e) => {
     e.preventDefault();
     try {
-      
       const verificationResponse = await verifyOTP({
         email: credentials.email,
         otp: otp,
@@ -44,6 +51,13 @@ function LoginPage({ setIsLoggedIn }) {
       navigate("/Home"); 
     } catch (err) {
       setError("Invalid OTP");
+      
+      Swal.fire({
+        title: 'Error!',
+        text: 'Invalid OTP. Please try again.',
+        icon: 'error',
+        confirmButtonText: 'OK'
+      });
     }
   };
 
@@ -59,7 +73,6 @@ function LoginPage({ setIsLoggedIn }) {
         {error && <p className="text-red-500 text-center mt-2">{error}</p>}
         
         {!isOtpSent ? (
-          
           <form onSubmit={handleSubmit} className="mt-6">
             <label className="block text-gray-300">Email</label>
             <input
@@ -89,7 +102,6 @@ function LoginPage({ setIsLoggedIn }) {
             </button>
           </form>
         ) : (
-          
           <form onSubmit={handleOtpSubmit} className="mt-6">
             <label className="block text-gray-300">Enter OTP</label>
             <input
@@ -110,6 +122,10 @@ function LoginPage({ setIsLoggedIn }) {
             </button>
           </form>
         )}
+
+        <p className="text-center text-gray-400 mt-4">
+          If you don't have an account, <a href="/signup" className="text-[#E66A4E]">Sign Up</a> now.
+        </p>
       </div>
     </div>
   );
