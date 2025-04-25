@@ -98,11 +98,6 @@ const updateFeedbackById = async (req, res) => {
   }
 
   try {
-<<<<<<< HEAD
-    const imageUrls = [];
-
-    if (req.files && req.files.length > 0) {
-=======
     const existing = await Feedback.findById(id);
     if (!existing) {
       return res.status(404).json({ message: "Feedback not found" });
@@ -111,7 +106,6 @@ const updateFeedbackById = async (req, res) => {
     const imageUrls = existing.images;
     if (req.files && req.files.length > 0) {
       imageUrls.length = 0; // clear old
->>>>>>> pinidu_backup
       for (const file of req.files) {
         const cloudinaryResult = await cloudinary.uploader.upload(file.path, {
           folder: "skw-photography",
@@ -119,18 +113,6 @@ const updateFeedbackById = async (req, res) => {
         });
         imageUrls.push(cloudinaryResult.secure_url);
       }
-<<<<<<< HEAD
-      req.body.images = imageUrls;
-    }
-
-    const updatedFeedback = await Feedback.findByIdAndUpdate(id, req.body, {
-      new: true,
-    });
-
-    if (!updatedFeedback) {
-      return res.status(404).json({ message: "Feedback not found" });
-    }
-=======
     }
 
     const {
@@ -161,7 +143,6 @@ const updateFeedbackById = async (req, res) => {
       },
       { new: true }
     );
->>>>>>> pinidu_backup
 
     res.status(200).json(updatedFeedback);
   } catch (error) {
