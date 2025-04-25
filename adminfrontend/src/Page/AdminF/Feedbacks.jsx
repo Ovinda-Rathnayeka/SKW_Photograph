@@ -56,6 +56,7 @@ function Feedbacks() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const [searchTerm, setSearchTerm] = useState("");
+  const [filterRating, setFilterRating] = useState("");
   const [filterDate, setFilterDate] = useState("");
   const [filterCategory, setFilterCategory] = useState("");
   const [viewModal, setViewModal] = useState(false);
@@ -109,6 +110,8 @@ function Feedbacks() {
         fb.title.toLowerCase().includes(keyword) ||
         fb.comment.toLowerCase().includes(keyword);
 
+      const matchRating = !filterRating || fb.rating === parseInt(filterRating);
+
       const matchDate =
         !filterDate ||
         (fb.createdAt && fb.createdAt.slice(0, 10) === filterDate);
@@ -120,11 +123,24 @@ function Feedbacks() {
         (filterApproval === "approved" && fb.isApproved) ||
         (filterApproval === "pending" && !fb.isApproved);
 
-      return matchSearch && matchDate && matchCategory && matchApproval;
+      return (
+        matchSearch &&
+        matchRating &&
+        matchDate &&
+        matchCategory &&
+        matchApproval
+      );
     });
 
     setFilteredFeedbacks(filtered);
-  }, [searchTerm, feedbacks, filterDate, filterCategory, filterApproval]);
+  }, [
+    searchTerm,
+    feedbacks,
+    filterRating,
+    filterDate,
+    filterCategory,
+    filterApproval,
+  ]);
 
   const handleDelete = async (id) => {
     Swal.fire({
@@ -197,7 +213,7 @@ function Feedbacks() {
   };
 
   return (
-    <div className="max-w-[95rem] mx-auto px-6 py-10">
+    <div className="max-w-7xl mx-auto px-4 py-10">
       <h1 className="text-3xl font-bold mb-6 text-blue-800">All Feedbacks</h1>
 
       <div className="mb-6">
@@ -234,6 +250,19 @@ function Feedbacks() {
           <option value="Service">Service</option>
         </select>
 
+        <select
+          className="px-4 py-2 border border-gray-300 rounded shadow-sm focus:outline-none focus:ring"
+          value={filterRating}
+          onChange={(e) => setFilterRating(e.target.value)}
+        >
+          <option value="">All Ratings</option>
+          {[5, 4, 3, 2, 1].map((r) => (
+            <option key={r} value={r}>
+              {r} ★
+            </option>
+          ))}
+        </select>
+
         <input
           type="date"
           value={filterDate}
@@ -241,9 +270,10 @@ function Feedbacks() {
           className="px-4 py-2 border border-gray-300 rounded shadow-sm focus:outline-none focus:ring"
         />
 
-        {(filterDate || filterCategory || filterApproval) && (
+        {(filterRating || filterDate) && (
           <button
             onClick={() => {
+              setFilterRating("");
               setFilterDate("");
               setFilterCategory("");
               setFilterApproval("");
@@ -256,8 +286,8 @@ function Feedbacks() {
       </div>
 
       {loading ? (
-        <div className="w-full overflow-x-auto md:overflow-x-visible bg-white shadow-lg rounded-xl">
-          <table className="min-w-full table-auto divide-y divide-gray-200">
+        <div className="overflow-x-auto bg-white shadow-lg rounded-xl">
+          <table className="min-w-full divide-y divide-gray-200">
             <thead className="bg-blue-600 text-white">
               <tr>
                 {[...Array(8)].map((_, i) => (
@@ -285,46 +315,36 @@ function Feedbacks() {
             <thead className="bg-blue-600 text-white">
               <tr>
                 <th className="px-6 py-3 text-left text-sm font-semibold">
-                  <center>Customer Email</center>
+                  Customer ID
                 </th>
                 <th className="px-6 py-3 text-left text-sm font-semibold">
-                  <center>Category</center>
+                  Customer Email
                 </th>
                 <th className="px-6 py-3 text-left text-sm font-semibold">
-                  <center>Title</center>
+                  Category
                 </th>
                 <th className="px-6 py-3 text-left text-sm font-semibold">
-                  <center>Comment</center>
+                  Title
                 </th>
                 <th className="px-6 py-3 text-left text-sm font-semibold">
-                  <center>Service</center>
+                  Comment
                 </th>
                 <th className="px-6 py-3 text-left text-sm font-semibold">
-                  <center>
-                    Response<br></br>Time
-                  </center>
+                  Rating
                 </th>
                 <th className="px-6 py-3 text-left text-sm font-semibold">
-                  <center>
-                    Value for<br></br>Money
-                  </center>
+                  Date
                 </th>
                 <th className="px-6 py-3 text-left text-sm font-semibold">
-                  <center>Overall</center>
-                </th>
-                <th className="px-6 py-3 text-left text-sm font-semibold">
-                  <center>Date</center>
-                </th>
-                <th className="px-6 py-3 text-left text-sm font-semibold">
-                  <center>Actions</center>
+                  Actions
                 </th>
               </tr>
             </thead>
-
             <tbody className="divide-y divide-gray-100 text-gray-800">
               {filteredFeedbacks.map((fb) => {
                 const customer = customerMap[fb.customerId];
-                const isSpam = isSpamComment(fb.comment) || isSpamComment(fb.title);
+                const isSpam =
+                  isSpamComment(fb.comment) || isSpamComment(fb.title);
                 return (
                   <tr
                     key={fb._id}
@@ -338,11 +358,12 @@ function Feedbacks() {
                     }
                   >
                     <td className="px-6 py-4 text-sm">
+                      {fb.customerId || "N/A"}
+                    </td>
+                    <td className="px-6 py-4 text-sm">
                       {customer?.email || "N/A"}
                     </td>
-                    <td className="px-6 py-4 text-sm text-center">
-                      {fb.category}
-                    </td>
+                    <td className="px-6 py-4 text-sm">{fb.category}</td>
                     <td className="px-6 py-4 text-sm">{fb.title}</td>
                     <td className="px-6 py-4 text-sm max-w-xs">
                       <p className="truncate">{fb.comment}</p>
@@ -352,24 +373,14 @@ function Feedbacks() {
                         </p>
                       )}
                     </td>
-                    <td className="px-2 py-4 text-sm text-center">
-                      {fb.serviceQuality}
-                    </td>
-                    <td className="px-6 py-4 text-sm text-center">
-                      {fb.responseTime}
-                    </td>
-                    <td className="px-6 py-4 text-sm text-center">
-                      {fb.valueForMoney}
-                    </td>
-                    <td className="px-6 py-4 text-sm text-center">
-                      {fb.overallExperience}
-                    </td>
+
+                    <td className="px-6 py-4 text-sm">{fb.rating} ★</td>
                     <td className="px-6 py-4 text-sm">
                       {fb.createdAt
                         ? new Date(fb.createdAt).toLocaleDateString()
                         : "N/A"}
                     </td>
-                    <td className="px-6 py-4 text-sm space-y-2 ">
+                    <td className="px-6 py-4 text-sm space-y-2">
                       {!fb.isApproved ? (
                         <button
                           onClick={() => handleApprove(fb._id, isSpam)}
@@ -391,6 +402,7 @@ function Feedbacks() {
                       >
                         View
                       </button>
+
                       <button
                         onClick={() => handleDelete(fb._id)}
                         className="bg-red-500 text-white px-4 py-1 rounded hover:bg-red-600 transition w-full"
@@ -406,91 +418,49 @@ function Feedbacks() {
 
           {viewModal && selectedFeedback && (
             <div className="fixed inset-0 bg-black bg-opacity-40 flex items-center justify-center z-50">
-              <div className="bg-white p-8 rounded-lg shadow-2xl w-[90%] max-w-3xl">
-                <h2 className="text-2xl font-bold mb-6 text-blue-800">
-                  Feedback Details
-                </h2>
+              <div className="bg-white p-6 rounded-lg shadow-xl w-[90%] max-w-3xl">
+                <h2 className="text-xl font-bold mb-4">Feedback Details</h2>
+                <p>
+                  <strong>Customer ID:</strong> {selectedFeedback.customerId}
+                </p>
+                <p>
+                  <strong>Title:</strong> {selectedFeedback.title}
+                </p>
+                <p>
+                  <strong>Comment:</strong> {selectedFeedback.comment}
+                </p>
+                <p>
+                  <strong>Category:</strong> {selectedFeedback.category}
+                </p>
+                <p>
+                  <strong>Rating:</strong> {selectedFeedback.rating} ★
+                </p>
+                <p>
+                  <strong>Date:</strong>{" "}
+                  {new Date(selectedFeedback.createdAt).toLocaleDateString()}
+                </p>
 
-                <div className="space-y-3 text-gray-700">
-                  <p>
-                    <strong>Customer ID:</strong> {selectedFeedback.customerId}
-                  </p>
-                  <p>
-                    <strong>Customer Email:</strong>{" "}
-                    {customerMap[selectedFeedback.customerId]?.email || "N/A"}
-                  </p>
-
-                  <p>
-                    <strong>Title:</strong> {selectedFeedback.title}
-                  </p>
-                  <p>
-                    <strong>Comment:</strong> {selectedFeedback.comment}
-                  </p>
-                  <p>
-                    <strong>Category:</strong> {selectedFeedback.category}
-                  </p>
-
-                  <div>
-                    <p className="font-semibold text-gray-800 mb-2">Ratings:</p>
-                    <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                      <div className="bg-gray-100 px-4 py-2 rounded shadow text-center">
-                        <p className="text-sm font-medium">Service Quality</p>
-                        <p className="text-xl font-bold text-blue-700">
-                          {selectedFeedback.serviceQuality} ★
-                        </p>
-                      </div>
-                      <div className="bg-gray-100 px-4 py-2 rounded shadow text-center">
-                        <p className="text-sm font-medium">Response Time</p>
-                        <p className="text-xl font-bold text-blue-700">
-                          {selectedFeedback.responseTime} ★
-                        </p>
-                      </div>
-                      <div className="bg-gray-100 px-4 py-2 rounded shadow text-center">
-                        <p className="text-sm font-medium">Value for Money</p>
-                        <p className="text-xl font-bold text-blue-700">
-                          {selectedFeedback.valueForMoney} ★
-                        </p>
-                      </div>
-                      <div className="bg-gray-100 px-4 py-2 rounded shadow text-center">
-                        <p className="text-sm font-medium">
-                          Overall Experience
-                        </p>
-                        <p className="text-xl font-bold text-blue-700">
-                          {selectedFeedback.overallExperience} ★
-                        </p>
-                      </div>
-                    </div>
+                <div className="mt-4">
+                  <strong>Images:</strong>
+                  <div className="grid grid-cols-2 gap-4 mt-2">
+                    {selectedFeedback.images?.map((img, idx) => (
+                      <img
+                        key={idx}
+                        src={img}
+                        alt={`feedback-${idx}`}
+                        className="w-full h-48 object-cover border rounded"
+                      />
+                    ))}
                   </div>
-
-                  <p>
-                    <strong>Date:</strong>{" "}
-                    {new Date(selectedFeedback.createdAt).toLocaleDateString()}
-                  </p>
-
-                  {selectedFeedback.images?.length > 0 && (
-                    <div className="mt-4">
-                      <p className="font-semibold mb-2">Images:</p>
-                      <div className="grid grid-cols-2 gap-4">
-                        {selectedFeedback.images.map((img, idx) => (
-                          <img
-                            key={idx}
-                            src={img}
-                            alt={`feedback-${idx}`}
-                            className="w-full h-48 object-cover border rounded"
-                          />
-                        ))}
-                      </div>
-                    </div>
-                  )}
                 </div>
 
-                <div className="mt-8 text-right">
+                <div className="mt-6 text-right">
                   <button
                     onClick={() => {
                       setSelectedFeedback(null);
                       setViewModal(false);
                     }}
-                    className="px-6 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded shadow"
+                    className="px-4 py-2 bg-gray-600 text-white rounded hover:bg-gray-800"
                   >
                     Close
                   </button>
