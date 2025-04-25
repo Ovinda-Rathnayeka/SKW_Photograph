@@ -1,20 +1,22 @@
 import axios from "axios";
 
-// Base URL for your backend API
-const API_URL = "http://localhost:5000/feedbacks"; // Replace with your actual backend URL
+const API_URL = "http://localhost:5000/feedbacks"; // Replace if deployed
 
-// Create feedback (POST request)
+// Create feedback
 const createFeedback = async (feedbackData, images) => {
   const formData = new FormData();
   formData.append("category", feedbackData.category);
   formData.append("rating", feedbackData.rating);
   formData.append("title", feedbackData.title);
   formData.append("comment", feedbackData.comment);
-
-  // Append customerId to the FormData
   formData.append("customerId", feedbackData.customerId);
 
-  // Append images to the formData
+  // ✅ Append the 4 new ratings
+  formData.append("serviceQuality", feedbackData.serviceQuality);
+  formData.append("responseTime", feedbackData.responseTime);
+  formData.append("valueForMoney", feedbackData.valueForMoney);
+  formData.append("overallExperience", feedbackData.overallExperience);
+
   if (images && images.length > 0) {
     for (let i = 0; i < images.length; i++) {
       formData.append("images", images[i]);
@@ -24,10 +26,10 @@ const createFeedback = async (feedbackData, images) => {
   try {
     const response = await axios.post(API_URL, formData, {
       headers: {
-        "Content-Type": "multipart/form-data", // Ensures the data is correctly sent
+        "Content-Type": "multipart/form-data",
       },
     });
-    return response.data; // Return the created feedback data
+    return response.data;
   } catch (error) {
     console.error("Error creating feedback:", error);
     throw new Error(
@@ -36,11 +38,11 @@ const createFeedback = async (feedbackData, images) => {
   }
 };
 
-// Get all feedbacks (GET request)
+// Get all feedbacks
 const getAllFeedback = async () => {
   try {
     const response = await axios.get(API_URL);
-    return response.data; // Return all feedbacks
+    return response.data;
   } catch (error) {
     console.error("Error fetching feedbacks:", error);
     throw new Error(
@@ -49,11 +51,11 @@ const getAllFeedback = async () => {
   }
 };
 
-// Get feedback by ID (GET request)
+// Get feedback by ID
 const getFeedbackById = async (feedbackId) => {
   try {
     const response = await axios.get(`${API_URL}/${feedbackId}`);
-    return response.data; // Return feedback data for the specific ID
+    return response.data;
   } catch (error) {
     console.error("Error fetching feedback by ID:", error);
     throw new Error(
@@ -62,18 +64,21 @@ const getFeedbackById = async (feedbackId) => {
   }
 };
 
-// Update feedback by ID (PUT request)
+// Update feedback
 const updateFeedbackById = async (feedbackId, feedbackData, images) => {
   const formData = new FormData();
   formData.append("category", feedbackData.category);
   formData.append("rating", feedbackData.rating);
   formData.append("title", feedbackData.title);
   formData.append("comment", feedbackData.comment);
-
-  // Append customerId to the FormData
   formData.append("customerId", feedbackData.customerId);
 
-  // Append images to the formData
+  // ✅ Append the 4 updated ratings
+  formData.append("serviceQuality", feedbackData.serviceQuality);
+  formData.append("responseTime", feedbackData.responseTime);
+  formData.append("valueForMoney", feedbackData.valueForMoney);
+  formData.append("overallExperience", feedbackData.overallExperience);
+
   if (images && images.length > 0) {
     for (let i = 0; i < images.length; i++) {
       formData.append("images", images[i]);
@@ -83,10 +88,10 @@ const updateFeedbackById = async (feedbackId, feedbackData, images) => {
   try {
     const response = await axios.put(`${API_URL}/${feedbackId}`, formData, {
       headers: {
-        "Content-Type": "multipart/form-data", // Ensures the data is correctly sent
+        "Content-Type": "multipart/form-data",
       },
     });
-    return response.data; // Return the updated feedback data
+    return response.data;
   } catch (error) {
     console.error("Error updating feedback:", error);
     throw new Error(
@@ -95,11 +100,11 @@ const updateFeedbackById = async (feedbackId, feedbackData, images) => {
   }
 };
 
-// Delete feedback by ID (DELETE request)
+// Delete feedback
 const deleteFeedbackById = async (feedbackId) => {
   try {
     const response = await axios.delete(`${API_URL}/${feedbackId}`);
-    return response.data; // Return the success message from deletion
+    return response.data;
   } catch (error) {
     console.error("Error deleting feedback:", error);
     throw new Error(
