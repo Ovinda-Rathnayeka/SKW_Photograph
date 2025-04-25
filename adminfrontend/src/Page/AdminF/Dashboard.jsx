@@ -10,7 +10,6 @@ import {
   Bar,
   XAxis,
   YAxis,
-  Legend,
 } from "recharts";
 
 const isSpamComment = (text) => {
@@ -24,20 +23,26 @@ const isSpamComment = (text) => {
 
   // Detect profanity
   const badWords = [
-    "fuck",
-    "shit",
-    "bitch",
-    "asshole",
-    "bastard",
+    "spam",
+    "scam",
+    "fake",
+    "fraud",
+    "stupid",
+    "idiot",
+    "nonsense",
     "damn",
     "crap",
+    "hell",
+    "shit",
+    "fuck",
+    "bitch",
+    "bastard",
+    "asshole",
+    "retard",
     "dick",
     "piss",
     "slut",
-    "idiot",
-    "stupid",
     "moron",
-    "retard",
     "suck",
     "nigger",
     "whore",
@@ -60,6 +65,7 @@ function Dashboard() {
   const [feedbacks, setFeedbacks] = useState([]);
   const [customers, setCustomers] = useState([]);
   const [loading, setLoading] = useState(true);
+  const approved = feedbacks.filter((fb) => fb.isApproved);
 
   const categories = ["Package", "Purchase", "Rental", "Service"];
 
@@ -84,6 +90,7 @@ function Dashboard() {
   };
 
   const positiveFeedbackPercent = () => {
+<<<<<<< HEAD
     const positiveUserIds = new Set(
       feedbacks
         .filter((fb) => fb.rating >= 3)
@@ -91,6 +98,12 @@ function Dashboard() {
     );
     if (!customers.length) return 0;
     return ((positiveUserIds.size / customers.length) * 100).toFixed(0);
+=======
+    const approved = feedbacks.filter((fb) => fb.isApproved);
+    const positive = approved.filter((fb) => fb.rating >= 4);
+    if (!approved.length) return 0;
+    return ((positive.length / approved.length) * 100).toFixed(0);
+>>>>>>> pinidu_backup
   };
 
   useEffect(() => {
@@ -121,6 +134,7 @@ function Dashboard() {
       <h2 className="text-2xl font-bold mb-6">Dashboard Overview</h2>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-10">
+<<<<<<< HEAD
         {categories.map((cat, i) => (
           <div
             key={cat}
@@ -145,17 +159,35 @@ function Dashboard() {
         </div>
 
         <div className="text-white p-6 rounded-lg shadow-md bg-green-500">
+=======
+        <div className="bg-blue-500 text-white p-6 rounded-lg shadow-md">
+          <h3 className="text-lg font-semibold">Total Feedbacks</h3>
+          <p className="text-3xl font-bold">{feedbacks.length}</p>
+          <span className="text-sm">Overall Count</span>
+        </div>
+
+        <div className="bg-green-600 text-white p-6 rounded-lg shadow-md">
+>>>>>>> pinidu_backup
           <h3 className="text-lg font-semibold">Approved</h3>
           <p className="text-3xl font-bold">
             {feedbacks.filter((fb) => fb.isApproved).length}
           </p>
-          <span className="text-sm">Feedbacks</span>
+          <span className="text-sm">Approved Feedbacks</span>
         </div>
 
-        <div className="text-white p-6 rounded-lg shadow-md bg-red-500">
+        <div className="bg-yellow-500 text-white p-6 rounded-lg shadow-md">
+          <h3 className="text-lg font-semibold">Pending Approval</h3>
+          <p className="text-3xl font-bold">
+            {feedbacks.filter((fb) => !fb.isApproved).length}
+          </p>
+          <span className="text-sm">Not Yet Approved</span>
+        </div>
+
+        <div className="bg-red-500 text-white p-6 rounded-lg shadow-md">
           <h3 className="text-lg font-semibold">Spam Detected</h3>
           <p className="text-3xl font-bold">
             {
+<<<<<<< HEAD
               feedbacks.filter((fb) => {
                 const cleanedTitle = fb.title?.toLowerCase() || "";
                 const cleanedComment = fb.comment?.toLowerCase() || "";
@@ -163,9 +195,14 @@ function Dashboard() {
                   isSpamComment(cleanedTitle) || isSpamComment(cleanedComment)
                 );
               }).length
+=======
+              feedbacks.filter(
+                (fb) => isSpamComment(fb.title) || isSpamComment(fb.comment)
+              ).length
+>>>>>>> pinidu_backup
             }
           </p>
-          <span className="text-sm">Feedbacks</span>
+          <span className="text-sm">Potential Spam</span>
         </div>
       </div>
 
@@ -183,36 +220,16 @@ function Dashboard() {
           />
         </div>
         <p className="text-sm text-gray-600 mt-2">
+<<<<<<< HEAD
           {positiveFeedbackPercent()}% of customers gave 3★ or higher
+=======
+          {positiveFeedbackPercent()}% of approved feedbacks rated 4★ or higher
+>>>>>>> pinidu_backup
         </p>
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-10">
-        <div className="bg-white rounded-lg p-6 shadow-md">
-          <h3 className="text-lg font-bold mb-4">
-            Feedback Category Distribution
-          </h3>
-          <ResponsiveContainer width="100%" height={250}>
-            <PieChart>
-              <Pie
-                data={chartData}
-                dataKey="value"
-                nameKey="name"
-                outerRadius={80}
-                label
-              >
-                {chartData.map((entry, index) => (
-                  <Cell
-                    key={`cell-${index}`}
-                    fill={CHART_COLORS[index % CHART_COLORS.length]}
-                  />
-                ))}
-              </Pie>
-              <Tooltip />
-            </PieChart>
-          </ResponsiveContainer>
-        </div>
-
+        {/* Feedbacks Per Category Chart */}
         <div className="bg-white rounded-lg p-6 shadow-md">
           <h3 className="text-lg font-bold mb-4">Feedbacks Per Category</h3>
           <ResponsiveContainer width="100%" height={250}>
@@ -220,8 +237,91 @@ function Dashboard() {
               <XAxis dataKey="name" />
               <YAxis allowDecimals={false} />
               <Tooltip />
-              <Legend />
               <Bar dataKey="value" fill="#3b82f6" />
+            </BarChart>
+          </ResponsiveContainer>
+        </div>
+
+        {/* Average Rating Percentages Chart */}
+        <div className="bg-white rounded-lg p-6 shadow-md">
+          <h3 className="text-lg font-bold mb-4">Average Rating Percentages</h3>
+          <ResponsiveContainer width="100%" height={250}>
+            <BarChart
+              data={[
+                {
+                  category: "Overall",
+                  percent:
+                    approved.length > 0
+                      ? (
+                          (approved.reduce((a, b) => a + (b.rating || 0), 0) /
+                            (approved.length * 5)) *
+                          100
+                        ).toFixed(1)
+                      : 0,
+                },
+                {
+                  category: "Quality",
+                  percent:
+                    approved.length > 0
+                      ? (
+                          (approved.reduce(
+                            (a, b) => a + (b.serviceQuality || 0),
+                            0
+                          ) /
+                            (approved.length * 5)) *
+                          100
+                        ).toFixed(1)
+                      : 0,
+                },
+                {
+                  category: "Response",
+                  percent:
+                    approved.length > 0
+                      ? (
+                          (approved.reduce(
+                            (a, b) => a + (b.responseTime || 0),
+                            0
+                          ) /
+                            (approved.length * 5)) *
+                          100
+                        ).toFixed(1)
+                      : 0,
+                },
+                {
+                  category: "Value",
+                  percent:
+                    approved.length > 0
+                      ? (
+                          (approved.reduce(
+                            (a, b) => a + (b.valueForMoney || 0),
+                            0
+                          ) /
+                            (approved.length * 5)) *
+                          100
+                        ).toFixed(1)
+                      : 0,
+                },
+                {
+                  category: "Experience",
+                  percent:
+                    approved.length > 0
+                      ? (
+                          (approved.reduce(
+                            (a, b) => a + (b.overallExperience || 0),
+                            0
+                          ) /
+                            (approved.length * 5)) *
+                          100
+                        ).toFixed(1)
+                      : 0,
+                },
+              ]}
+              margin={{ top: 20, right: 30, left: 20, bottom: 5 }}
+            >
+              <XAxis dataKey="category" />
+              <YAxis domain={[0, 100]} tickFormatter={(v) => `${v}%`} />
+              <Tooltip formatter={(v) => `${v}%`} />
+              <Bar dataKey="percent" fill="#6366f1" />
             </BarChart>
           </ResponsiveContainer>
         </div>

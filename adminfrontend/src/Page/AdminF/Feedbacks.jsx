@@ -14,20 +14,26 @@ const isSpamComment = (text) => {
 
   // Detect profanity
   const badWords = [
-    "fuck",
-    "shit",
-    "bitch",
-    "asshole",
-    "bastard",
+    "spam",
+    "scam",
+    "fake",
+    "fraud",
+    "stupid",
+    "idiot",
+    "nonsense",
     "damn",
     "crap",
+    "hell",
+    "shit",
+    "fuck",
+    "bitch",
+    "bastard",
+    "asshole",
+    "retard",
     "dick",
     "piss",
     "slut",
-    "idiot",
-    "stupid",
     "moron",
-    "retard",
     "suck",
     "nigger",
     "whore",
@@ -62,6 +68,7 @@ function Feedbacks() {
   const [viewModal, setViewModal] = useState(false);
   const [selectedFeedback, setSelectedFeedback] = useState(null);
   const [filterApproval, setFilterApproval] = useState("");
+  const [showSpamOnly, setShowSpamOnly] = useState(false);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -180,7 +187,7 @@ function Feedbacks() {
         icon: "warning",
         width: 600,
         padding: "2em",
-        color: "#b91c1c",
+        color: "#000000",
         backdrop: `rgba(210, 105, 105, 0.47)`,
         showCancelButton: true,
         confirmButtonText: "Yes, I'm sure",
@@ -250,6 +257,7 @@ function Feedbacks() {
           <option value="Service">Service</option>
         </select>
 
+<<<<<<< HEAD
         <select
           className="px-4 py-2 border border-gray-300 rounded shadow-sm focus:outline-none focus:ring"
           value={filterRating}
@@ -262,6 +270,30 @@ function Feedbacks() {
             </option>
           ))}
         </select>
+=======
+        <button
+          onClick={() => {
+            if (showSpamOnly) {
+              // Show all feedbacks again
+              setFilteredFeedbacks(feedbacks);
+            } else {
+              // Filter only spam
+              const spam = feedbacks.filter(
+                (fb) => isSpamComment(fb.title) || isSpamComment(fb.comment)
+              );
+              setFilteredFeedbacks(spam);
+            }
+            setShowSpamOnly((prev) => !prev);
+          }}
+          className={`px-4 py-2 rounded shadow-sm transition ${
+            showSpamOnly
+              ? "bg-blue-500 text-white hover:bg-blue-600"
+              : "bg-red-500 text-white hover:bg-red-600"
+          }`}
+        >
+          {showSpamOnly ? "View All Comments" : "Show Spam Comments"}
+        </button>
+>>>>>>> pinidu_backup
 
         <input
           type="date"
@@ -270,19 +302,25 @@ function Feedbacks() {
           className="px-4 py-2 border border-gray-300 rounded shadow-sm focus:outline-none focus:ring"
         />
 
+<<<<<<< HEAD
         {(filterRating || filterDate) && (
+=======
+        {filterDate || filterCategory || filterApproval || showSpamOnly ? (
+>>>>>>> pinidu_backup
           <button
             onClick={() => {
               setFilterRating("");
               setFilterDate("");
               setFilterCategory("");
               setFilterApproval("");
+              setShowSpamOnly(false);
+              setFilteredFeedbacks(feedbacks); // reset feedback list
             }}
             className="px-4 py-2 bg-gray-200 text-gray-700 rounded hover:bg-gray-300"
           >
             Clear Filters
           </button>
-        )}
+        ) : null}
       </div>
 
       {loading ? (
@@ -327,6 +365,7 @@ function Feedbacks() {
                   Title
                 </th>
                 <th className="px-6 py-3 text-left text-sm font-semibold">
+<<<<<<< HEAD
                   Comment
                 </th>
                 <th className="px-6 py-3 text-left text-sm font-semibold">
@@ -337,6 +376,15 @@ function Feedbacks() {
                 </th>
                 <th className="px-6 py-3 text-left text-sm font-semibold">
                   Actions
+=======
+                  <center>Ratings</center>
+                </th>
+                <th className="px-6 py-3 text-left text-sm font-semibold">
+                  <center>Date</center>
+                </th>
+                <th className="px-6 py-3 text-left text-sm font-semibold">
+                  <center>Actions</center>
+>>>>>>> pinidu_backup
                 </th>
               </tr>
             </thead>
@@ -374,7 +422,28 @@ function Feedbacks() {
                       )}
                     </td>
 
+<<<<<<< HEAD
                     <td className="px-6 py-4 text-sm">{fb.rating} ★</td>
+=======
+                    <td className="px-6 py-4 text-sm leading-5">
+                      <div>
+                        <strong>Overall:</strong> {fb.rating}
+                      </div>
+                      <div>
+                        <strong>Service:</strong> {fb.serviceQuality || 0}
+                      </div>
+                      <div>
+                        <strong>Response:</strong> {fb.responseTime || 0}
+                      </div>
+                      <div>
+                        <strong>Value:</strong> {fb.valueForMoney || 0}
+                      </div>
+                      <div>
+                        <strong>Experience:</strong> {fb.overallExperience || 0}{" "}
+                      </div>
+                    </td>
+
+>>>>>>> pinidu_backup
                     <td className="px-6 py-4 text-sm">
                       {fb.createdAt
                         ? new Date(fb.createdAt).toLocaleDateString()
@@ -417,6 +486,7 @@ function Feedbacks() {
           </table>
 
           {viewModal && selectedFeedback && (
+<<<<<<< HEAD
             <div className="fixed inset-0 bg-black bg-opacity-40 flex items-center justify-center z-50">
               <div className="bg-white p-6 rounded-lg shadow-xl w-[90%] max-w-3xl">
                 <h2 className="text-xl font-bold mb-4">Feedback Details</h2>
@@ -455,12 +525,102 @@ function Feedbacks() {
                 </div>
 
                 <div className="mt-6 text-right">
+=======
+            <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+              <div className="bg-white p-8 rounded-xl shadow-2xl w-[90%] max-w-4xl">
+                <h2 className="text-2xl font-bold text-center text-blue-700 mb-6">
+                  Feedback Details
+                </h2>
+
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6 text-sm text-gray-800">
+                  <div>
+                    <p className="mb-2">
+                      <strong>Customer ID:</strong>{" "}
+                      {selectedFeedback.customerId}
+                    </p>
+                    <p className="mb-2">
+                      <strong>Title:</strong> {selectedFeedback.title}
+                    </p>
+                    <p className="mb-2">
+                      <strong>Comment:</strong> {selectedFeedback.comment}
+                    </p>
+                    <p className="mb-2">
+                      <strong>Category:</strong> {selectedFeedback.category}
+                    </p>
+                    <p className="mb-2">
+                      <strong>Status:</strong>{" "}
+                      <span
+                        className={`inline-block px-3 py-1 rounded-full text-xs font-medium ${
+                          selectedFeedback.isApproved
+                            ? "bg-green-100 text-green-800"
+                            : "bg-yellow-100 text-yellow-800"
+                        }`}
+                      >
+                        {selectedFeedback.isApproved ? "Approved" : "Pending"}
+                      </span>
+                    </p>
+                    <p className="mb-2">
+                      <strong>Date:</strong>{" "}
+                      {new Date(
+                        selectedFeedback.createdAt
+                      ).toLocaleDateString()}
+                    </p>
+                  </div>
+
+                  <div className="space-y-2">
+                    <p>
+                      <strong>Overall Rating:</strong>{" "}
+                      {"⭐".repeat(selectedFeedback.rating || 0)}
+                    </p>
+                    <p>
+                      <strong>Service Quality:</strong>{" "}
+                      {"⭐".repeat(selectedFeedback.serviceQuality || 0)}
+                    </p>
+                    <p>
+                      <strong>Response Time:</strong>{" "}
+                      {"⭐".repeat(selectedFeedback.responseTime || 0)}
+                    </p>
+                    <p>
+                      <strong>Value for Money:</strong>{" "}
+                      {"⭐".repeat(selectedFeedback.valueForMoney || 0)}
+                    </p>
+                    <p>
+                      <strong>Overall Experience:</strong>{" "}
+                      {"⭐".repeat(selectedFeedback.overallExperience || 0)}
+                    </p>
+                  </div>
+                </div>
+
+                {selectedFeedback.images?.length > 0 && (
+                  <div className="mt-6">
+                    <strong className="block mb-2 text-gray-800">
+                      Attached Images:
+                    </strong>
+                    <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+                      {selectedFeedback.images.map((img, idx) => (
+                        <img
+                          key={idx}
+                          src={img}
+                          alt={`feedback-${idx}`}
+                          className="w-full h-40 object-cover rounded border shadow"
+                        />
+                      ))}
+                    </div>
+                  </div>
+                )}
+
+                <div className="mt-8 text-right">
+>>>>>>> pinidu_backup
                   <button
                     onClick={() => {
                       setSelectedFeedback(null);
                       setViewModal(false);
                     }}
+<<<<<<< HEAD
                     className="px-4 py-2 bg-gray-600 text-white rounded hover:bg-gray-800"
+=======
+                    className="px-6 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 transition"
+>>>>>>> pinidu_backup
                   >
                     Close
                   </button>
