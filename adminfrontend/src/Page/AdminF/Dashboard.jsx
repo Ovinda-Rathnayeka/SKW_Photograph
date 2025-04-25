@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
-import CountUp from "react-countup";
 import {
   PieChart,
   Pie,
@@ -85,22 +84,13 @@ function Dashboard() {
   };
 
   const positiveFeedbackPercent = () => {
-    if (!feedbacks.length) return 0;
-
-    const positiveCount = feedbacks.filter((fb) => {
-      const ratings = [
-        fb.serviceQuality,
-        fb.responseTime,
-        fb.valueForMoney,
-        fb.overallExperience,
-      ];
-      const avg =
-        ratings.reduce((sum, val) => sum + Number(val || 0), 0) /
-        ratings.length;
-      return avg >= 3;
-    }).length;
-
-    return ((positiveCount / feedbacks.length) * 100).toFixed(0);
+    const positiveUserIds = new Set(
+      feedbacks
+        .filter((fb) => fb.rating >= 3)
+        .map((fb) => fb.customerId?.toString())
+    );
+    if (!customers.length) return 0;
+    return ((positiveUserIds.size / customers.length) * 100).toFixed(0);
   };
 
   useEffect(() => {
@@ -139,100 +129,17 @@ function Dashboard() {
             }`}
           >
             <h3 className="text-lg font-semibold">{cat}</h3>
-            <p className="text-3xl font-bold">
-              <CountUp end={categoryCount(cat)} duration={2} />
-            </p>
+            <p className="text-3xl font-bold">{categoryCount(cat)}</p>
             <span className="text-sm">Feedbacks</span>
           </div>
         ))}
-      </div>
-
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-10">
-        <div className="bg-indigo-500 text-white p-6 rounded-lg shadow-md">
-          <h3 className="text-lg font-semibold">Service Quality</h3>
-          <p className="text-3xl font-bold">
-            <CountUp
-              end={(
-                (feedbacks.reduce(
-                  (sum, fb) => sum + Number(fb.serviceQuality || 0),
-                  0
-                ) /
-                  (feedbacks.length * 5 || 1)) *
-                100
-              ).toFixed(1)}
-              duration={2}
-              decimals={1}
-              suffix="%"
-            />
-          </p>
-        </div>
-
-        <div className="bg-sky-600 text-white p-6 rounded-lg shadow-md">
-          <h3 className="text-lg font-semibold">Response Time</h3>
-          <p className="text-3xl font-bold">
-            <CountUp
-              end={(
-                (feedbacks.reduce(
-                  (sum, fb) => sum + Number(fb.responseTime || 0),
-                  0
-                ) /
-                  (feedbacks.length * 5 || 1)) *
-                100
-              ).toFixed(1)}
-              duration={2}
-              decimals={1}
-              suffix="%"
-            />
-          </p>
-        </div>
-
-        <div className="bg-emerald-600 text-white p-6 rounded-lg shadow-md">
-          <h3 className="text-lg font-semibold">Value for Money</h3>
-          <p className="text-3xl font-bold">
-            <CountUp
-              end={(
-                (feedbacks.reduce(
-                  (sum, fb) => sum + Number(fb.valueForMoney || 0),
-                  0
-                ) /
-                  (feedbacks.length * 5 || 1)) *
-                100
-              ).toFixed(1)}
-              duration={2}
-              decimals={1}
-              suffix="%"
-            />
-          </p>
-        </div>
-
-        <div className="bg-rose-600 text-white p-6 rounded-lg shadow-md">
-          <h3 className="text-lg font-semibold">Overall Experience</h3>
-          <p className="text-3xl font-bold">
-            <CountUp
-              end={(
-                (feedbacks.reduce(
-                  (sum, fb) => sum + Number(fb.overallExperience || 0),
-                  0
-                ) /
-                  (feedbacks.length * 5 || 1)) *
-                100
-              ).toFixed(1)}
-              duration={2}
-              decimals={1}
-              suffix="%"
-            />
-          </p>
-        </div>
       </div>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mb-10">
         <div className="text-white p-6 rounded-lg shadow-md bg-orange-500">
           <h3 className="text-lg font-semibold">Pending Approval</h3>
           <p className="text-3xl font-bold">
-            <CountUp
-              end={feedbacks.filter((fb) => !fb.isApproved).length}
-              duration={2}
-            />
+            {feedbacks.filter((fb) => !fb.isApproved).length}
           </p>
           <span className="text-sm">Feedbacks</span>
         </div>
@@ -240,10 +147,7 @@ function Dashboard() {
         <div className="text-white p-6 rounded-lg shadow-md bg-green-500">
           <h3 className="text-lg font-semibold">Approved</h3>
           <p className="text-3xl font-bold">
-            <CountUp
-              end={feedbacks.filter((fb) => fb.isApproved).length}
-              duration={2}
-            />
+            {feedbacks.filter((fb) => fb.isApproved).length}
           </p>
           <span className="text-sm">Feedbacks</span>
         </div>
@@ -251,18 +155,15 @@ function Dashboard() {
         <div className="text-white p-6 rounded-lg shadow-md bg-red-500">
           <h3 className="text-lg font-semibold">Spam Detected</h3>
           <p className="text-3xl font-bold">
-            <CountUp
-              end={
-                feedbacks.filter((fb) => {
-                  const cleanedTitle = fb.title?.toLowerCase() || "";
-                  const cleanedComment = fb.comment?.toLowerCase() || "";
-                  return (
-                    isSpamComment(cleanedTitle) || isSpamComment(cleanedComment)
-                  );
-                }).length
-              }
-              duration={2}
-            />
+            {
+              feedbacks.filter((fb) => {
+                const cleanedTitle = fb.title?.toLowerCase() || "";
+                const cleanedComment = fb.comment?.toLowerCase() || "";
+                return (
+                  isSpamComment(cleanedTitle) || isSpamComment(cleanedComment)
+                );
+              }).length
+            }
           </p>
           <span className="text-sm">Feedbacks</span>
         </div>
@@ -282,8 +183,7 @@ function Dashboard() {
           />
         </div>
         <p className="text-sm text-gray-600 mt-2">
-          {positiveFeedbackPercent()}% of feedbacks have an average rating of 3★
-          or higher
+          {positiveFeedbackPercent()}% of customers gave 3★ or higher
         </p>
       </div>
 

@@ -52,38 +52,22 @@ function FeedbackList() {
       else if (value.length > 100)
         error = "Comment cannot exceed 100 characters.";
     }
-    if (
-      [
-        "serviceQuality",
-        "responseTime",
-        "valueForMoney",
-        "overallExperience",
-      ].includes(field)
-    ) {
-      if (!/^[1-5]$/.test(value)) error = "Rating must be between 1 and 5.";
+    if (field === "rating") {
+      if (!/^[1-5]$/.test(value))
+        error = "Rating must be a whole number between 1 and 5.";
     }
     setFormErrors((prev) => ({ ...prev, [field]: error }));
   };
 
   const validateForm = () => {
-    const {
-      title,
-      comment,
-      serviceQuality,
-      responseTime,
-      valueForMoney,
-      overallExperience,
-    } = feedbackToUpdate;
-
-    const titleValid = title?.trim() && /^[a-zA-Z0-9 ]+$/.test(title);
-    const commentValid = comment?.trim() && comment.length <= 100;
-    const ratingsValid =
-      /^[1-5]$/.test(serviceQuality) &&
-      /^[1-5]$/.test(responseTime) &&
-      /^[1-5]$/.test(valueForMoney) &&
-      /^[1-5]$/.test(overallExperience);
-
-    return titleValid && commentValid && ratingsValid;
+    const { title, comment, rating } = feedbackToUpdate;
+    return (
+      title.trim() &&
+      /^[a-zA-Z0-9 ]+$/.test(title) &&
+      comment.trim() &&
+      comment.length <= 100 &&
+      /^[1-5]$/.test(rating)
+    );
   };
 
   const handleInputChange = (field, value) => {
@@ -131,21 +115,21 @@ function FeedbackList() {
   const handleUpdateFeedback = async () => {
     if (!validateForm()) return;
     try {
-      feedbackToUpdate.isApproved = false; // Force re-approval on update
       await feedbackAPI.updateFeedbackById(
         feedbackToUpdate._id,
         feedbackToUpdate
       );
       setFeedbacks((prev) =>
-        prev.filter((f) => f._id !== feedbackToUpdate._id)
+        prev.map((f) =>
+          f._id === feedbackToUpdate._id ? { ...f, ...feedbackToUpdate } : f
+        )
       );
-
       Swal.fire({
         position: "center",
         icon: "success",
-        title: "Your Feedback will be updated after admin approval.",
+        title: "Your Feedback has been updated",
         showConfirmButton: false,
-        timer: 2000,
+        timer: 1500,
       });
       setShowModal(false);
     } catch {
@@ -166,89 +150,60 @@ function FeedbackList() {
     <div id={title.toLowerCase()} className="mb-12">
       <h2 className="text-white text-2xl font-bold mb-4">{title}</h2>
       {items.length > 0 ? (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {items.map((feedback) => (
             <div
               key={feedback._id}
-              className="relative bg-white/80 backdrop-blur-lg border border-transparent rounded-2xl p-6 shadow-md transition-all duration-300 hover:shadow-2xl hover:scale-[1.025] hover:border-blue-400 h-full"
+              className="relative bg-white/80 backdrop-blur-lg border border-transparent rounded-2xl p-6 shadow-md transition-all duration-300 hover:shadow-2xl hover:scale-[1.025] hover:border-blue-400"
             >
-              <div className="flex flex-col justify-between h-full">
-                <div>
-                  <h2 className="text-2xl font-bold text-gray-800 mb-3">
-                    {feedback.title}
-                  </h2>
-
-                  <div className="grid grid-cols-2 gap-2 text-sm text-gray-700 mb-3">
-                    <p>
-                      <strong>Service Quality:</strong> <br />
-                      <span className="text-yellow-500 text-2xl">
-                        {"★".repeat(feedback.serviceQuality || 0)}
-                      </span>
-                    </p>
-                    <p>
-                      <strong>Response Time:</strong> <br />
-                      <span className="text-yellow-500 text-2xl">
-                        {"★".repeat(feedback.responseTime || 0)}
-                      </span>
-                    </p>
-                    <p>
-                      <strong>Value for Money:</strong> <br />
-                      <span className="text-yellow-500 text-2xl">
-                        {"★".repeat(feedback.valueForMoney || 0)}
-                      </span>
-                    </p>
-                    <p>
-                      <strong>Overall:</strong> <br />
-                      <span className="text-yellow-500 text-2xl">
-                        {"★".repeat(feedback.overallExperience || 0)}
-                      </span>
-                    </p>
-                  </div>
-
-                  <p className="text-md font-medium text-blue-600 mb-1">
-                    {feedback.category}
-                  </p>
-                  <p className="text-gray-700 mb-4">{feedback.comment}</p>
-
-                  <div className="flex flex-wrap gap-4 mb-4">
-                    {feedback.images && feedback.images.length > 0 ? (
-                      feedback.images.map((image, index) => (
-                        <div
-                          key={index}
-                          className="w-28 h-28 bg-gray-200 rounded-lg overflow-hidden border border-gray-300"
-                        >
-                          <img
-                            src={image}
-                            alt={`feedback-img-${index}`}
-                            className="object-cover w-full h-full"
-                          />
-                        </div>
-                      ))
-                    ) : (
-                      <p className="text-black-400 text-sm">
-                        No images available
-                      </p>
-                    )}
-                  </div>
-                </div>
-
-                {userId && feedback.customerId === userId && (
-                  <div className="flex justify-center gap-10 mt-4">
-                    <button
-                      onClick={() => handleOpenModal(feedback)}
-                      className="bg-yellow-400 text-white px-4 py-2 rounded-lg font-semibold hover:bg-yellow-500 transition"
+              <div className="absolute inset-0 rounded-2xl border border-white/20 shadow-inner pointer-events-none"></div>
+              <h2 className="text-2xl font-bold text-gray-800 mb-3">
+                {feedback.title}
+              </h2>
+              <div className="flex items-center mb-3">
+                <span className="text-yellow-500 text-lg">
+                  {"★".repeat(feedback.rating)}{" "}
+                  {"☆".repeat(5 - feedback.rating)}
+                </span>
+              </div>
+              <p className="text-md font-medium text-blue-600 mb-1">
+                {feedback.category}
+              </p>
+              <p className="text-gray-700 mb-4">{feedback.comment}</p>
+              <div className="flex flex-wrap gap-4 mb-4">
+                {feedback.images && feedback.images.length > 0 ? (
+                  feedback.images.map((image, index) => (
+                    <div
+                      key={index}
+                      className="w-28 h-28 bg-gray-200 rounded-lg overflow-hidden border border-gray-300"
                     >
-                      Update
-                    </button>
-                    <button
-                      onClick={() => handleDelete(feedback._id)}
-                      className="bg-red-500 text-white px-4 py-2 rounded-lg font-semibold hover:bg-red-600 transition"
-                    >
-                      Delete
-                    </button>
-                  </div>
+                      <img
+                        src={image}
+                        alt={`feedback-img-${index}`}
+                        className="object-cover w-full h-full"
+                      />
+                    </div>
+                  ))
+                ) : (
+                  <p className="text-black-400 text-sm">No images available</p>
                 )}
               </div>
+              {userId && feedback.customerId === userId && (
+                <div className="flex justify-center gap-10 pt-2">
+                  <button
+                    onClick={() => handleOpenModal(feedback)}
+                    className="bg-yellow-400 text-white px-4 py-2 rounded-lg font-semibold hover:bg-yellow-500 transition"
+                  >
+                    Update
+                  </button>
+                  <button
+                    onClick={() => handleDelete(feedback._id)}
+                    className="bg-red-500 text-white px-4 py-2 rounded-lg font-semibold hover:bg-red-600 transition"
+                  >
+                    Delete
+                  </button>
+                </div>
+              )}
             </div>
           ))}
         </div>
@@ -262,7 +217,8 @@ function FeedbackList() {
     return (
       <div className="text-center p-6 text-white">Loading feedbacks...</div>
     );
-  if (error) return <div className="text-center p-6 text-red-600">{error}</div>;
+  if (error)
+    return <div className="text-center p-6 text-red-600">{error}</div>;
 
   return (
     <div
@@ -271,7 +227,7 @@ function FeedbackList() {
         backgroundImage: `url(${dot})`,
       }}
     >
-      <div className="max-w-screen-xl mx-auto px-4 py-6">
+      <div className="max-w-7xl mx-auto p-6">
         <h1 className="text-3xl font-semibold mb-6 text-white">All Feedback</h1>
 
         {userId && (
@@ -328,7 +284,9 @@ function FeedbackList() {
                   <input
                     type="text"
                     value={feedbackToUpdate.title}
-                    onChange={(e) => handleInputChange("title", e.target.value)}
+                    onChange={(e) =>
+                      handleInputChange("title", e.target.value)
+                    }
                     className="w-full p-2 border border-gray-300 rounded-md"
                   />
                   {formErrors.title && (
@@ -346,40 +304,31 @@ function FeedbackList() {
                     className="w-full p-2 border border-gray-300 rounded-md"
                   />
                   {formErrors.comment && (
-                    <p className="text-red-500 text-sm">{formErrors.comment}</p>
+                    <p className="text-red-500 text-sm">
+                      {formErrors.comment}
+                    </p>
                   )}
                 </div>
 
-                {/* ⭐ New Rating Inputs */}
-                {[
-                  { label: "Service Quality", field: "serviceQuality" },
-                  { label: "Response Time", field: "responseTime" },
-                  { label: "Value for Money", field: "valueForMoney" },
-                  { label: "Overall Experience", field: "overallExperience" },
-                ].map(({ label, field }) => (
-                  <div className="mb-4" key={field}>
-                    <label className="block mb-2">{label}</label>
-                    <select
-                      value={feedbackToUpdate[field]}
-                      onChange={(e) => handleInputChange(field, e.target.value)}
-                      className="w-full p-2 border border-gray-300 rounded-md"
-                    >
-                      <option value="">Select rating</option>
-                      {[1, 2, 3, 4, 5].map((value) => (
-                        <option key={value} value={value}>
-                          {value} ★
-                        </option>
-                      ))}
-                    </select>
-                    {formErrors[field] && (
-                      <p className="text-red-500 text-sm">
-                        {formErrors[field]}
-                      </p>
-                    )}
-                  </div>
-                ))}
+                <div className="mb-6">
+                  <label className="block mb-2">Rating</label>
+                  <input
+                    type="number"
+                    value={feedbackToUpdate.rating}
+                    min="1"
+                    max="5"
+                    step="1"
+                    onChange={(e) =>
+                      handleInputChange("rating", e.target.value)
+                    }
+                    className="w-full p-2 border border-gray-300 rounded-md"
+                  />
+                  {formErrors.rating && (
+                    <p className="text-red-500 text-sm">{formErrors.rating}</p>
+                  )}
+                </div>
 
-                <div className="flex justify-center gap-4 mt-6">
+                <div className="flex justify-center gap-4">
                   <button
                     type="submit"
                     disabled={!validateForm()}

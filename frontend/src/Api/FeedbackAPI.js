@@ -7,17 +7,14 @@ const API_URL = "http://localhost:5000/feedbacks"; // Replace with your actual b
 const createFeedback = async (feedbackData, images) => {
   const formData = new FormData();
   formData.append("category", feedbackData.category);
+  formData.append("rating", feedbackData.rating);
   formData.append("title", feedbackData.title);
   formData.append("comment", feedbackData.comment);
+
+  // Append customerId to the FormData
   formData.append("customerId", feedbackData.customerId);
 
-  // ✅ Add the four required numeric fields
-  formData.append("serviceQuality", feedbackData.serviceQuality);
-  formData.append("responseTime", feedbackData.responseTime);
-  formData.append("valueForMoney", feedbackData.valueForMoney);
-  formData.append("overallExperience", feedbackData.overallExperience);
-
-  // ✅ Append images if any
+  // Append images to the formData
   if (images && images.length > 0) {
     for (let i = 0; i < images.length; i++) {
       formData.append("images", images[i]);
@@ -27,10 +24,10 @@ const createFeedback = async (feedbackData, images) => {
   try {
     const response = await axios.post(API_URL, formData, {
       headers: {
-        "Content-Type": "multipart/form-data",
+        "Content-Type": "multipart/form-data", // Ensures the data is correctly sent
       },
     });
-    return response.data;
+    return response.data; // Return the created feedback data
   } catch (error) {
     console.error("Error creating feedback:", error);
     throw new Error(
@@ -69,16 +66,14 @@ const getFeedbackById = async (feedbackId) => {
 const updateFeedbackById = async (feedbackId, feedbackData, images) => {
   const formData = new FormData();
   formData.append("category", feedbackData.category);
+  formData.append("rating", feedbackData.rating);
   formData.append("title", feedbackData.title);
   formData.append("comment", feedbackData.comment);
+
+  // Append customerId to the FormData
   formData.append("customerId", feedbackData.customerId);
 
-  // ✅ Append all 4 new rating fields
-  formData.append("serviceQuality", feedbackData.serviceQuality);
-  formData.append("responseTime", feedbackData.responseTime);
-  formData.append("valueForMoney", feedbackData.valueForMoney);
-  formData.append("overallExperience", feedbackData.overallExperience);
-
+  // Append images to the formData
   if (images && images.length > 0) {
     for (let i = 0; i < images.length; i++) {
       formData.append("images", images[i]);
@@ -88,10 +83,10 @@ const updateFeedbackById = async (feedbackId, feedbackData, images) => {
   try {
     const response = await axios.put(`${API_URL}/${feedbackId}`, formData, {
       headers: {
-        "Content-Type": "multipart/form-data",
+        "Content-Type": "multipart/form-data", // Ensures the data is correctly sent
       },
     });
-    return response.data;
+    return response.data; // Return the updated feedback data
   } catch (error) {
     console.error("Error updating feedback:", error);
     throw new Error(

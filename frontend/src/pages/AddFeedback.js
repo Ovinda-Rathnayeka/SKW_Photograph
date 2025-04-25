@@ -9,14 +9,13 @@ function AddFeedback() {
   const history = useNavigate();
   const [feedbackData, setFeedbackData] = useState({
     category: "",
+    rating: 1,
     title: "",
     comment: "",
-    serviceQuality: 0,
-    responseTime: 0,
-    valueForMoney: 0,
-    overallExperience: 0,
+    responseTime: 1,
+    workQuality: 1,
+    satisfaction: 1,
   });
-  
   const [images, setImages] = useState([]);
   const [customerEmail, setCustomerEmail] = useState("");
   const [customerId, setCustomerId] = useState("");
@@ -39,11 +38,11 @@ function AddFeedback() {
 
   const validate = (name, value) => {
     let errors = { ...validationErrors };
-  
+
     if (name === "category") {
       errors.category = value.trim() === "" ? "Category is required." : "";
     }
-  
+
     if (name === "title") {
       if (value.trim() === "") {
         errors.title = "Title is required.";
@@ -53,19 +52,20 @@ function AddFeedback() {
         errors.title = "";
       }
     }
-  
+
     if (name === "comment") {
       const plainText = value.replace(/[^a-zA-Z]/g, "");
       errors.comment =
         plainText.length > 100 ? "Comment must not exceed 100 letters." : "";
     }
-  
-    if (
-      ["serviceQuality", "responseTime", "valueForMoney", "overallExperience"].includes(name)
-    ) {
-      errors[name] = value === "0" || value === 0 ? "Please select a value." : "";
+
+    if (name === "rating") {
+      const valid = /^[1-5]$/.test(value);
+      errors.rating = valid
+        ? ""
+        : "Rating must be a whole number between 1 and 5.";
     }
-  
+
     setValidationErrors(errors);
   };
 
@@ -92,17 +92,15 @@ function AddFeedback() {
 
   const isFormValid = () => {
     const letterCount = feedbackData.comment.replace(/[^a-zA-Z]/g, "").length;
-  
-    const allRatingsSelected = ["serviceQuality", "responseTime", "valueForMoney", "overallExperience"].every(
-      (key) => Number(feedbackData[key]) > 0
-    );
-  
+
     return (
       feedbackData.category &&
       feedbackData.title &&
+      /^[1-5]$/.test(feedbackData.rating) &&
       letterCount > 0 &&
       letterCount <= 100 &&
-      allRatingsSelected &&
+      (validationErrors.images === undefined ||
+        validationErrors.images === "") &&
       Object.values(validationErrors).every((err) => err === "")
     );
   };
@@ -119,19 +117,10 @@ function AddFeedback() {
       }
 
       const feedbackWithCustomer = {
+        ...feedbackData,
         customerEmail,
         customerId,
-        category: feedbackData.category,
-        title: feedbackData.title,
-        comment: feedbackData.comment,
-        serviceQuality: Number(feedbackData.serviceQuality),
-        responseTime: Number(feedbackData.responseTime),
-        valueForMoney: Number(feedbackData.valueForMoney),
-        overallExperience: Number(feedbackData.overallExperience),
-        images: images.length > 0 ? images : [],
       };
-      
-      
 
       await feedbackAPI.createFeedback(feedbackWithCustomer, images);
 
@@ -143,16 +132,7 @@ function AddFeedback() {
         timer: 1500,
       });
 
-      setFeedbackData({
-        category: "",
-        title: "",
-        comment: "",
-        serviceQuality: 0,
-        responseTime: 0,
-        valueForMoney: 0,
-        overallExperience: 0,
-      });
-      
+      setFeedbackData({ category: "", rating: 1, title: "", comment: "" });
       setImages([]);
       history("/feedbacks");
     } catch (err) {
@@ -243,31 +223,22 @@ function AddFeedback() {
             )}
           </div>
 
-          {[
-  { key: "serviceQuality", label: "Service Quality" },
-  { key: "responseTime", label: "Response Time" },
-  { key: "valueForMoney", label: "Value for Money" },
-  { key: "overallExperience", label: "Overall Experience" },
-].map(({ key, label }) => (
-  <div key={key} className="mb-4">
-    <label className="block mb-2">{label}</label>
-    <select
-      name={key}
-      value={feedbackData[key]}
-      onChange={handleChange}
-      className="w-full p-2 border border-gray-300 rounded-md focus:outline-none focus:border-gray-300"
-      required
-    >
-      <option value={0} disabled>Select value</option>
-      {[1, 2, 3, 4, 5].map((val) => (
-        <option key={val} value={val}>{val}</option>
-      ))}
-    </select>
-    {validationErrors[key] && (
-      <p className="text-red-500 text-sm mt-1">{validationErrors[key]}</p>
-    )}
-  </div>
-))}
+          <div className="mb-4">
+            <label className="block mb-2">Rating</label>
+            <input
+              type="number"
+              name="rating"
+              value={feedbackData.rating}
+              onChange={handleChange}
+              min="1"
+              max="5"
+              className="w-full p-2 border border-gray-300 rounded-md focus:outline-none focus:border-gray-300"
+              required
+            />
+            {validationErrors.rating && (
+              <p className="text-red-500 text-sm">{validationErrors.rating}</p>
+            )}
+          </div>
 
           <div className="mb-4">
             <label className="block mb-2">Upload Images</label>
