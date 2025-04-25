@@ -62,7 +62,6 @@ function Feedbacks() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const [searchTerm, setSearchTerm] = useState("");
-  const [filterRating, setFilterRating] = useState("");
   const [filterDate, setFilterDate] = useState("");
   const [filterCategory, setFilterCategory] = useState("");
   const [viewModal, setViewModal] = useState(false);
@@ -117,8 +116,6 @@ function Feedbacks() {
         fb.title.toLowerCase().includes(keyword) ||
         fb.comment.toLowerCase().includes(keyword);
 
-      const matchRating = !filterRating || fb.rating === parseInt(filterRating);
-
       const matchDate =
         !filterDate ||
         (fb.createdAt && fb.createdAt.slice(0, 10) === filterDate);
@@ -130,24 +127,11 @@ function Feedbacks() {
         (filterApproval === "approved" && fb.isApproved) ||
         (filterApproval === "pending" && !fb.isApproved);
 
-      return (
-        matchSearch &&
-        matchRating &&
-        matchDate &&
-        matchCategory &&
-        matchApproval
-      );
+      return matchSearch && matchDate && matchCategory && matchApproval;
     });
 
     setFilteredFeedbacks(filtered);
-  }, [
-    searchTerm,
-    feedbacks,
-    filterRating,
-    filterDate,
-    filterCategory,
-    filterApproval,
-  ]);
+  }, [searchTerm, feedbacks, filterDate, filterCategory, filterApproval]);
 
   const handleDelete = async (id) => {
     Swal.fire({
@@ -257,20 +241,6 @@ function Feedbacks() {
           <option value="Service">Service</option>
         </select>
 
-<<<<<<< HEAD
-        <select
-          className="px-4 py-2 border border-gray-300 rounded shadow-sm focus:outline-none focus:ring"
-          value={filterRating}
-          onChange={(e) => setFilterRating(e.target.value)}
-        >
-          <option value="">All Ratings</option>
-          {[5, 4, 3, 2, 1].map((r) => (
-            <option key={r} value={r}>
-              {r} ★
-            </option>
-          ))}
-        </select>
-=======
         <button
           onClick={() => {
             if (showSpamOnly) {
@@ -293,7 +263,6 @@ function Feedbacks() {
         >
           {showSpamOnly ? "View All Comments" : "Show Spam Comments"}
         </button>
->>>>>>> pinidu_backup
 
         <input
           type="date"
@@ -302,14 +271,9 @@ function Feedbacks() {
           className="px-4 py-2 border border-gray-300 rounded shadow-sm focus:outline-none focus:ring"
         />
 
-<<<<<<< HEAD
-        {(filterRating || filterDate) && (
-=======
         {filterDate || filterCategory || filterApproval || showSpamOnly ? (
->>>>>>> pinidu_backup
           <button
             onClick={() => {
-              setFilterRating("");
               setFilterDate("");
               setFilterCategory("");
               setFilterApproval("");
@@ -353,30 +317,18 @@ function Feedbacks() {
             <thead className="bg-blue-600 text-white">
               <tr>
                 <th className="px-6 py-3 text-left text-sm font-semibold">
-                  Customer ID
+                  <center>Customer Email</center>
                 </th>
                 <th className="px-6 py-3 text-left text-sm font-semibold">
-                  Customer Email
+                  <center>Category</center>
                 </th>
                 <th className="px-6 py-3 text-left text-sm font-semibold">
-                  Category
+                  <center>Title</center>
                 </th>
                 <th className="px-6 py-3 text-left text-sm font-semibold">
-                  Title
+                  <center>Comment</center>
                 </th>
                 <th className="px-6 py-3 text-left text-sm font-semibold">
-<<<<<<< HEAD
-                  Comment
-                </th>
-                <th className="px-6 py-3 text-left text-sm font-semibold">
-                  Rating
-                </th>
-                <th className="px-6 py-3 text-left text-sm font-semibold">
-                  Date
-                </th>
-                <th className="px-6 py-3 text-left text-sm font-semibold">
-                  Actions
-=======
                   <center>Ratings</center>
                 </th>
                 <th className="px-6 py-3 text-left text-sm font-semibold">
@@ -384,7 +336,6 @@ function Feedbacks() {
                 </th>
                 <th className="px-6 py-3 text-left text-sm font-semibold">
                   <center>Actions</center>
->>>>>>> pinidu_backup
                 </th>
               </tr>
             </thead>
@@ -406,9 +357,6 @@ function Feedbacks() {
                     }
                   >
                     <td className="px-6 py-4 text-sm">
-                      {fb.customerId || "N/A"}
-                    </td>
-                    <td className="px-6 py-4 text-sm">
                       {customer?.email || "N/A"}
                     </td>
                     <td className="px-6 py-4 text-sm">{fb.category}</td>
@@ -422,9 +370,6 @@ function Feedbacks() {
                       )}
                     </td>
 
-<<<<<<< HEAD
-                    <td className="px-6 py-4 text-sm">{fb.rating} ★</td>
-=======
                     <td className="px-6 py-4 text-sm leading-5">
                       <div>
                         <strong>Overall:</strong> {fb.rating}
@@ -443,7 +388,6 @@ function Feedbacks() {
                       </div>
                     </td>
 
->>>>>>> pinidu_backup
                     <td className="px-6 py-4 text-sm">
                       {fb.createdAt
                         ? new Date(fb.createdAt).toLocaleDateString()
@@ -486,46 +430,6 @@ function Feedbacks() {
           </table>
 
           {viewModal && selectedFeedback && (
-<<<<<<< HEAD
-            <div className="fixed inset-0 bg-black bg-opacity-40 flex items-center justify-center z-50">
-              <div className="bg-white p-6 rounded-lg shadow-xl w-[90%] max-w-3xl">
-                <h2 className="text-xl font-bold mb-4">Feedback Details</h2>
-                <p>
-                  <strong>Customer ID:</strong> {selectedFeedback.customerId}
-                </p>
-                <p>
-                  <strong>Title:</strong> {selectedFeedback.title}
-                </p>
-                <p>
-                  <strong>Comment:</strong> {selectedFeedback.comment}
-                </p>
-                <p>
-                  <strong>Category:</strong> {selectedFeedback.category}
-                </p>
-                <p>
-                  <strong>Rating:</strong> {selectedFeedback.rating} ★
-                </p>
-                <p>
-                  <strong>Date:</strong>{" "}
-                  {new Date(selectedFeedback.createdAt).toLocaleDateString()}
-                </p>
-
-                <div className="mt-4">
-                  <strong>Images:</strong>
-                  <div className="grid grid-cols-2 gap-4 mt-2">
-                    {selectedFeedback.images?.map((img, idx) => (
-                      <img
-                        key={idx}
-                        src={img}
-                        alt={`feedback-${idx}`}
-                        className="w-full h-48 object-cover border rounded"
-                      />
-                    ))}
-                  </div>
-                </div>
-
-                <div className="mt-6 text-right">
-=======
             <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
               <div className="bg-white p-8 rounded-xl shadow-2xl w-[90%] max-w-4xl">
                 <h2 className="text-2xl font-bold text-center text-blue-700 mb-6">
@@ -610,17 +514,12 @@ function Feedbacks() {
                 )}
 
                 <div className="mt-8 text-right">
->>>>>>> pinidu_backup
                   <button
                     onClick={() => {
                       setSelectedFeedback(null);
                       setViewModal(false);
                     }}
-<<<<<<< HEAD
-                    className="px-4 py-2 bg-gray-600 text-white rounded hover:bg-gray-800"
-=======
                     className="px-6 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 transition"
->>>>>>> pinidu_backup
                   >
                     Close
                   </button>
