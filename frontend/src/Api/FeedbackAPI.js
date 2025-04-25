@@ -9,20 +9,14 @@ const createFeedback = async (feedbackData, images) => {
   formData.append("rating", feedbackData.rating);
   formData.append("title", feedbackData.title);
   formData.append("comment", feedbackData.comment);
-
-  // Append customerId to the FormData
   formData.append("customerId", feedbackData.customerId);
 
-<<<<<<< HEAD
-  // Append images to the formData
-=======
   // ✅ Append the 4 new ratings
   formData.append("serviceQuality", feedbackData.serviceQuality);
   formData.append("responseTime", feedbackData.responseTime);
   formData.append("valueForMoney", feedbackData.valueForMoney);
   formData.append("overallExperience", feedbackData.overallExperience);
 
->>>>>>> pinidu_backup
   if (images && images.length > 0) {
     for (let i = 0; i < images.length; i++) {
       formData.append("images", images[i]);
@@ -32,10 +26,10 @@ const createFeedback = async (feedbackData, images) => {
   try {
     const response = await axios.post(API_URL, formData, {
       headers: {
-        "Content-Type": "multipart/form-data", // Ensures the data is correctly sent
+        "Content-Type": "multipart/form-data",
       },
     });
-    return response.data; // Return the created feedback data
+    return response.data;
   } catch (error) {
     console.error("Error creating feedback:", error);
     throw new Error(
@@ -77,20 +71,14 @@ const updateFeedbackById = async (feedbackId, feedbackData, images) => {
   formData.append("rating", feedbackData.rating);
   formData.append("title", feedbackData.title);
   formData.append("comment", feedbackData.comment);
-
-  // Append customerId to the FormData
   formData.append("customerId", feedbackData.customerId);
 
-<<<<<<< HEAD
-  // Append images to the formData
-=======
   // ✅ Append the 4 updated ratings
   formData.append("serviceQuality", feedbackData.serviceQuality);
   formData.append("responseTime", feedbackData.responseTime);
   formData.append("valueForMoney", feedbackData.valueForMoney);
   formData.append("overallExperience", feedbackData.overallExperience);
 
->>>>>>> pinidu_backup
   if (images && images.length > 0) {
     for (let i = 0; i < images.length; i++) {
       formData.append("images", images[i]);
@@ -100,10 +88,10 @@ const updateFeedbackById = async (feedbackId, feedbackData, images) => {
   try {
     const response = await axios.put(`${API_URL}/${feedbackId}`, formData, {
       headers: {
-        "Content-Type": "multipart/form-data", // Ensures the data is correctly sent
+        "Content-Type": "multipart/form-data",
       },
     });
-    return response.data; // Return the updated feedback data
+    return response.data;
   } catch (error) {
     console.error("Error updating feedback:", error);
     throw new Error(
