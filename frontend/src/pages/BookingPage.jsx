@@ -11,7 +11,7 @@ const BookingPage = ({ selectedPackage, onClose }) => {
   const [totalPrice, setTotalPrice] = useState(selectedPackage?.price || 0);
   const [selectedAdditions, setSelectedAdditions] = useState([]);
   const [date, setDate] = useState("");
-  const [time, setTime] = useState("");
+  const [time, setTime] = useState(" ");
   const [isPaymentModalOpen, setIsPaymentModalOpen] = useState(false); 
   const [bookingResult, setBookingResult] = useState(null); 
 
