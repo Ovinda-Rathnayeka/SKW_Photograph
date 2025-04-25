@@ -90,20 +90,10 @@ function Dashboard() {
   };
 
   const positiveFeedbackPercent = () => {
-<<<<<<< HEAD
-    const positiveUserIds = new Set(
-      feedbacks
-        .filter((fb) => fb.rating >= 3)
-        .map((fb) => fb.customerId?.toString())
-    );
-    if (!customers.length) return 0;
-    return ((positiveUserIds.size / customers.length) * 100).toFixed(0);
-=======
     const approved = feedbacks.filter((fb) => fb.isApproved);
     const positive = approved.filter((fb) => fb.rating >= 4);
     if (!approved.length) return 0;
     return ((positive.length / approved.length) * 100).toFixed(0);
->>>>>>> pinidu_backup
   };
 
   useEffect(() => {
@@ -134,32 +124,6 @@ function Dashboard() {
       <h2 className="text-2xl font-bold mb-6">Dashboard Overview</h2>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-10">
-<<<<<<< HEAD
-        {categories.map((cat, i) => (
-          <div
-            key={cat}
-            className={`text-white p-6 rounded-lg shadow-md ${
-              COLORS[i % COLORS.length]
-            }`}
-          >
-            <h3 className="text-lg font-semibold">{cat}</h3>
-            <p className="text-3xl font-bold">{categoryCount(cat)}</p>
-            <span className="text-sm">Feedbacks</span>
-          </div>
-        ))}
-      </div>
-
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mb-10">
-        <div className="text-white p-6 rounded-lg shadow-md bg-orange-500">
-          <h3 className="text-lg font-semibold">Pending Approval</h3>
-          <p className="text-3xl font-bold">
-            {feedbacks.filter((fb) => !fb.isApproved).length}
-          </p>
-          <span className="text-sm">Feedbacks</span>
-        </div>
-
-        <div className="text-white p-6 rounded-lg shadow-md bg-green-500">
-=======
         <div className="bg-blue-500 text-white p-6 rounded-lg shadow-md">
           <h3 className="text-lg font-semibold">Total Feedbacks</h3>
           <p className="text-3xl font-bold">{feedbacks.length}</p>
@@ -167,7 +131,6 @@ function Dashboard() {
         </div>
 
         <div className="bg-green-600 text-white p-6 rounded-lg shadow-md">
->>>>>>> pinidu_backup
           <h3 className="text-lg font-semibold">Approved</h3>
           <p className="text-3xl font-bold">
             {feedbacks.filter((fb) => fb.isApproved).length}
@@ -187,19 +150,9 @@ function Dashboard() {
           <h3 className="text-lg font-semibold">Spam Detected</h3>
           <p className="text-3xl font-bold">
             {
-<<<<<<< HEAD
-              feedbacks.filter((fb) => {
-                const cleanedTitle = fb.title?.toLowerCase() || "";
-                const cleanedComment = fb.comment?.toLowerCase() || "";
-                return (
-                  isSpamComment(cleanedTitle) || isSpamComment(cleanedComment)
-                );
-              }).length
-=======
               feedbacks.filter(
                 (fb) => isSpamComment(fb.title) || isSpamComment(fb.comment)
               ).length
->>>>>>> pinidu_backup
             }
           </p>
           <span className="text-sm">Potential Spam</span>
@@ -220,11 +173,7 @@ function Dashboard() {
           />
         </div>
         <p className="text-sm text-gray-600 mt-2">
-<<<<<<< HEAD
-          {positiveFeedbackPercent()}% of customers gave 3★ or higher
-=======
           {positiveFeedbackPercent()}% of approved feedbacks rated 4★ or higher
->>>>>>> pinidu_backup
         </p>
       </div>
 
