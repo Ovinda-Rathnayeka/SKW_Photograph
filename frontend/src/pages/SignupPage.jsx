@@ -2,8 +2,9 @@ import React, { useState } from "react";
 import { signup } from "../Api/AuthAPI.js";
 import { Link, useNavigate } from "react-router-dom";
 import logo from "../components/images/logo.png";
+import Swal from "sweetalert2";
 
-function SignupPage({ setIsLoggedIn }) {
+function SignupPage() {
   const [userData, setUserData] = useState({
     name: "",
     email: "",
@@ -62,7 +63,14 @@ function SignupPage({ setIsLoggedIn }) {
       setIsLoggedIn(true);
       navigate("/login");
     } catch (err) {
-      setError("Signup failed. Please try again.");
+      console.error("Signup error:", err);
+      setError(err.message || "Signup failed. Please try again.");
+      Swal.fire({
+        title: "Error!",
+        text: err.message || "Signup failed. Please try again.",
+        icon: "error",
+        confirmButtonText: "OK",
+      });
     }
   };
 

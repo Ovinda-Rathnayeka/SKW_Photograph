@@ -15,7 +15,7 @@ function UpdateFeedback() {
   const { id } = useParams();
   const [errors, setErrors] = useState({});
 
-  // Fetch existing feedback
+  
   useEffect(() => {
     const fetchHandler = async () => {
       try {
@@ -28,7 +28,7 @@ function UpdateFeedback() {
     fetchHandler();
   }, [id]);
 
-  // Handle form input changes
+ 
   const handleChange = (e) => {
     const { name, value } = e.target;
     let newErrors = { ...errors };
@@ -57,7 +57,7 @@ function UpdateFeedback() {
     setErrors(newErrors);
   };
 
-  // Handle form submission
+  
   const handleSubmit = async (e) => {
     e.preventDefault();
 
@@ -76,15 +76,15 @@ function UpdateFeedback() {
     }
   };
 
-  // Handle Cancel Button Click
+  
   const handleCancel = () => {
-    history("/feedbacks"); // Redirects back to feedback list
+    history("/feedbacks"); 
   };
 
   return (
     <div className="bg-gray-900 min-h-screen flex flex-col">
 
-      {/* Centered Form with Spacing */}
+     
       <div className="flex-grow flex items-center justify-center mt-12 mb-16 px-4">
         <div className="max-w-3xl w-full bg-white shadow-lg rounded-lg p-8">
           <h1 className="text-orange-400 text-3xl font-bold text-center mb-6">
@@ -92,7 +92,7 @@ function UpdateFeedback() {
           </h1>
 
           <form onSubmit={handleSubmit} className="space-y-6">
-            {/* User Input */}
+            
             <div>
               <label className="block text-gray-700 font-semibold">
                 Your Name
@@ -112,7 +112,7 @@ function UpdateFeedback() {
               )}
             </div>
 
-            {/* Category Dropdown */}
+            
             <div>
               <label className="block text-gray-700 font-semibold">
                 Category
@@ -136,7 +136,7 @@ function UpdateFeedback() {
               )}
             </div>
 
-            {/* Title Input */}
+           
             <div>
               <label className="block text-gray-700 font-semibold">Title</label>
               <input
@@ -154,7 +154,7 @@ function UpdateFeedback() {
               )}
             </div>
 
-            {/* Rating Input */}
+            
             <div>
               <label className="block text-gray-700 font-semibold">
                 Rating (1-5)
@@ -176,7 +176,7 @@ function UpdateFeedback() {
               )}
             </div>
 
-            {/* Comment Textarea */}
+            
             <div>
               <label className="block text-gray-700 font-semibold">
                 Comment
@@ -196,9 +196,9 @@ function UpdateFeedback() {
               )}
             </div>
 
-            {/* Submit & Cancel Buttons */}
+            
             <div className="flex justify-center gap-4 mt-4">
-              {/* Update Feedback Button */}
+              
               <button
                 type="submit"
                 className={`flex items-center gap-2 bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700 transition w-full sm:w-auto ${
@@ -225,7 +225,7 @@ function UpdateFeedback() {
                 Update Feedback
               </button>
 
-              {/* Cancel Button */}
+              
               <button
                 type="button"
                 onClick={handleCancel}

@@ -72,6 +72,13 @@ function LoginPage({ setIsLoggedIn }) {
         confirmButtonColor: "#E66A4E",
       });
       setError("Invalid OTP");
+      
+      Swal.fire({
+        title: 'Error!',
+        text: 'Invalid OTP. Please try again.',
+        icon: 'error',
+        confirmButtonText: 'OK'
+      });
     }
   };
 
@@ -146,6 +153,10 @@ function LoginPage({ setIsLoggedIn }) {
             </button>
           </form>
         )}
+
+        <p className="text-center text-gray-400 mt-4">
+          If you don't have an account, <a href="/signup" className="text-[#E66A4E]">Sign Up</a> now.
+        </p>
       </div>
     </div>
   );

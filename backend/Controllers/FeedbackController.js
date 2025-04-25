@@ -1,59 +1,52 @@
 import mongoose from "mongoose";
 import Feedback from "../Models/FeedbackModel.js";
-import uploadMultiple from "../Middleware/MulterMultipleConfig.js"; // Importing the multiple upload config
-import cloudinary from "../Middleware/CloudinaryConfig.js"; // Cloudinary configuration
+import uploadMultiple from "../Middleware/MulterMultipleConfig.js";
+import cloudinary from "../Middleware/CloudinaryConfig.js";
 
 const isValidObjectId = (id) => mongoose.Types.ObjectId.isValid(id);
 
-// Create feedback
 const createFeedback = async (req, res) => {
   try {
-    const imageUrls = []; // Initialize an array to hold image URLs
+    const imageUrls = [];
 
-    // Check if files are provided (multiple images)
     if (req.files && req.files.length > 0) {
-      // Loop through each file and upload it to Cloudinary
       for (const file of req.files) {
         const cloudinaryResult = await cloudinary.uploader.upload(file.path, {
-          folder: "skw-photography", // Cloudinary folder
-          allowed_formats: ["jpg", "jpeg", "png"], // Allowed formats
+          folder: "skw-photography",
+          allowed_formats: ["jpg", "jpeg", "png"],
         });
-        imageUrls.push(cloudinaryResult.secure_url); // Store the URL of each uploaded image
+        imageUrls.push(cloudinaryResult.secure_url);
       }
 
-      // Attach the uploaded image URLs to the request body
       req.body.images = imageUrls;
     }
 
-    // Ensure customerId is present
     if (!req.body.customerId) {
       return res.status(400).json({ message: "Customer ID is required" });
     }
 
-    // Create a new feedback instance with customerId
     const newFeedback = new Feedback(req.body);
     const savedFeedback = await newFeedback.save();
 
-    res.status(201).json(savedFeedback); // Respond with the saved feedback
+    res.status(201).json(savedFeedback);
   } catch (error) {
     console.error("Error creating feedback:", error);
     res.status(500).json({ message: "Error creating feedback", error });
   }
 };
 
-// Get all feedback
 export const getAllFeedback = async (req, res) => {
   try {
     const feedbackList = await Feedback.find();
 
     const formattedFeedbackList = feedbackList.map((feedback) => ({
       _id: feedback._id,
-      customerId: feedback.customerId, // Ensure customerId is included in the response
+      customerId: feedback.customerId,
       category: feedback.category,
       rating: feedback.rating,
       title: feedback.title,
       comment: feedback.comment,
-      images: feedback.images, // Multiple images
+      images: feedback.images,
       createdAt: feedback.createdAt,
       updatedAt: feedback.updatedAt,
     }));
@@ -65,7 +58,6 @@ export const getAllFeedback = async (req, res) => {
   }
 };
 
-// Get feedback by ID
 const getFeedbackById = async (req, res) => {
   const { id } = req.params;
 
@@ -88,37 +80,32 @@ const getFeedbackById = async (req, res) => {
 const updateFeedbackById = async (req, res) => {
   const { id } = req.params;
 
-  // Validate feedback ID format
   if (!isValidObjectId(id)) {
     return res.status(400).json({ message: "Invalid feedback ID format" });
   }
 
   try {
-    const imageUrls = []; // Initialize an array to hold image URLs
+    const imageUrls = [];
 
-    // Check if files (images) are provided for update
     if (req.files && req.files.length > 0) {
-      // Loop through each file and upload it to Cloudinary
       for (const file of req.files) {
         const cloudinaryResult = await cloudinary.uploader.upload(file.path, {
-          folder: "skw-photography", // Cloudinary folder
-          allowed_formats: ["jpg", "jpeg", "png"], // Allowed formats
+          folder: "skw-photography",
+          allowed_formats: ["jpg", "jpeg", "png"],
         });
-        imageUrls.push(cloudinaryResult.secure_url); // Push image URL to array
+        imageUrls.push(cloudinaryResult.secure_url);
       }
-      req.body.images = imageUrls; // Add new images to the request body
+      req.body.images = imageUrls;
     }
 
-    // Find and update the feedback by its ID
     const updatedFeedback = await Feedback.findByIdAndUpdate(id, req.body, {
-      new: true, // Return the updated document
+      new: true,
     });
 
     if (!updatedFeedback) {
       return res.status(404).json({ message: "Feedback not found" });
     }
 
-    // Respond with the updated feedback
     res.status(200).json(updatedFeedback);
   } catch (error) {
     console.error("Error updating feedback:", error);
@@ -126,17 +113,14 @@ const updateFeedbackById = async (req, res) => {
   }
 };
 
-// Delete feedback by ID
 const deleteFeedbackById = async (req, res) => {
   const { id } = req.params;
 
-  // Validate the ID format
   if (!mongoose.Types.ObjectId.isValid(id)) {
     return res.status(400).json({ message: "Invalid feedback ID format" });
   }
 
   try {
-    // Find and delete the feedback by ID
     const deletedFeedback = await Feedback.findByIdAndDelete(id);
     if (!deletedFeedback) {
       return res.status(404).json({ message: "Feedback not found" });
