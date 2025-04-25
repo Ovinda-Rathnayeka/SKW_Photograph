@@ -1,13 +1,13 @@
 import React, { useState, useEffect } from "react";
 import { createPackage } from "../../API/PackageAPI.js";
 import { FaCloudUploadAlt, FaCheckCircle } from "react-icons/fa";
-import LoadingModal from "./LoadingModal.js"; // logo is handled inside this component
+import LoadingModal from "./LoadingModal.js";
 
 function PackageAdd() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const timer = setTimeout(() => setLoading(false), 2000); // Show loader for 2 seconds
+    const timer = setTimeout(() => setLoading(false), 2000);
     return () => clearTimeout(timer);
   }, []);
 

@@ -15,29 +15,19 @@ import CustomizationPage from "./Page/AdminP&B/CustomizationPage.jsx";
 function App() {
   return (
     <Router>
-      <div className="flex h-screen bg-gray-100">
-        {/* Sidebar - Fixed height */}
-
-        {/* Main Content Area */}
-        <div className="flex flex-col flex-1">
-          {/* Navbar - Fixed at the top */}
-
-          {/* Page Content */}
-          <div className="flex-1 overflow-auto p-6">
-            <Routes>
-              <Route path="/" element={<LoginPage />} />
-              <Route path="/PDashboard" element={<PDashboard />} />
-              <Route path="/add-package" element={<PackageAdd />} />
-              <Route path="/packagedisplay" element={<PackageDisplay />} />
-              <Route path="/payment" element={<PaymentPage />} />
-              <Route path="/displaybooking" element={<DisplayBooking />} />
-              <Route path="/rental/:id" element={<RentalAdd />} />
-              <Route path="/RDashbaord" element={<RDashbaord />} />
-              <Route path="/re" element={<ResourcesPage />} />
-              <Route path="/customization" element={<CustomizationPage />} />
-            </Routes>
-          </div>
-        </div>
+      <div>
+        <Routes>
+          <Route path="/" element={<LoginPage />} />
+          <Route path="/PDashboard" element={<PDashboard />} />
+          <Route path="/add-package" element={<PackageAdd />} />
+          <Route path="/packagedisplay" element={<PackageDisplay />} />
+          <Route path="/payment" element={<PaymentPage />} />
+          <Route path="/displaybooking" element={<DisplayBooking />} />
+          <Route path="/rental/:id" element={<RentalAdd />} />
+          <Route path="/RDashbaord" element={<RDashbaord />} />
+          <Route path="/re" element={<ResourcesPage />} />
+          <Route path="/customization" element={<CustomizationPage />} />
+        </Routes>
       </div>
     </Router>
   );

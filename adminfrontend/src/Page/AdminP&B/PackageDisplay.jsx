@@ -157,7 +157,7 @@ function PackageDisplay() {
   };
 
   return (
-    <div className="max-w-6xl mx-auto p-6">
+    <div className="w-full px-6 py-8">
       <h1 className="text-3xl font-bold text-center text-slate-800 mb-6">
         📦 All Packages
       </h1>
