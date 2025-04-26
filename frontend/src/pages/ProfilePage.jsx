@@ -1,17 +1,26 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { FaUserCircle, FaEnvelope, FaPhone, FaIdCard, FaHome, FaEdit, FaSave, FaTimes } from "react-icons/fa";
-import Swal from "sweetalert2"; 
-import dot from "../components/images/dot.jpg"; 
-import {fetchUserDetails} from "../Api/AuthAPI";
-import {updateCustomer} from "../Api/CustomerAPI"
+import {
+  FaUserCircle,
+  FaEnvelope,
+  FaPhone,
+  FaIdCard,
+  FaHome,
+  FaEdit,
+  FaSave,
+  FaTimes,
+} from "react-icons/fa";
+import Swal from "sweetalert2";
+import dot from "../components/images/dot.jpg";
+import { fetchUserDetails } from "../Api/AuthAPI";
+import { updateCustomer } from "../Api/CustomerAPI";
 
 const UserProfile = () => {
   const navigate = useNavigate();
   const [isEditing, setIsEditing] = useState(false);
   const [errors, setErrors] = useState({
-    phone: '',
-    nic: ''
+    phone: "",
+    nic: "",
   });
   const [user, setUser] = useState({
     name: "",
@@ -38,7 +47,7 @@ const UserProfile = () => {
   useEffect(() => {
     const fetchUserData = async () => {
       try {
-        const data = await fetchUserDetails(); 
+        const data = await fetchUserDetails();
         setUser(data);
       } catch (error) {
         console.error("Error fetching user data:", error);
@@ -58,19 +67,25 @@ const UserProfile = () => {
     const { name, value } = e.target;
     setUser({ ...user, [name]: value });
 
-    if (name === 'phone') {
-      if (!validatePhone(value) && value !== '') {
-        setErrors(prev => ({ ...prev, phone: 'Phone number must be exactly 10 digits' }));
+    if (name === "phone") {
+      if (!validatePhone(value) && value !== "") {
+        setErrors((prev) => ({
+          ...prev,
+          phone: "Phone number must be exactly 10 digits",
+        }));
       } else {
-        setErrors(prev => ({ ...prev, phone: '' }));
+        setErrors((prev) => ({ ...prev, phone: "" }));
       }
     }
 
-    if (name === 'nic') {
-      if (!validateNIC(value) && value !== '') {
-        setErrors(prev => ({ ...prev, nic: 'NIC must be exactly 12 digits' }));
+    if (name === "nic") {
+      if (!validateNIC(value) && value !== "") {
+        setErrors((prev) => ({
+          ...prev,
+          nic: "NIC must be exactly 12 digits",
+        }));
       } else {
-        setErrors(prev => ({ ...prev, nic: '' }));
+        setErrors((prev) => ({ ...prev, nic: "" }));
       }
     }
   };
@@ -85,17 +100,17 @@ const UserProfile = () => {
       });
       return;
     }
-    const userId = sessionStorage.getItem("_id")
+    const userId = sessionStorage.getItem("_id");
     try {
       const updatedData = {
         name: user.name,
         email: user.email,
         phone: user.phone,
         address: user.address,
-        nic : user.nic
+        nic: user.nic,
       };
-  
-      const updatedUser = await updateCustomer(userId, updatedData); 
+
+      const updatedUser = await updateCustomer(userId, updatedData);
       setUser(updatedUser);
       Swal.fire({
         title: "Success!",
@@ -103,7 +118,7 @@ const UserProfile = () => {
         icon: "success",
         confirmButtonText: "OK",
       });
-      setIsEditing(false); 
+      setIsEditing(false);
     } catch (error) {
       Swal.fire({
         title: "Error!",
@@ -113,6 +128,7 @@ const UserProfile = () => {
       });
     }
   };
+
   const handleClose = () => {
     Swal.fire({
       title: "Are you sure?",
@@ -123,13 +139,14 @@ const UserProfile = () => {
       cancelButtonText: "No",
     }).then((result) => {
       if (result.isConfirmed) {
-        navigate("/"); 
+        navigate("/");
       }
     });
   };
 
   return (
-    <div className="flex justify-center items-center min-h-screen bg-gradient-to-r from-white-400 to-purple-500"
+    <div
+      className="flex justify-center items-center min-h-screen bg-gradient-to-r from-white-400 to-purple-500 mt-20"
       style={{
         backgroundImage: `url(${dot})`,
         backgroundSize: "cover",
@@ -137,7 +154,7 @@ const UserProfile = () => {
         backgroundAttachment: "fixed",
       }}
     >
-      <div className="w-full md:w-[500px] lg:w-[600px] p-10 bg-white rounded-3xl shadow-2xl">
+      <div className="w-full md:w-[600px] lg:w-[800px] p-10 bg-white rounded-3xl shadow-2xl overflow-auto">
         <div className="flex flex-col items-center">
           <FaUserCircle className="text-gray-600 text-8xl mb-4" />
           {isEditing ? (
@@ -151,31 +168,65 @@ const UserProfile = () => {
           ) : (
             <h2 className="text-3xl font-semibold">{user.name}</h2>
           )}
-          <p className={`text-sm ${user.active ? "text-green-600" : "text-red-600"}`}>
+          <p
+            className={`text-sm ${
+              user.active ? "text-green-600" : "text-red-600"
+            }`}
+          >
             {user.active ? "Active" : "Inactive"}
           </p>
         </div>
-        <div className="mt-8">
-          <div className="space-y-6">
-            {["email", "phone", "nic", "address"].map((field) => (
+        <div className="mt-8 space-y-6">
+          <div className="space-y-4">
+            {/* Flexbox layout for email and phone */}
+            <div className="flex justify-between">
+              <div className="flex items-center gap-3 text-gray-700 bg-gray-100 p-3 rounded-lg w-1/2">
+                <FaEnvelope className="text-gray-500" />
+                {isEditing ? (
+                  <input
+                    type="email"
+                    name="email"
+                    value={user.email}
+                    onChange={handleChange}
+                    className="border p-3 rounded-lg w-full focus:ring-2 focus:ring-blue-400"
+                  />
+                ) : (
+                  <span>{user.email}</span>
+                )}
+              </div>
+              <div className="flex items-center gap-3 text-gray-700 bg-gray-100 p-3 rounded-lg w-1/2">
+                <FaPhone className="text-gray-500" />
+                {isEditing ? (
+                  <input
+                    type="text"
+                    name="phone"
+                    value={user.phone}
+                    onChange={handleChange}
+                    className={`border p-3 rounded-lg w-full focus:ring-2 focus:ring-blue-400 ${
+                      errors.phone ? "border-red-500" : ""
+                    }`}
+                  />
+                ) : (
+                  <span>{user.phone}</span>
+                )}
+              </div>
+            </div>
+
+            {["nic", "address"].map((field) => (
               <div key={field}>
                 <p className="flex items-center gap-3 text-gray-700 bg-gray-100 p-3 rounded-lg">
-                  {field === "email" && <FaEnvelope className="text-gray-500" />}
-                  {field === "phone" && <FaPhone className="text-gray-500" />}
                   {field === "nic" && <FaIdCard className="text-gray-500" />}
                   {field === "address" && <FaHome className="text-gray-500" />}
                   {isEditing ? (
-                    <>
-                      <input
-                        type="text"
-                        name={field}
-                        value={user[field]}
-                        onChange={handleChange}
-                        className={`border p-3 rounded-lg w-full focus:ring-2 focus:ring-blue-400 ${
-                          errors[field] ? 'border-red-500' : ''
-                        }`}
-                      />
-                    </>
+                    <input
+                      type="text"
+                      name={field}
+                      value={user[field]}
+                      onChange={handleChange}
+                      className={`border p-3 rounded-lg w-full focus:ring-2 focus:ring-blue-400 ${
+                        errors[field] ? "border-red-500" : ""
+                      }`}
+                    />
                   ) : (
                     user[field]
                   )}
@@ -185,8 +236,14 @@ const UserProfile = () => {
                 )}
               </div>
             ))}
-            <p className="text-gray-700 font-semibold">Joined: {user.createdAt}</p>
-            <p className={`text-sm font-semibold ${user.otpVerified ? "text-green-600" : "text-red-600"}`}>
+            <p className="text-gray-700 font-semibold">
+              Joined: {user.createdAt}
+            </p>
+            <p
+              className={`text-sm font-semibold ${
+                user.otpVerified ? "text-green-600" : "text-red-600"
+              }`}
+            >
               OTP Verified: {user.otpVerified ? "Yes" : "No"}
             </p>
           </div>

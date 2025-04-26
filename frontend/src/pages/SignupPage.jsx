@@ -9,10 +9,11 @@ function SignupPage() {
     name: "",
     email: "",
     password: "",
-    confirmPassword: ""
+    confirmPassword: "",
   });
   const [error, setError] = useState("");
   const [passwordErrors, setPasswordErrors] = useState([]);
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
   const navigate = useNavigate();
 
   const validatePassword = (password) => {
@@ -37,7 +38,7 @@ function SignupPage() {
 
   const handleChange = (e) => {
     setUserData({ ...userData, [e.target.name]: e.target.value });
-    if (e.target.name === 'password') {
+    if (e.target.name === "password") {
       setPasswordErrors(validatePassword(e.target.value));
     }
   };
@@ -57,7 +58,7 @@ function SignupPage() {
       const submitData = {
         name: userData.name,
         email: userData.email,
-        password: userData.password
+        password: userData.password,
       };
       await signup(submitData);
       setIsLoggedIn(true);
@@ -77,7 +78,6 @@ function SignupPage() {
   return (
     <div className="min-h-screen flex items-center justify-center bg-[#0D1117] p-6">
       <div className="w-full max-w-md bg-[#161B22] p-8 rounded-2xl shadow-lg">
-        {/* Logo with fixed height */}
         <div className="flex justify-center mb-4">
           <img src={logo} alt="Logo" className="h-16 w-auto object-contain" />
         </div>
