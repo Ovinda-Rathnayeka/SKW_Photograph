@@ -1,12 +1,9 @@
 import React, { useState, useEffect } from "react";
 import feedbackAPI from "../Api/FeedbackAPI";
 import { fetchUserDetails } from "../Api/AuthAPI";
-<<<<<<< HEAD
 import { useNavigate } from "react-router-dom";
 import Swal from "sweetalert2";
 import dot from "../components/images/dot.jpg";
-=======
->>>>>>> main
 
 function AddFeedback() {
   const history = useNavigate();
@@ -41,7 +38,6 @@ function AddFeedback() {
     fetchUser();
   }, []);
 
-<<<<<<< HEAD
   const validate = (name, value) => {
     let errors = { ...validationErrors };
 
@@ -72,8 +68,6 @@ function AddFeedback() {
     setValidationErrors(errors);
   };
 
-=======
->>>>>>> main
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFeedbackData((prev) => ({ ...prev, [name]: value }));
@@ -115,15 +109,6 @@ function AddFeedback() {
     e.preventDefault();
     setLoading(true);
 
-<<<<<<< HEAD
-=======
-    console.log("Feedback Data: ", {
-      ...feedbackData,
-      customerEmail,
-      customerId,
-    });
-
->>>>>>> main
     try {
       if (!customerId) {
         setError("Customer ID is missing.");

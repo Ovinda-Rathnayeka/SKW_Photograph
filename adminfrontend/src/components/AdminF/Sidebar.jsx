@@ -43,37 +43,13 @@ function Sidebar() {
         <SidebarItem
           icon={<FaTachometerAlt />}
           text="Dashboard"
-          link="/"
+          link="/feedbackDashboard"
           isOpen={isOpen}
         />
         <SidebarItem
           icon={<FaUser />}
-          text="Bookings"
-          link="/displaybooking"
-          isOpen={isOpen}
-        />
-        <SidebarItem
-          icon={<FaCog />}
-          text="Payment"
-          link="/payment"
-          isOpen={isOpen}
-        />
-        <SidebarItem
-          icon={<FaBox />}
-          text="Add Package"
-          link="/add-package"
-          isOpen={isOpen}
-        />
-        <SidebarItem
-          icon={<FaBox />}
-          text="Customization"
-          link="/customization"
-          isOpen={isOpen}
-        />
-        <SidebarItem
-          icon={<FaEye />}
-          text="View Packages"
-          link="/packagedisplay"
+          text="Feedbacks"
+          link="/feedbackTable"
           isOpen={isOpen}
         />
       </ul>

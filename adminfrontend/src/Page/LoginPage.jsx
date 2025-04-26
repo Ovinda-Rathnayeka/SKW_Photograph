@@ -1,6 +1,5 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { loginEmployee } from "../API/AdminAPI.js"; 
 import logo from "../components/images/logo.png";
 
 const LoginPage = () => {
@@ -13,43 +12,36 @@ const LoginPage = () => {
     e.preventDefault();
     setErrorMessage("");
 
-    try {
-     
-      const response = await loginEmployee(email, password);
-      const { token, employee } = response;
+    const adminEmails = [
+      "packageadmin@skwphotography.com",
+      "resourceadmin@skwphotography.com",
+      "hradmin@gmail.com",
+      "feedback@gmail.com",
+      "admin5@example.com",
+    ];
 
-      
-      const adminEmails = [
-        "packageadmin@skwphotography.com",
-        "resourceadmin@skwphotography.com",
-        "hradmin@gmail.com",
-        "admin4@example.com",
-        "admin5@example.com"
-      ];
+    if (!adminEmails.includes(email)) {
+      setErrorMessage("Invalid admin email.");
+      return;
+    }
 
-      if (adminEmails.includes(email)) {
-        if (employee.jobRole === "Admin") {
-          
-          localStorage.setItem("token", token);
+    if (password !== "123") {
+      setErrorMessage("Incorrect password. Please use password: 123");
+      return;
+    }
 
-          
-          if (email === "packageadmin@skwphotography.com") {
-            navigate("/PDashboard"); 
-          } else if (email === "resourceadmin@skwphotography.com") {
-            navigate("/RDashbaord"); 
-          } else if (email === "hradmin@gmail.com") {
-            navigate("/admin/hr-dashboard"); 
-          } else {
-            navigate("/admin/dashboard"); 
-          }
-        } else {
-          setErrorMessage("You do not have admin privileges.");
-        }
-      } else {
-        setErrorMessage("Invalid email for admin.");
-      }
-    } catch (error) {
-      setErrorMessage("Invalid credentials or server error.");
+    // Login success
+    localStorage.setItem("token", "dummy-token-123456"); // You can save any dummy token
+
+    // Redirect based on email
+    if (email === "packageadmin@skwphotography.com") {
+      navigate("/PDashboard");
+    } else if (email === "resourceadmin@skwphotography.com") {
+      navigate("/RDashbaord");
+    } else if (email === "hradmin@gmail.com") {
+      navigate("/admin/hr-dashboard");
+    } else if (email === "feedback@gmail.com") {
+      navigate("/feedbackDashboard");
     }
   };
 
@@ -58,11 +50,7 @@ const LoginPage = () => {
       <div className="w-full max-w-md p-8 bg-black shadow-lg rounded-lg">
         {/* Logo */}
         <div className="flex justify-center mb-6">
-          <img
-            src={logo}
-            alt="Admin Logo"
-            className="w-50 h-50"
-          />
+          <img src={logo} alt="Admin Logo" className="w-50 h-50" />
         </div>
 
         <h2 className="text-2xl font-bold text-center text-white mb-4">

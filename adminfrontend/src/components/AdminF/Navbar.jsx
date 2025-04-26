@@ -5,7 +5,7 @@ function Navbar() {
   return (
     <div className="flex justify-between items-center bg-white shadow-sm px-6 py-4 border-b">
       <h2 className="text-2xl font-semibold text-gray-800">
-        Package & Booking Management
+        Feedback & Review Management
       </h2>
 
       <div className="flex items-center space-x-5">

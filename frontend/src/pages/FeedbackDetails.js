@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from "react";
-<<<<<<< HEAD
 import { Link } from "react-router-dom";
 import Swal from "sweetalert2";
 import feedbackAPI from "../Api/FeedbackAPI";
@@ -16,46 +15,13 @@ function FeedbackList() {
   const [originalFeedback, setOriginalFeedback] = useState(null);
   const [formErrors, setFormErrors] = useState({});
 
-=======
-import { Link } from "react-router-dom"; 
-import feedbackAPI from "../Api/FeedbackAPI"; 
-import { fetchUserDetails } from "../Api/AuthAPI"; 
-
-function FeedbackList() {
-  const [feedbacks, setFeedbacks] = useState([]); 
-  const [loading, setLoading] = useState(true); 
-  const [error, setError] = useState(null); 
-  const [userId, setUserId] = useState(null); 
-  const [showModal, setShowModal] = useState(false); 
-  const [feedbackToUpdate, setFeedbackToUpdate] = useState(null); 
-
-  
-  const fetchAllFeedbacks = async () => {
-    try {
-      const feedbackData = await feedbackAPI.getAllFeedback();
-      setFeedbacks(feedbackData);
-      setLoading(false); 
-    } catch (err) {
-      setError("Error fetching feedbacks.");
-      setLoading(false); 
-    }
-  };
-
-  
->>>>>>> main
   useEffect(() => {
     const fetchUser = async () => {
       try {
         const userDetails = await fetchUserDetails();
-<<<<<<< HEAD
         setUserId(userDetails._id);
       } catch {
         setUserId(null);
-=======
-        setUserId(userDetails._id); 
-      } catch (err) {
-        setUserId(null); 
->>>>>>> main
       }
     };
 
@@ -107,7 +73,6 @@ function FeedbackList() {
     const randomPattern = /([a-zA-Z])\1{4,}|[^a-zA-Z0-9\s]{4,}|([bcdfghjklmnpqrstvwxyz]{5,}|[aeiou]{5,})/g;
     const containsBadWords = badWords.some((word) => lowerText.includes(word));
 
-<<<<<<< HEAD
     return randomPattern.test(lowerText) || containsBadWords;
   };
 
@@ -117,15 +82,6 @@ function FeedbackList() {
       if (!value.trim()) error = "This field is required.";
       else if (value.length > 100) error = "Max 100 characters.";
       else if (isSpam(value)) error = "Spam content detected.";
-=======
-  
-  const handleDelete = async (feedbackId) => {
-    try {
-      await feedbackAPI.deleteFeedbackById(feedbackId);
-      setFeedbacks(feedbacks.filter((feedback) => feedback._id !== feedbackId)); 
-    } catch (err) {
-      setError("Error deleting feedback.");
->>>>>>> main
     }
 
     if (
@@ -193,7 +149,6 @@ function FeedbackList() {
     });
   };
 
-<<<<<<< HEAD
   const handleOpenModal = (feedback) => {
     setFeedbackToUpdate({ ...feedback });
     setOriginalFeedback({ ...feedback });
@@ -209,22 +164,6 @@ function FeedbackList() {
 
   const handleUpdateFeedback = async () => {
     if (!validateForm()) return;
-=======
-  
-  const handleOpenModal = (feedback) => {
-    setFeedbackToUpdate(feedback); 
-    setShowModal(true); 
-  };
-
-  
-  const handleCloseModal = () => {
-    setShowModal(false);
-    setFeedbackToUpdate(null); 
-  };
-
-  
-  const handleUpdateFeedback = async (updatedFeedbackData) => {
->>>>>>> main
     try {
       feedbackToUpdate.isApproved = false;
       await feedbackAPI.updateFeedbackById(
@@ -236,43 +175,21 @@ function FeedbackList() {
           f._id === feedbackToUpdate._id ? { ...f, ...feedbackToUpdate } : f
         )
       );
-<<<<<<< HEAD
       Swal.fire("Updated!", "Your feedback is awaiting approval.", "success");
       setShowModal(false);
     } catch {
-=======
-      setShowModal(false); 
-    } catch (err) {
->>>>>>> main
       setError("Error updating feedback.");
     }
   };
 
   const renderStars = (count) => "★".repeat(count);
 
-<<<<<<< HEAD
   const renderFeedbackSection = (title, items) => (
     <div id={title.toLowerCase()} className="mb-12">
       <h2 className="text-white text-2xl font-bold mb-4">{title}</h2>
       {items.length > 0 ? (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
           {items.map((feedback) => (
-=======
-      
-      {userId && (
-        <Link to="/add-feedback">
-          <button className="bg-blue-500 text-white py-2 px-4 rounded mb-6 hover:bg-blue-700">
-            Add Feedback
-          </button>
-        </Link>
-      )}
-
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {feedbacks.length === 0 ? (
-          <p className="text-center col-span-3">No feedback available.</p>
-        ) : (
-          feedbacks.map((feedback) => (
->>>>>>> main
             <div
               key={feedback._id}
               className="relative bg-white/80 backdrop-blur-lg border border-transparent rounded-2xl p-6 shadow-md transition-all duration-300 hover:shadow-2xl hover:scale-[1.025] hover:border-blue-400 h-full flex flex-col justify-between"
@@ -314,7 +231,6 @@ function FeedbackList() {
                   </p>
                 </div>
 
-<<<<<<< HEAD
                 <p className="text-blue-600 font-medium">{feedback.category}</p>
                 <p className="text-gray-700 mb-3">{feedback.comment}</p>
 
@@ -331,43 +247,12 @@ function FeedbackList() {
               </div>
               {userId === feedback.customerId && (
                 <div className="flex justify-center gap-4 mt-auto">
-=======
-              
-              <div className="flex flex-wrap gap-4">
-                {feedback.images && feedback.images.length > 0 ? (
-                  feedback.images.map((image, index) => (
-                    <div
-                      key={index}
-                      className="w-32 h-32 bg-gray-200 rounded-lg overflow-hidden"
-                    >
-                      <img
-                        src={image}
-                        alt={`feedback-img-${index}`}
-                        className="object-cover w-full h-full"
-                      />
-                    </div>
-                  ))
-                ) : (
-                  <p className="text-gray-400">No images available</p>
-                )}
-              </div>
-
-              
-              {userId && feedback.customerId === userId && (
-                <div className="mt-4 flex justify-between">
-                  
->>>>>>> main
                   <button
                     onClick={() => handleOpenModal(feedback)}
                     className="bg-yellow-400 text-white px-4 py-2 rounded hover:bg-yellow-500"
                   >
                     Update
                   </button>
-<<<<<<< HEAD
-=======
-
-                 
->>>>>>> main
                   <button
                     onClick={() => handleDelete(feedback._id)}
                     className="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600"
@@ -527,106 +412,6 @@ function FeedbackList() {
           </div>
         )}
       </div>
-<<<<<<< HEAD
-=======
-
-      
-      {showModal && feedbackToUpdate && (
-        <div className="fixed inset-0 bg-gray-500 bg-opacity-75 flex items-center justify-center z-50">
-          <div className="bg-white p-8 rounded-lg w-96">
-            <h2 className="text-xl font-semibold mb-4">Update Feedback</h2>
-           
-            <form
-              onSubmit={(e) => {
-                e.preventDefault();
-                handleUpdateFeedback(feedbackToUpdate);
-              }}
-            >
-              <div className="mb-4">
-                <label className="block mb-2">Category</label>
-                <input
-                  type="text"
-                  name="category"
-                  value={feedbackToUpdate.category}
-                  onChange={(e) =>
-                    setFeedbackToUpdate({
-                      ...feedbackToUpdate,
-                      category: e.target.value,
-                    })
-                  }
-                  className="w-full p-2 border border-gray-300 rounded-md"
-                />
-              </div>
-
-              <div className="mb-4">
-                <label className="block mb-2">Title</label>
-                <input
-                  type="text"
-                  name="title"
-                  value={feedbackToUpdate.title}
-                  onChange={(e) =>
-                    setFeedbackToUpdate({
-                      ...feedbackToUpdate,
-                      title: e.target.value,
-                    })
-                  }
-                  className="w-full p-2 border border-gray-300 rounded-md"
-                />
-              </div>
-
-              <div className="mb-4">
-                <label className="block mb-2">Comment</label>
-                <textarea
-                  name="comment"
-                  value={feedbackToUpdate.comment}
-                  onChange={(e) =>
-                    setFeedbackToUpdate({
-                      ...feedbackToUpdate,
-                      comment: e.target.value,
-                    })
-                  }
-                  className="w-full p-2 border border-gray-300 rounded-md"
-                />
-              </div>
-
-              <div className="mb-4">
-                <label className="block mb-2">Rating</label>
-                <input
-                  type="number"
-                  name="rating"
-                  value={feedbackToUpdate.rating}
-                  min="1"
-                  max="5"
-                  onChange={(e) =>
-                    setFeedbackToUpdate({
-                      ...feedbackToUpdate,
-                      rating: e.target.value,
-                    })
-                  }
-                  className="w-full p-2 border border-gray-300 rounded-md"
-                />
-              </div>
-
-              
-              <button
-                type="submit"
-                className="bg-blue-500 text-white py-2 px-4 rounded mt-4 hover:bg-blue-700"
-              >
-                Update Feedback
-              </button>
-            </form>
-
-            
-            <button
-              onClick={handleCloseModal}
-              className="bg-gray-500 text-white py-2 px-4 rounded mt-4 ml-2 hover:bg-gray-700"
-            >
-              Close
-            </button>
-          </div>
-        </div>
-      )}
->>>>>>> main
     </div>
   );
 }
