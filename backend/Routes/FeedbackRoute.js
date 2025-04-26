@@ -5,9 +5,19 @@ import uploadMultiple from "../Middleware/MulterMultipleConfig.js";
 const router = express.Router();
 
 router.post("/", uploadMultiple, FeedbackController.createFeedback);
+<<<<<<< HEAD
 router.put("/:id", uploadMultiple, FeedbackController.updateFeedbackById);
 router.get("/", FeedbackController.getAllFeedback);
 router.get("/:id", FeedbackController.getFeedbackById);
+=======
+
+router.put("/:id", uploadMultiple, FeedbackController.updateFeedbackById);
+
+router.get("/", FeedbackController.getAllFeedback);
+
+router.get("/:id", FeedbackController.getFeedbackById);
+
+>>>>>>> main
 router.delete("/:id", FeedbackController.deleteFeedbackById);
 
 // Approve feedback by ID

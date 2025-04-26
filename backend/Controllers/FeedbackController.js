@@ -5,7 +5,6 @@ import cloudinary from "../Middleware/CloudinaryConfig.js";
 
 const isValidObjectId = (id) => mongoose.Types.ObjectId.isValid(id);
 
-// Create feedback
 const createFeedback = async (req, res) => {
   try {
     const imageUrls = [];
@@ -18,6 +17,7 @@ const createFeedback = async (req, res) => {
         });
         imageUrls.push(cloudinaryResult.secure_url);
       }
+<<<<<<< HEAD
     }
 
     const {
@@ -51,6 +51,19 @@ const createFeedback = async (req, res) => {
     });
 
     const savedFeedback = await newFeedback.save();
+=======
+
+      req.body.images = imageUrls;
+    }
+
+    if (!req.body.customerId) {
+      return res.status(400).json({ message: "Customer ID is required" });
+    }
+
+    const newFeedback = new Feedback(req.body);
+    const savedFeedback = await newFeedback.save();
+
+>>>>>>> main
     res.status(201).json(savedFeedback);
   } catch (error) {
     console.error("Error creating feedback:", error);
@@ -58,18 +71,37 @@ const createFeedback = async (req, res) => {
   }
 };
 
+<<<<<<< HEAD
 // Get all feedbacks
 const getAllFeedback = async (req, res) => {
   try {
     const feedbackList = await Feedback.find();
     res.status(200).json(feedbackList);
+=======
+export const getAllFeedback = async (req, res) => {
+  try {
+    const feedbackList = await Feedback.find();
+
+    const formattedFeedbackList = feedbackList.map((feedback) => ({
+      _id: feedback._id,
+      customerId: feedback.customerId,
+      category: feedback.category,
+      rating: feedback.rating,
+      title: feedback.title,
+      comment: feedback.comment,
+      images: feedback.images,
+      createdAt: feedback.createdAt,
+      updatedAt: feedback.updatedAt,
+    }));
+
+    res.status(200).json(formattedFeedbackList);
+>>>>>>> main
   } catch (error) {
     console.error("Error fetching feedback:", error);
     res.status(500).json({ message: "Error fetching feedback", error });
   }
 };
 
-// Get feedback by ID
 const getFeedbackById = async (req, res) => {
   const { id } = req.params;
 
@@ -98,6 +130,7 @@ const updateFeedbackById = async (req, res) => {
   }
 
   try {
+<<<<<<< HEAD
     const existing = await Feedback.findById(id);
     if (!existing) {
       return res.status(404).json({ message: "Feedback not found" });
@@ -144,6 +177,29 @@ const updateFeedbackById = async (req, res) => {
       { new: true }
     );
 
+=======
+    const imageUrls = [];
+
+    if (req.files && req.files.length > 0) {
+      for (const file of req.files) {
+        const cloudinaryResult = await cloudinary.uploader.upload(file.path, {
+          folder: "skw-photography",
+          allowed_formats: ["jpg", "jpeg", "png"],
+        });
+        imageUrls.push(cloudinaryResult.secure_url);
+      }
+      req.body.images = imageUrls;
+    }
+
+    const updatedFeedback = await Feedback.findByIdAndUpdate(id, req.body, {
+      new: true,
+    });
+
+    if (!updatedFeedback) {
+      return res.status(404).json({ message: "Feedback not found" });
+    }
+
+>>>>>>> main
     res.status(200).json(updatedFeedback);
   } catch (error) {
     console.error("Error updating feedback:", error);
@@ -151,11 +207,18 @@ const updateFeedbackById = async (req, res) => {
   }
 };
 
+<<<<<<< HEAD
 // Delete feedback
 const deleteFeedbackById = async (req, res) => {
   const { id } = req.params;
 
   if (!isValidObjectId(id)) {
+=======
+const deleteFeedbackById = async (req, res) => {
+  const { id } = req.params;
+
+  if (!mongoose.Types.ObjectId.isValid(id)) {
+>>>>>>> main
     return res.status(400).json({ message: "Invalid feedback ID format" });
   }
 

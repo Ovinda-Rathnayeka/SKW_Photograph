@@ -1,13 +1,14 @@
 import React, { useState } from "react";
-import { login, verifyOTP } from "../Api/AuthAPI.js"; 
-import { useNavigate } from "react-router-dom";
+import { login, verifyOTP } from "../Api/AuthAPI.js";
+import { Link, useNavigate } from "react-router-dom";
 import logo from "../components/images/logo.png";
+import Swal from "sweetalert2";
 
 function LoginPage({ setIsLoggedIn }) {
   const [credentials, setCredentials] = useState({ email: "", password: "" });
-  const [otp, setOtp] = useState(""); 
+  const [otp, setOtp] = useState("");
   const [error, setError] = useState("");
-  const [isOtpSent, setIsOtpSent] = useState(false); 
+  const [isOtpSent, setIsOtpSent] = useState(false);
   const navigate = useNavigate();
 
   const handleChange = (e) => {
@@ -15,18 +16,31 @@ function LoginPage({ setIsLoggedIn }) {
   };
 
   const handleOtpChange = (e) => {
-    setOtp(e.target.value); 
+    setOtp(e.target.value);
   };
 
-  const handleSubmit = async (e) => {
+  const handleLoginSubmit = async (e) => {
     e.preventDefault();
     try {
-      
       const user = await login(credentials);
-      sessionStorage.setItem("user", JSON.stringify(user)); 
-      setIsOtpSent(true); 
-      setError(""); 
+      sessionStorage.setItem("user", JSON.stringify(user));
+      sessionStorage.setItem("_id", JSON.stringify(user._id));
+      setIsOtpSent(true);
+      setError("");
+
+      Swal.fire({
+        title: "OTP Sent!",
+        text: "Please check your email for the OTP code.",
+        icon: "success",
+        confirmButtonColor: "#E66A4E",
+      });
     } catch (err) {
+      Swal.fire({
+        title: "Login Failed",
+        text: "Invalid email or password",
+        icon: "error",
+        confirmButtonColor: "#E66A4E",
+      });
       setError("Invalid email or password");
     }
   };
@@ -34,16 +48,37 @@ function LoginPage({ setIsLoggedIn }) {
   const handleOtpSubmit = async (e) => {
     e.preventDefault();
     try {
-      
       const verificationResponse = await verifyOTP({
         email: credentials.email,
         otp: otp,
       });
-      sessionStorage.setItem("user", JSON.stringify(verificationResponse)); 
-      setIsLoggedIn(true); 
-      navigate("/Home"); 
+      sessionStorage.setItem("user", JSON.stringify(verificationResponse));
+      setIsLoggedIn(true);
+
+      Swal.fire({
+        title: "Success!",
+        text: "You have been logged in successfully.",
+        icon: "success",
+        timer: 1500,
+        showConfirmButton: false,
+      }).then(() => {
+        navigate("/Home");
+      });
     } catch (err) {
+      Swal.fire({
+        title: "Verification Failed",
+        text: "Invalid OTP",
+        icon: "error",
+        confirmButtonColor: "#E66A4E",
+      });
       setError("Invalid OTP");
+      
+      Swal.fire({
+        title: 'Error!',
+        text: 'Invalid OTP. Please try again.',
+        icon: 'error',
+        confirmButtonText: 'OK'
+      });
     }
   };
 
@@ -53,14 +88,13 @@ function LoginPage({ setIsLoggedIn }) {
         <div className="flex justify-center mb-4">
           <img src={logo} alt="Logo" className="w-50 h-50 object-contain" />
         </div>
-        <h2 className="text-center text-2xl font-semibold text-[#E66A4E]">
-          Login
-        </h2>
+
+        <h2 className="text-center text-2xl font-semibold text-[#E66A4E]">Login</h2>
+
         {error && <p className="text-red-500 text-center mt-2">{error}</p>}
-        
+
         {!isOtpSent ? (
-          
-          <form onSubmit={handleSubmit} className="mt-6">
+          <form onSubmit={handleLoginSubmit} className="mt-6">
             <label className="block text-gray-300">Email</label>
             <input
               type="email"
@@ -87,9 +121,18 @@ function LoginPage({ setIsLoggedIn }) {
             >
               Login ➝
             </button>
+
+            <p className="text-center text-gray-400 mt-6">
+              Don't have an account?{" "}
+              <Link
+                to="/signup"
+                className="text-[#E66A4E] cursor-pointer hover:underline"
+              >
+                Sign up here
+              </Link>
+            </p>
           </form>
         ) : (
-          
           <form onSubmit={handleOtpSubmit} className="mt-6">
             <label className="block text-gray-300">Enter OTP</label>
             <input
@@ -98,7 +141,7 @@ function LoginPage({ setIsLoggedIn }) {
               value={otp}
               onChange={handleOtpChange}
               required
-              maxLength={6} 
+              maxLength={6}
               className="w-full p-2 mt-1 bg-[#0D1117] border border-gray-600 rounded-lg text-white"
             />
 
@@ -110,6 +153,10 @@ function LoginPage({ setIsLoggedIn }) {
             </button>
           </form>
         )}
+
+        <p className="text-center text-gray-400 mt-4">
+          If you don't have an account, <a href="/signup" className="text-[#E66A4E]">Sign Up</a> now.
+        </p>
       </div>
     </div>
   );
