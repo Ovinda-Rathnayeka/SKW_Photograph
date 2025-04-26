@@ -4,7 +4,7 @@ import Navbar from "./components/Navbar.jsx";
 import HomePage from "./pages/HomePage.jsx";
 import PackagePage from "./pages/PackagePage.jsx";
 import LoginPage from "./pages/LoginPage.jsx";
-import { logout } from "./Api/AuthAPI.js";
+import logout from "./Api/AuthAPI.js";
 import PaymentPage from "./pages/PaymentPage.jsx";
 import SignupPage from "./pages/SignupPage.jsx";
 import Feedbacks from "./pages/FeedbackDetails.js";
@@ -15,6 +15,10 @@ import Cart from "./pages/CartDisplay.js";
 =======
 import UpdateFeedback from "./pages/UpdateFeedback.js";
 import Profile from "./pages/ProfilePage.jsx";
+<<<<<<< HEAD
+>>>>>>> main
+=======
+import BookingHistory from "./pages/BookignHistory.jsx";
 >>>>>>> main
 
 function App() {
@@ -58,7 +62,12 @@ function App() {
         <Route path="/product" element={<Product/>} />
 =======
         <Route path="/feedbacks/:id" element={<UpdateFeedback />} />
+<<<<<<< HEAD
         <Route path="/profile" element={<Profile/>} />
+>>>>>>> main
+=======
+        <Route path="/profile" element={<Profile />} />
+        <Route path="/booking-history" element={<BookingHistory />} />
 >>>>>>> main
       </Routes>
     </Router>
