@@ -3,23 +3,24 @@ import {
   fetchCartItems,
   removeFromCart,
   updateCartItem,
-} from "../Api/CartAPI.js";
-import { fetchUserDetails } from "../Api/AuthAPI.js";
+} from "../Api/CartAPI.js"; // Import cart API functions
+import { fetchUserDetails } from "../Api/AuthAPI.js"; // Import fetchUserDetails to get the customerId
 import { useNavigate } from "react-router-dom";
 
 function CartDisplay() {
   const [cartItems, setCartItems] = useState([]);
-  const [customerId, setCustomerId] = useState(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
+  const [customerId, setCustomerId] = useState(null); // Store customerId
+  const [loading, setLoading] = useState(true); // Loading state
+  const [error, setError] = useState(null); // Error state
   const navigate = useNavigate();
 
   useEffect(() => {
+    // Fetch user details to get customerId
     const loadUserDetails = async () => {
       try {
-        const userData = await fetchUserDetails();
-        setCustomerId(userData._id);
-        console.log("Customer ID:", userData._id);
+        const userData = await fetchUserDetails(); // Fetch user data from backend
+        setCustomerId(userData._id); // Set customerId from user data
+        console.log("Customer ID:", userData._id); // Debugging log to verify customerId
       } catch (error) {
         setError("Failed to load user details");
         console.error("Error fetching user details:", error);
@@ -27,13 +28,14 @@ function CartDisplay() {
     };
 
     loadUserDetails();
-  }, []);
+  }, []); // Empty dependency array ensures this runs only once when the component mounts
 
   useEffect(() => {
+    // Fetch cart items after customerId is set
     const loadCartItems = async () => {
       if (customerId) {
         try {
-          const items = await fetchCartItems(customerId);
+          const items = await fetchCartItems(customerId); // Fetch cart items for the logged-in user
           setCartItems(items);
         } catch (error) {
           setError("Failed to load cart items");
@@ -45,25 +47,28 @@ function CartDisplay() {
     };
 
     loadCartItems();
-  }, [customerId]);
+  }, [customerId]); // Fetch cart items when customerId changes
 
+  // Handle removing an item from the cart
   const handleRemoveFromCart = async (cartItemId) => {
     try {
-      await removeFromCart(cartItemId);
-      setCartItems(cartItems.filter((item) => item._id !== cartItemId));
+      const result = await removeFromCart(cartItemId); // Call the removeFromCart API
+      setCartItems(cartItems.filter((item) => item._id !== cartItemId)); // Update cart items after removal
       alert("Product removed from cart");
     } catch (error) {
       console.error("Error removing product from cart:", error);
     }
   };
 
+  // Handle updating the quantity of a cart item
   const handleUpdateQuantity = async (cartItemId, newQuantity) => {
     if (newQuantity <= 0) {
       alert("Quantity must be greater than 0");
       return;
     }
     try {
-      await updateCartItem(cartItemId, newQuantity);
+      const updatedItem = await updateCartItem(cartItemId, newQuantity); // Call the updateCartItem API
+      // Update the cartItems state with the updated item
       setCartItems((prevItems) =>
         prevItems.map((item) =>
           item._id === cartItemId ? { ...item, quantity: newQuantity } : item
@@ -75,6 +80,7 @@ function CartDisplay() {
     }
   };
 
+  // Calculate the total price of the cart
   const calculateTotalPrice = () => {
     return cartItems.reduce(
       (total, item) => total + item.price * item.quantity,
@@ -119,7 +125,7 @@ function CartDisplay() {
                   <td className="py-3 px-4">
                     <div className="flex items-center">
                       <img
-                        src={item.productId?.image || "/default-image.jpg"}
+                        src={item.productId?.image || "/default-image.jpg"} // Fallback image if productId.image is undefined
                         alt={item.productId?.name || "Product Image"}
                         className="w-16 h-16 object-cover rounded-md mr-4"
                       />
@@ -162,6 +168,12 @@ function CartDisplay() {
         </div>
       )}
 
+      {/* Total Price */}
+      <div className="text-right mt-4 text-xl font-bold text-white">
+        Total Price: ${calculateTotalPrice()}
+      </div>
+
+      {/* Checkout Button */}
       <div className="text-center mt-6">
         <button
           onClick={() => navigate("/checkout")}

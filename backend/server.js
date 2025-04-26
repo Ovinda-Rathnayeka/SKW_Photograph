@@ -11,9 +11,11 @@ import Payment from "./Routes/PaymentRoutes.js";
 import Feedback from "./Routes/FeedbackRoute.js";
 import Product from "./Routes/ProductRoutes.js";
 import Cart from "./Routes/CartRoutes.js";
-import CartPayment from "./Routes/CartPaymentRoutes.js";
 
 import cloudinary from "./Middleware/CloudinaryConfig.js";
+import Rental from "./Routes/RentalRoutes.js";
+import Resource from "./Routes/ResourceRoutes.js";
+import CustomizePackage from "./Routes/CustomizePackageRoute.js";
 
 const app = express();
 dotenv.config();
@@ -35,8 +37,6 @@ app.use("/payment", Payment);
 app.use("/feedbacks", Feedback);
 app.use("/product", Product);
 app.use("/cart", Cart);
-app.use("/cart-payment", CartPayment);
-
 
 mongoose
   .connect(process.env.MONGODB_URI)

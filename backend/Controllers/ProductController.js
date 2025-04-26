@@ -5,7 +5,7 @@ import cloudinary from "../Middleware/CloudinaryConfig.js";
 
 const isValidObjectId = (id) => mongoose.Types.ObjectId.isValid(id);
 
-// Create Product
+
 const createProduct = async (req, res) => {
   try {
     let imageUrl = "";
@@ -38,7 +38,7 @@ const createProduct = async (req, res) => {
   }
 };
 
-// Get All Products
+
 export const getAllProducts = async (req, res) => {
   try {
     const products = await Product.find();
@@ -62,7 +62,7 @@ export const getAllProducts = async (req, res) => {
   }
 };
 
-// Get Product By ID
+
 const getProductById = async (req, res) => {
   const { id } = req.params;
 
@@ -82,7 +82,7 @@ const getProductById = async (req, res) => {
   }
 };
 
-// Update Product By ID
+
 const updateProductById = async (req, res) => {
   const { id } = req.params;
 
@@ -118,7 +118,7 @@ const updateProductById = async (req, res) => {
 };
 
 
-// Delete Product By ID
+
 const deleteProductById = async (req, res) => {
   const { id } = req.params;
 

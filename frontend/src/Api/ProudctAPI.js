@@ -1,7 +1,7 @@
 import axios from "axios";
 
 const api = axios.create({
-  baseURL: "http://localhost:5000/product", // Adjusted to target the product routes
+  baseURL: "http://localhost:5000/product", 
 });
 
 export const fetchProducts = async () => {

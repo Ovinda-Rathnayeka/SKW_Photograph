@@ -24,6 +24,8 @@ const createPayment = async (req, res) => {
   } = req.body;
 
   try {
+    console.log("Received data:", JSON.stringify(req.body, null, 2));
+
     if (
       !isValidObjectId(bookingId) ||
       !isValidObjectId(customerId) ||
@@ -34,17 +36,24 @@ const createPayment = async (req, res) => {
       });
     }
 
+    const numericAmount = parseFloat(amount);
+    const numericHalfPaymentAmount = parseFloat(halfPaymentAmount);
     let toPayAmount = 0;
+
     if (paymentType === "half") {
       if (
-        !halfPaymentAmount ||
-        halfPaymentAmount <= 0 ||
-        halfPaymentAmount > amount
+        isNaN(numericHalfPaymentAmount) ||
+        numericHalfPaymentAmount <= 0 ||
+        numericHalfPaymentAmount > numericAmount
       ) {
         return res.status(400).json({ message: "Invalid half payment amount" });
       }
-      toPayAmount = amount - halfPaymentAmount;
+      toPayAmount = numericAmount - numericHalfPaymentAmount;
+    } else {
+      toPayAmount = numericAmount;
     }
+
+    console.log("Calculated toPayAmount:", toPayAmount);
 
     let proofImageUrl = "";
     if (req.file) {
@@ -53,14 +62,15 @@ const createPayment = async (req, res) => {
         allowed_formats: ["jpg", "jpeg", "png"],
       });
       proofImageUrl = cloudinaryResult.secure_url;
+      console.log("Proof image uploaded:", proofImageUrl);
     }
 
     const newPayment = new Payment({
       bookingId,
       customerId,
       packageId,
-      amount,
-      halfPaymentAmount: paymentType === "half" ? halfPaymentAmount : 0,
+      amount: numericAmount,
+      halfPaymentAmount: paymentType === "half" ? numericHalfPaymentAmount : 0,
       toPayAmount,
       paymentMethod,
       paymentType,
@@ -69,7 +79,14 @@ const createPayment = async (req, res) => {
       paymentStatus: "Pending",
     });
 
+    console.log(
+      "New payment object to save:",
+      JSON.stringify(newPayment, null, 2)
+    );
+
     const savedPayment = await newPayment.save();
+
+    console.log("Payment saved:", JSON.stringify(savedPayment, null, 2));
 
     const booking = await Booking.findById(bookingId)
       .populate("customerId")
@@ -191,7 +208,6 @@ const sendPaymentConfirmationEmail = async (
   }
 };
 
-// Get all payments API function
 const getAllPayments = async (req, res) => {
   try {
     const payments = await Payment.find().populate("bookingId");
@@ -202,7 +218,6 @@ const getAllPayments = async (req, res) => {
   }
 };
 
-// Get payment by ID API function
 const getPaymentById = async (req, res) => {
   const { id } = req.params;
   if (!isValidObjectId(id)) {
@@ -221,7 +236,6 @@ const getPaymentById = async (req, res) => {
   }
 };
 
-// Update payment status by ID API function
 const updatePaymentStatus = async (req, res) => {
   const { id } = req.params;
   const { paymentStatus } = req.body;
@@ -241,7 +255,6 @@ const updatePaymentStatus = async (req, res) => {
       return res.status(404).json({ message: "Payment not found" });
     }
 
-    // Send email notification based on payment status
     if (paymentStatus === "Completed") {
       await sendPaymentSuccessEmail(
         updatedPayment.customerId.email,

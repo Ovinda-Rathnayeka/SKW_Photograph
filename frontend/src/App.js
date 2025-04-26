@@ -4,16 +4,15 @@ import Navbar from "./components/Navbar.jsx";
 import HomePage from "./pages/HomePage.jsx";
 import PackagePage from "./pages/PackagePage.jsx";
 import LoginPage from "./pages/LoginPage.jsx";
-import { logout } from "./Api/AuthAPI.js";
+import logout from "./Api/AuthAPI.js";
 import PaymentPage from "./pages/PaymentPage.jsx";
-import SignupPage from "./pages/SingupPage.jsx";
-
+import SignupPage from "./pages/SignupPage.jsx";
 import Feedbacks from "./pages/FeedbackDetails.js";
 import AddFeedback from "./pages/AddFeedback.js";
 import UpdateFeedback from "./pages/UpdateFeedback.js";
 import Product from "./pages/ProductDisplay.jsx";
 import Cart from "./pages/CartDisplay.js";
-import CartPaymentPage from "./pages/CartPaymentPage";
+
 function App() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
 
@@ -43,14 +42,16 @@ function App() {
           path="/login"
           element={<LoginPage setIsLoggedIn={setIsLoggedIn} />}
         />
+        <Route
+          path="/signup"
+          element={<SignupPage setIsLoggedIn={setIsLoggedIn} />}
+        />
         <Route path="/payment" element={<PaymentPage />} />
 
         <Route path="/feedbacks" element={<Feedbacks />} />
         <Route path="/add-feedback" element={<AddFeedback />} />
         <Route path="/feedbacks/:id" element={<UpdateFeedback />} />
-        <Route path="/cart" element={<Cart />} />
-        <Route path="/product" element={<Product/>} />
-        <Route path="/checkout" element={<CartPaymentPage />} />
+        <Route path="/product" element={<Cart />} />
       </Routes>
     </Router>
   );

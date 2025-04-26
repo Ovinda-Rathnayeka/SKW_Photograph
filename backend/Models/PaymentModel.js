@@ -46,9 +46,8 @@ const paymentSchema = new mongoose.Schema({
     default: "Pending",
   },
   paymentType: {
-    // New field to store the payment type (full or half)
     type: String,
-    enum: ["full", "half"], // Only "full" or "half" are allowed
+    enum: ["full", "half"],
     required: true,
   },
 });

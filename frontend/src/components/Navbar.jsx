@@ -1,8 +1,16 @@
-import React from "react";
+import React, { useState } from "react";
 import logo from "../components/images/logo.png";
 import { Link } from "react-router-dom";
+import Sidebar from "./Sidebar";
+import profile_image from "../components/images/profile_image.png";
 
 const Navbar = ({ isLoggedIn, onLogout }) => {
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+
+  const toggleSidebar = () => {
+    setIsSidebarOpen(!isSidebarOpen);
+  };
+
   return (
     <nav className="flex justify-between items-center p-4 bg-[#0a181f]">
       <div className="flex items-center">
@@ -14,7 +22,6 @@ const Navbar = ({ isLoggedIn, onLogout }) => {
         <a href="#video" className="text-[#8f8888] font-bold hover:text-[#747c7c]">Video Gallery</a>
         <Link to="/packages" className="text-[#8f8888] font-bold hover:text-[#747c7c]">Packages</Link>
         <Link to="/product" className="text-[#8f8888] font-bold hover:text-[#747c7c]">Store</Link>
-        <Link to="/cart" className="text-[#8f8888] font-bold hover:text-[#747c7c]">Cart</Link>
         <Link to="/feedbacks" className="text-[#8f8888] font-bold hover:text-[#747c7c]">Feedbacks</Link>
         <a href="#contact" className="text-[#8f8888] font-bold hover:text-[#747c7c]">Contact Us</a>
       </div>
