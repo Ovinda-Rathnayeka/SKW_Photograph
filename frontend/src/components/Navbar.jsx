@@ -22,6 +22,7 @@ const Navbar = ({ isLoggedIn, onLogout }) => {
         <a href="#video" className="text-[#8f8888] font-bold hover:text-[#747c7c]">Video Gallery</a>
         <Link to="/packages" className="text-[#8f8888] font-bold hover:text-[#747c7c]">Packages</Link>
         <Link to="/product" className="text-[#8f8888] font-bold hover:text-[#747c7c]">Store</Link>
+        <Link to="/cart" className="text-[#8f8888] font-bold hover:text-[#747c7c]">Cart</Link>
         <Link to="/feedbacks" className="text-[#8f8888] font-bold hover:text-[#747c7c]">Feedbacks</Link>
         <a href="#contact" className="text-[#8f8888] font-bold hover:text-[#747c7c]">Contact Us</a>
       </div>

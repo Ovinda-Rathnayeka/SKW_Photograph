@@ -7,6 +7,10 @@ import PDashboard from "./Page/AdminP&B/Dashboard.jsx";
 
 import PaymentPage from "./Page/AdminP&B/PaymentPage.jsx";
 import DisplayBooking from "./Page/AdminP&B/DisplayBooking.jsx";
+import Sidebar from './components/AdminP&B/Sidebar'; 
+import Navbar from './components/AdminP&B/Navbar';
+import Dashboard from './Page/AdminP&B/Dashboard';
+
 
 function App() {
   return (
