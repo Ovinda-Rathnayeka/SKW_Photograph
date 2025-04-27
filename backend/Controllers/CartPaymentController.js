@@ -1,9 +1,9 @@
-import CartPayment from "../Models/CartPaymentModel.js";
+import Payment from "../Models/PaymentModel.js"; // ✅ Changed
 import Cart from "../Models/CartModel.js";
 import Customer from "../Models/CustomerModel.js";
 import cloudinary from "../Middleware/CloudinaryConfig.js";
 import nodemailer from "nodemailer";
-import Product from "../Models/ProductModel.js"; // ✅ Added import
+import Product from "../Models/ProductModel.js"; // ✅ Already imported
 
 const generateTransactionId = () => `TRCART${Math.floor(Math.random() * 1000000)}`;
 
@@ -31,7 +31,7 @@ export const createCartPayment = async (req, res) => {
       price: item.price,
     }));
 
-    const newPayment = new CartPayment({
+    const newPayment = new Payment({
       customerId,
       cartItems: cartData,
       totalAmount,
@@ -40,6 +40,7 @@ export const createCartPayment = async (req, res) => {
       proofImageUrl,
       transactionId: generateTransactionId(),
       paymentStatus: "Pending",
+      isCartPayment: true, // ✅ Important to identify cart payments
     });
 
     await newPayment.save();
@@ -55,7 +56,7 @@ export const createCartPayment = async (req, res) => {
 // Get all cart payments
 export const getAllCartPayments = async (req, res) => {
   try {
-    const payments = await CartPayment.find()
+    const payments = await Payment.find({ isCartPayment: true }) // ✅ Only cart payments
       .populate("customerId")
       .populate("cartItems.productId");
 
@@ -77,11 +78,11 @@ export const updateCartPaymentStatus = async (req, res) => {
   }
 
   try {
-    const updated = await CartPayment.findByIdAndUpdate(
+    const updated = await Payment.findByIdAndUpdate(
       id,
-      { paymentStatus: status },
+      { paymentStatus: status === "Accepted" ? "Completed" : "Failed" },
       { new: true }
-    ).populate("customerId");
+    ).populate("customerId").populate("cartItems.productId");
 
     if (!updated) {
       return res.status(404).json({ message: "Order not found" });

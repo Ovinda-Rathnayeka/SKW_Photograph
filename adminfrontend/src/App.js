@@ -3,40 +3,37 @@ import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import LoginPage from "./Page/LoginPage.jsx";
 import PackageAdd from "./Page/AdminP&B/PackageAdd.jsx";
 import PackageDisplay from "./Page/AdminP&B/PackageDisplay.jsx";
-import PDashboard from "./Page/AdminP&B/Dashboard.jsx";
-
+import ProductDashboard from "./Page/AdminP&M/Productashboard.jsx"; // ✅ Already imported
 import PaymentPage from "./Page/AdminP&B/PaymentPage.jsx";
 import DisplayBooking from "./Page/AdminP&B/DisplayBooking.jsx";
-import Sidebar from './components/AdminP&B/Sidebar'; 
-import Navbar from './components/AdminP&B/Navbar';
-import Dashboard from './Page/AdminP&B/Dashboard';
-
+import Dashboard from "./Page/AdminP&B/Dashboard.jsx"; // ✅ Admin Dashboard
+import AdminProductPage from "./Page/AdminP&M/AdminProductPage.jsx";
+import Analytics from "./Page/AdminP&M/Analytics.jsx";
+import AdminOrderManagement from "./Page/AdminP&M/AdminOrderManagement.jsx"; // ✅ Already imported
+import ProductTablePage from "./Page/AdminP&M/ProductTablePage.jsx"; // ✅ Newly added import
 
 function App() {
   return (
     <Router>
-      <div className="flex h-screen bg-gray-100">
-        {/* Sidebar - Fixed height */}
-        <Sidebar />
+      <Routes>
+        {/* Login pages */}
+        <Route path="/lg" element={<LoginPage />} />
+        <Route path="/login" element={<LoginPage />} />
 
-        {/* Main Content Area */}
-        <div className="flex flex-col flex-1">
-          {/* Navbar - Fixed at the top */}
-          <Navbar />
+        {/* Admin and Product Dashboards */}
+        <Route path="/" element={<ProductDashboard />} />
+        <Route path="/adminproductpage" element={<AdminProductPage />} />
+        <Route path="/adminproducttable" element={<ProductTablePage />} /> {/* ✅ New Route */}
+        <Route path="/analytics" element={<Analytics />} />
+        <Route path="/adminordermanage" element={<AdminOrderManagement />} />
 
-          {/* Page Content */}
-          <div className="flex-1 overflow-auto p-6">
-            <Routes>
-              <Route path="/" element={<Dashboard />} />
-              <Route path="/login" element={<LoginPage />} />
-              <Route path="/add-package" element={<PackageAdd />} />
-              <Route path="/packagedisplay" element={<PackageDisplay />} />
-              <Route path="/payment" element={<PaymentPage />} />
-              <Route path="/displaybooking" element={<DisplayBooking />} />
-            </Routes>
-          </div>
-        </div>
-      </div>
+        {/* Other pages */}
+        <Route path="/admindashboard" element={<Dashboard />} />
+        <Route path="/add-package" element={<PackageAdd />} />
+        <Route path="/packagedisplay" element={<PackageDisplay />} />
+        <Route path="/payment" element={<PaymentPage />} />
+        <Route path="/displaybooking" element={<DisplayBooking />} />
+      </Routes>
     </Router>
   );
 }

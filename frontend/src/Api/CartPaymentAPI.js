@@ -7,25 +7,12 @@ const api = axios.create({
   baseURL: "http://localhost:5000/api/cart-payment", // Adjust if backend URL is different
 });
 
-// Upload payment slip
-export const uploadPaymentSlip = async (formData) => {
-  try {
-    const response = await api.post("/upload", formData, {
-      headers: {
-        "Content-Type": "multipart/form-data",
-      },
-    });
-    return response.data;
-  } catch (error) {
-    console.error("Error uploading payment slip:", error);
-    throw new Error("Failed to upload payment slip");
-  }
-};
+// Upload payment slip (❌ This is no longer needed, so we comment it safely)
+// export const uploadPaymentSlip = async (formData) => { ... }
 
-// Fetch all payments
 export const fetchPayments = async () => {
   try {
-    const response = await api.get("/all");
+    const response = await api.get("/");
     return response.data;
   } catch (error) {
     console.error("Error fetching payments:", error);
@@ -33,10 +20,25 @@ export const fetchPayments = async () => {
   }
 };
 
-// ➡️ Add createCartPayment (new function matching your request)
-export const createCartPayment = async (paymentData) => {
+// ➡️ Corrected createCartPayment
+export const createCartPayment = async (paymentData, proofImage) => {
   try {
-    const response = await api.post("/", paymentData);
+    const formData = new FormData();
+
+    formData.append("customerId", paymentData.customerId);
+    formData.append("address", paymentData.address);
+    formData.append("totalAmount", paymentData.totalAmount);
+
+    if (proofImage) {
+      formData.append("proofImage", proofImage);
+    }
+
+    const response = await api.post("/", formData, {
+      headers: {
+        "Content-Type": "multipart/form-data",
+      },
+    });
+
     return response.data;
   } catch (error) {
     console.error("Error creating cart payment:", error);

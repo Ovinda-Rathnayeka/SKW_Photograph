@@ -1,4 +1,6 @@
 import React, { useEffect, useState } from "react";
+import Navbar from "../../components/AdminP&M/Navbar.jsx";
+import Sidebar from "../../components/AdminP&M/Sidebar.jsx";
 import axios from "axios";
 import "./AdminProductPage.css";
 
@@ -8,7 +10,7 @@ function AdminOrderManagement() {
 
   const fetchAllOrders = async () => {
     try {
-      const response = await axios.get("http://localhost:5000/cart-payment", {
+      const response = await axios.get("http://localhost:5000/api/cart-payment", {
         withCredentials: true,
       });
       setOrders(response.data);
@@ -26,13 +28,11 @@ function AdminOrderManagement() {
   const handleUpdateStatus = async (orderId, status) => {
     try {
       const res = await axios.patch(
-        `http://localhost:5000/cart-payment/${orderId}/status`,
+        `http://localhost:5000/api/cart-payment/${orderId}/status`,
         { status },
         { withCredentials: true }
       );
-
       alert(res.data.message);
-
       setOrders((prevOrders) =>
         prevOrders.map((order) =>
           order._id === orderId ? { ...order, paymentStatus: status } : order
@@ -156,10 +156,16 @@ function AdminOrderManagement() {
   if (loading) return <div className="text-center mt-10">Loading orders...</div>;
 
   return (
-    <div className="p-6 max-w-7xl mx-auto">
-      <h1 className="text-3xl font-bold mb-6 text-center">Order Management</h1>
-      {renderTable("Pending Orders", pendingOrders)}
-      {renderTable("Processed Orders", processedOrders)}
+    <div className="flex">
+      <Sidebar />
+      <div className="flex flex-col flex-grow">
+        <Navbar />
+        <div className="p-6 max-w-7xl mx-auto">
+          <h1 className="text-3xl font-bold mb-6 text-center">Order Management</h1>
+          {renderTable("Pending Orders", pendingOrders)}
+          {renderTable("Processed Orders", processedOrders)}
+        </div>
+      </div>
     </div>
   );
 }
