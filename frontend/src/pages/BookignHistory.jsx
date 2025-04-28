@@ -13,12 +13,20 @@ function BookingHistory() {
     const fetchDetailsAndBookings = async () => {
       try {
         const user = await fetchUserDetails();
+        console.log("Fetched User:", user);
         setUserDetails(user);
 
         const allBookings = await fetchAllBookings();
-        const userBookings = allBookings.filter(
-          (booking) => booking.userId === user.id
-        );
+        console.log("All Bookings:", allBookings);
+
+        // 🔥 Fix for ObjectId support
+        const userBookings = allBookings.filter((booking) => {
+          const bookingCustomerId =
+            booking.customerId?._id || booking.customerId;
+          return bookingCustomerId?.toString() === user._id?.toString();
+        });
+
+        console.log("User Bookings After Filter:", userBookings);
         setBookings(userBookings);
       } catch (err) {
         setError("Error fetching user details or bookings");
@@ -34,12 +42,10 @@ function BookingHistory() {
   };
 
   const filteredBookings = bookings.filter((booking) => {
-    const packageName = booking.packageId
-      ? booking.packageId.packageName.toLowerCase()
-      : "";
     const bookingDate = new Date(booking.bookingDate).toLocaleDateString();
     return (
-      packageName.includes(search.toLowerCase()) || bookingDate.includes(search)
+      bookingDate.includes(search) ||
+      booking.status.toLowerCase().includes(search.toLowerCase())
     );
   });
 
@@ -56,7 +62,9 @@ function BookingHistory() {
       if (result.isConfirmed) {
         try {
           await deleteBooking(bookingId);
-          setBookings(bookings.filter((booking) => booking._id !== bookingId));
+          setBookings((prev) =>
+            prev.filter((booking) => booking._id !== bookingId)
+          );
           Swal.fire("Deleted!", "The booking has been deleted.", "success");
         } catch (err) {
           Swal.fire(
@@ -70,11 +78,15 @@ function BookingHistory() {
   };
 
   if (error) {
-    return <div className="text-red-500">{error}</div>;
+    return <div className="text-red-500 text-center mt-8">{error}</div>;
   }
 
   if (!userDetails) {
-    return <div>Loading user details...</div>;
+    return (
+      <div className="text-center mt-8 text-gray-700">
+        Loading user details...
+      </div>
+    );
   }
 
   return (
@@ -82,12 +94,21 @@ function BookingHistory() {
       <h2 className="text-3xl font-semibold mb-4 text-gray-800">
         Booking History
       </h2>
-      <h3 className="text-xl text-gray-600 mb-6">User: {userDetails.name}</h3>
+
+      {/* ✅ Show User Info */}
+      <div className="mb-6">
+        <h3 className="text-xl text-gray-600">
+          <strong>User:</strong> {userDetails.name}
+        </h3>
+        <h4 className="text-md text-gray-500">
+          <strong>Customer ID:</strong> {userDetails._id}
+        </h4>
+      </div>
 
       <div className="mb-4">
         <input
           type="text"
-          placeholder="Search by Package Name or Booking Date"
+          placeholder="Search by Booking Date or Status"
           value={search}
           onChange={handleSearch}
           className="w-full p-3 border border-gray-300 rounded-lg"
@@ -100,9 +121,12 @@ function BookingHistory() {
             <thead className="bg-gray-100 text-gray-700">
               <tr>
                 <th className="py-3 px-6 text-left border-b">Booking Date</th>
-                <th className="py-3 px-6 text-left border-b">Booking Status</th>
-                <th className="py-3 px-6 text-left border-b">Package Name</th>
-                <th className="py-3 px-6 text-left border-b">Package Price</th>
+                <th className="py-3 px-6 text-left border-b">Booking Time</th>
+                <th className="py-3 px-6 text-left border-b">Status</th>
+                <th className="py-3 px-6 text-left border-b">Total Price</th>
+                <th className="py-3 px-6 text-left border-b">
+                  Additional Notes
+                </th>
                 <th className="py-3 px-6 text-left border-b">Actions</th>
               </tr>
             </thead>
@@ -113,17 +137,16 @@ function BookingHistory() {
                     {new Date(booking.bookingDate).toLocaleDateString()}
                   </td>
                   <td className="py-3 px-6 border-b text-sm">
+                    {booking.bookingTime || "-"}
+                  </td>
+                  <td className="py-3 px-6 border-b text-sm">
                     {booking.status}
                   </td>
                   <td className="py-3 px-6 border-b text-sm">
-                    {booking.packageId
-                      ? booking.packageId.packageName
-                      : "No package"}
+                    ₨{booking.totalPrice}
                   </td>
                   <td className="py-3 px-6 border-b text-sm">
-                    {booking.packageId
-                      ? `₨${booking.packageId.price}`
-                      : "No package"}
+                    {booking.additionalNotes || "-"}
                   </td>
                   <td className="py-3 px-6 border-b text-sm">
                     <button
@@ -138,7 +161,7 @@ function BookingHistory() {
             </tbody>
           </table>
         ) : (
-          <p className="text-gray-500">No bookings found.</p>
+          <p className="text-gray-500 p-6 text-center">No bookings found.</p>
         )}
       </div>
     </div>
