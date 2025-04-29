@@ -1,42 +1,36 @@
 import mongoose from "mongoose";
-import RentalProduct from "../Models/RentalProduct.js"; // Import your RentalProduct model
-import uploadMultiple from "../Middleware/MulterMultipleConfig.js"; // Importing the multiple upload config
-import cloudinary from "../Middleware/CloudinaryConfig.js"; // Cloudinary configuration
+import RentalProduct from "../Models/RentalProduct.js";
+import uploadMultiple from "../Middleware/MulterMultipleConfig.js";
+import cloudinary from "../Middleware/CloudinaryConfig.js";
 
 const isValidObjectId = (id) => mongoose.Types.ObjectId.isValid(id);
 
-// Create rental product
 const createRentalProduct = async (req, res) => {
   try {
-    const imageUrls = []; // Initialize an array to hold image URLs
+    const imageUrls = [];
 
-    // Check if files are provided (multiple images)
     if (req.files && req.files.length > 0) {
-      // Loop through each file and upload it to Cloudinary
       for (const file of req.files) {
         const cloudinaryResult = await cloudinary.uploader.upload(file.path, {
-          folder: "skw-photography/rentals", // Cloudinary folder
-          allowed_formats: ["jpg", "jpeg", "png"], // Allowed formats
+          folder: "skw-photography/rentals",
+          allowed_formats: ["jpg", "jpeg", "png"],
         });
-        imageUrls.push(cloudinaryResult.secure_url); // Store the URL of each uploaded image
+        imageUrls.push(cloudinaryResult.secure_url);
       }
 
-      // Attach the uploaded image URLs to the request body
       req.body.images = imageUrls;
     }
 
-    // Create a new rental product instance with provided data
     const newRentalProduct = new RentalProduct(req.body);
     const savedRentalProduct = await newRentalProduct.save();
 
-    res.status(201).json(savedRentalProduct); // Respond with the saved rental product
+    res.status(201).json(savedRentalProduct);
   } catch (error) {
     console.error("Error creating rental product:", error);
     res.status(500).json({ message: "Error creating rental product", error });
   }
 };
 
-// Get all rental products
 export const getAllRentalProducts = async (req, res) => {
   try {
     const rentalProducts = await RentalProduct.find();
@@ -50,7 +44,7 @@ export const getAllRentalProducts = async (req, res) => {
       price: product.price,
       condition: product.condition,
       availabilityStatus: product.availabilityStatus,
-      images: product.images, // Multiple images
+      images: product.images,
       createdAt: product.createdAt,
       updatedAt: product.updatedAt,
     }));
@@ -62,7 +56,6 @@ export const getAllRentalProducts = async (req, res) => {
   }
 };
 
-// Get rental product by ID
 const getRentalProductById = async (req, res) => {
   const { id } = req.params;
 
@@ -84,11 +77,9 @@ const getRentalProductById = async (req, res) => {
   }
 };
 
-// Update rental product by ID
 const updateRentalProductById = async (req, res) => {
   const { id } = req.params;
 
-  // Validate rental product ID format
   if (!isValidObjectId(id)) {
     return res
       .status(400)
@@ -96,27 +87,24 @@ const updateRentalProductById = async (req, res) => {
   }
 
   try {
-    const imageUrls = []; // Initialize an array to hold image URLs
+    const imageUrls = [];
 
-    // Check if files (images) are provided for update
     if (req.files && req.files.length > 0) {
-      // Loop through each file and upload it to Cloudinary
       for (const file of req.files) {
         const cloudinaryResult = await cloudinary.uploader.upload(file.path, {
-          folder: "skw-photography/rentals", // Cloudinary folder
-          allowed_formats: ["jpg", "jpeg", "png"], // Allowed formats
+          folder: "skw-photography/rentals",
+          allowed_formats: ["jpg", "jpeg", "png"],
         });
-        imageUrls.push(cloudinaryResult.secure_url); // Push image URL to array
+        imageUrls.push(cloudinaryResult.secure_url);
       }
-      req.body.images = imageUrls; // Add new images to the request body
+      req.body.images = imageUrls;
     }
 
-    // Find and update the rental product by its ID
     const updatedRentalProduct = await RentalProduct.findByIdAndUpdate(
       id,
       req.body,
       {
-        new: true, // Return the updated document
+        new: true,
       }
     );
 
@@ -124,7 +112,6 @@ const updateRentalProductById = async (req, res) => {
       return res.status(404).json({ message: "Rental product not found" });
     }
 
-    // Respond with the updated rental product
     res.status(200).json(updatedRentalProduct);
   } catch (error) {
     console.error("Error updating rental product:", error);
@@ -132,11 +119,9 @@ const updateRentalProductById = async (req, res) => {
   }
 };
 
-// Delete rental product by ID
 const deleteRentalProductById = async (req, res) => {
   const { id } = req.params;
 
-  // Validate the ID format
   if (!mongoose.Types.ObjectId.isValid(id)) {
     return res
       .status(400)
@@ -144,7 +129,6 @@ const deleteRentalProductById = async (req, res) => {
   }
 
   try {
-    // Find and delete the rental product by ID
     const deletedRentalProduct = await RentalProduct.findByIdAndDelete(id);
     if (!deletedRentalProduct) {
       return res.status(404).json({ message: "Rental product not found" });

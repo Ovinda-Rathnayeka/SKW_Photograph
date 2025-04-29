@@ -1,36 +1,36 @@
 import React, { useState, useEffect } from "react";
-import { Link } from "react-router-dom"; // Import Link from React Router
-import feedbackAPI from "../Api/FeedbackAPI"; // Import the feedback API methods
-import { fetchUserDetails } from "../Api/AuthAPI"; // Import fetchUserDetails method for fetching customer details
+import { Link } from "react-router-dom"; 
+import feedbackAPI from "../Api/FeedbackAPI"; 
+import { fetchUserDetails } from "../Api/AuthAPI"; 
 
 function FeedbackList() {
-  const [feedbacks, setFeedbacks] = useState([]); // State to store all feedbacks
-  const [loading, setLoading] = useState(true); // State to track loading state
-  const [error, setError] = useState(null); // State to track errors
-  const [userId, setUserId] = useState(null); // Logged-in user ID
-  const [showModal, setShowModal] = useState(false); // Modal state for update form
-  const [feedbackToUpdate, setFeedbackToUpdate] = useState(null); // Store feedback to update
+  const [feedbacks, setFeedbacks] = useState([]); 
+  const [loading, setLoading] = useState(true); 
+  const [error, setError] = useState(null); 
+  const [userId, setUserId] = useState(null); 
+  const [showModal, setShowModal] = useState(false); 
+  const [feedbackToUpdate, setFeedbackToUpdate] = useState(null); 
 
-  // Fetch all feedbacks when the component mounts
+  
   const fetchAllFeedbacks = async () => {
     try {
       const feedbackData = await feedbackAPI.getAllFeedback();
-      setFeedbacks(feedbackData); // Update the state with fetched feedbacks
-      setLoading(false); // Set loading to false after data is fetched
+      setFeedbacks(feedbackData);
+      setLoading(false); 
     } catch (err) {
       setError("Error fetching feedbacks.");
-      setLoading(false); // Set loading to false in case of error
+      setLoading(false); 
     }
   };
 
-  // Fetch user details when the component mounts to get the logged-in user's ID
+  
   useEffect(() => {
     const fetchUser = async () => {
       try {
         const userDetails = await fetchUserDetails();
-        setUserId(userDetails._id); // Set the userId from fetchUserDetails
+        setUserId(userDetails._id); 
       } catch (err) {
-        setUserId(null); // If not logged in, set userId to null
+        setUserId(null); 
       }
     };
     fetchUser();
@@ -45,29 +45,29 @@ function FeedbackList() {
     return <div className="text-center p-6 text-red-600">{error}</div>;
   }
 
-  // Handle delete operation
+  
   const handleDelete = async (feedbackId) => {
     try {
       await feedbackAPI.deleteFeedbackById(feedbackId);
-      setFeedbacks(feedbacks.filter((feedback) => feedback._id !== feedbackId)); // Remove deleted feedback from the list
+      setFeedbacks(feedbacks.filter((feedback) => feedback._id !== feedbackId)); 
     } catch (err) {
       setError("Error deleting feedback.");
     }
   };
 
-  // Open the modal to update feedback
+  
   const handleOpenModal = (feedback) => {
-    setFeedbackToUpdate(feedback); // Set the feedback to update
-    setShowModal(true); // Show the modal
+    setFeedbackToUpdate(feedback); 
+    setShowModal(true); 
   };
 
-  // Close the modal
+  
   const handleCloseModal = () => {
     setShowModal(false);
-    setFeedbackToUpdate(null); // Reset feedback to update
+    setFeedbackToUpdate(null); 
   };
 
-  // Handle feedback update
+  
   const handleUpdateFeedback = async (updatedFeedbackData) => {
     try {
       await feedbackAPI.updateFeedbackById(
@@ -81,7 +81,7 @@ function FeedbackList() {
             : feedback
         )
       );
-      setShowModal(false); // Close the modal after successful update
+      setShowModal(false); 
     } catch (err) {
       setError("Error updating feedback.");
     }
@@ -91,7 +91,7 @@ function FeedbackList() {
     <div className="max-w-7xl mx-auto p-6">
       <h1 className="text-3xl font-semibold mb-6">All Feedback</h1>
 
-      {/* Add Feedback Button (Visible if user is logged in) */}
+      
       {userId && (
         <Link to="/add-feedback">
           <button className="bg-blue-500 text-white py-2 px-4 rounded mb-6 hover:bg-blue-700">
@@ -119,7 +119,7 @@ function FeedbackList() {
               <p className="text-gray-600 mb-4">{feedback.category}</p>
               <p className="text-gray-800 mb-4">{feedback.comment}</p>
 
-              {/* Display images if available */}
+              
               <div className="flex flex-wrap gap-4">
                 {feedback.images && feedback.images.length > 0 ? (
                   feedback.images.map((image, index) => (
@@ -139,10 +139,10 @@ function FeedbackList() {
                 )}
               </div>
 
-              {/* Update and Delete Buttons (Visible if user is logged in and owns the feedback) */}
+              
               {userId && feedback.customerId === userId && (
                 <div className="mt-4 flex justify-between">
-                  {/* Update Button */}
+                  
                   <button
                     onClick={() => handleOpenModal(feedback)}
                     className="bg-yellow-500 text-white py-2 px-4 rounded hover:bg-yellow-700"
@@ -150,7 +150,7 @@ function FeedbackList() {
                     Update
                   </button>
 
-                  {/* Delete Button */}
+                 
                   <button
                     onClick={() => handleDelete(feedback._id)}
                     className="bg-red-500 text-white py-2 px-4 rounded hover:bg-red-700"
@@ -164,12 +164,12 @@ function FeedbackList() {
         )}
       </div>
 
-      {/* Update Feedback Modal */}
+      
       {showModal && feedbackToUpdate && (
         <div className="fixed inset-0 bg-gray-500 bg-opacity-75 flex items-center justify-center z-50">
           <div className="bg-white p-8 rounded-lg w-96">
             <h2 className="text-xl font-semibold mb-4">Update Feedback</h2>
-            {/* Add form to update feedback */}
+           
             <form
               onSubmit={(e) => {
                 e.preventDefault();
@@ -241,7 +241,7 @@ function FeedbackList() {
                 />
               </div>
 
-              {/* Submit Button */}
+              
               <button
                 type="submit"
                 className="bg-blue-500 text-white py-2 px-4 rounded mt-4 hover:bg-blue-700"
@@ -250,7 +250,7 @@ function FeedbackList() {
               </button>
             </form>
 
-            {/* Close Modal Button */}
+            
             <button
               onClick={handleCloseModal}
               className="bg-gray-500 text-white py-2 px-4 rounded mt-4 ml-2 hover:bg-gray-700"

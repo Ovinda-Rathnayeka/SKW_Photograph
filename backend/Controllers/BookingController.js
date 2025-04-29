@@ -226,7 +226,6 @@ export const updateBookingStatus = async (req, res) => {
   const { id } = req.params;
   const { status } = req.body;
 
-  // Check if status is valid
   if (!["Pending", "Confirmed", "Cancelled"].includes(status)) {
     return res.status(400).json({
       message:
@@ -239,7 +238,6 @@ export const updateBookingStatus = async (req, res) => {
       return res.status(400).json({ message: "Invalid booking ID format" });
     }
 
-    // Update the booking status
     const updatedBooking = await Booking.findByIdAndUpdate(
       id,
       { status },
@@ -252,10 +250,8 @@ export const updateBookingStatus = async (req, res) => {
       return res.status(404).json({ message: "Booking not found" });
     }
 
-    // Log to ensure status change is correct
     console.log(`Booking status changed to: ${status}`);
 
-    // Send confirmation email if booking is confirmed
     if (status === "Confirmed") {
       console.log("Confirmed status detected, sending confirmation email...");
       await sendBookingConfirmedEmail(
@@ -264,7 +260,6 @@ export const updateBookingStatus = async (req, res) => {
       );
     }
 
-    // Send cancellation email if booking is cancelled
     if (status === "Cancelled") {
       console.log("Cancelled status detected, sending cancellation email...");
       await sendBookingCancelledEmail(
@@ -356,7 +351,7 @@ const sendBookingCancelledEmail = async (email, booking) => {
 };
 const sendBookingConfirmedEmail = async (email, booking) => {
   try {
-    console.log("Sending confirmation email to:", email); // Debugging line to ensure it's being called
+    console.log("Sending confirmation email to:", email);
 
     const transporter = nodemailer.createTransport({
       service: "gmail",

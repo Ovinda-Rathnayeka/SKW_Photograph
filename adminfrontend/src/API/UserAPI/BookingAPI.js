@@ -7,7 +7,6 @@ const api = axios.create({
 
 const isValidObjectId = (id) => mongoose.Types.ObjectId.isValid(id);
 
-// Create a new booking
 export const createBooking = async (bookingData) => {
   try {
     console.log("Creating booking with data:", bookingData);
@@ -30,7 +29,6 @@ export const createBooking = async (bookingData) => {
   }
 };
 
-// Fetch all bookings
 export const fetchAllBookings = async () => {
   try {
     console.log("Fetching all bookings...");
@@ -43,7 +41,6 @@ export const fetchAllBookings = async () => {
   }
 };
 
-// Fetch booking by ID
 export const fetchBookingById = async (bookingId) => {
   if (!isValidObjectId(bookingId)) {
     console.error("Invalid booking ID format:", bookingId);
@@ -70,7 +67,6 @@ export const fetchBookingById = async (bookingId) => {
   }
 };
 
-// Update a booking
 export const updateBooking = async (bookingId, updatedData) => {
   if (!isValidObjectId(bookingId)) {
     console.error("Invalid booking ID format:", bookingId);
@@ -95,7 +91,6 @@ export const updateBooking = async (bookingId, updatedData) => {
   }
 };
 
-// Delete a booking
 export const deleteBooking = async (bookingId) => {
   if (!isValidObjectId(bookingId)) {
     console.error("Invalid booking ID format:", bookingId);
@@ -116,7 +111,6 @@ export const deleteBooking = async (bookingId) => {
   }
 };
 
-// Update booking status
 export const updateBookingStatus = async (bookingId, status) => {
   if (!isValidObjectId(bookingId)) {
     console.error("Invalid booking ID format:", bookingId);
@@ -127,7 +121,7 @@ export const updateBookingStatus = async (bookingId, status) => {
     console.log("Updating booking status for:", bookingId, "to", status);
     const response = await api.put(
       `/${bookingId}/status`,
-      { status }, // Send the status in the request body
+      { status },
       {
         headers: {
           "Content-Type": "application/json",

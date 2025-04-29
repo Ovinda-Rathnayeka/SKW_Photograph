@@ -1,14 +1,12 @@
 import axios from "axios";
 
-// Base URL for the customer API
 const api = axios.create({
-  baseURL: "http://localhost:5000/customer", // Adjust this according to your backend API
+  baseURL: "http://localhost:5000/customer",
 });
 
-// Function to create a new customer
 export const createCustomer = async (customerData) => {
   try {
-    const response = await api.post("/", customerData); // POST request to create a new customer
+    const response = await api.post("/", customerData);
     console.log("Customer created successfully:", response.data);
     return response.data;
   } catch (error) {
@@ -20,10 +18,9 @@ export const createCustomer = async (customerData) => {
   }
 };
 
-// Function to fetch all customers
 export const fetchAllCustomers = async () => {
   try {
-    const response = await api.get("/"); // GET request to fetch all customers
+    const response = await api.get("/");
     console.log("Fetched all customers:", response.data);
     return response.data;
   } catch (error) {
@@ -35,7 +32,6 @@ export const fetchAllCustomers = async () => {
   }
 };
 
-// Function to fetch a customer by ID
 export const fetchCustomerById = async (customerId) => {
   try {
     const response = await api.get(`/${customerId}`);
@@ -50,10 +46,9 @@ export const fetchCustomerById = async (customerId) => {
   }
 };
 
-// Function to update customer data
 export const updateCustomer = async (customerId, updatedData) => {
   try {
-    const response = await api.put(`/${customerId}`, updatedData); // PUT request to update customer data
+    const response = await api.put(`/${customerId}`, updatedData);
     console.log("Customer updated successfully:", response.data);
     return response.data;
   } catch (error) {
@@ -65,10 +60,9 @@ export const updateCustomer = async (customerId, updatedData) => {
   }
 };
 
-// Function to deactivate (delete) customer
 export const deactivateCustomer = async (customerId) => {
   try {
-    const response = await api.delete(`/${customerId}`); // DELETE request to deactivate a customer
+    const response = await api.delete(`/${customerId}`);
     console.log("Customer deactivated successfully:", response.data);
     return response.data;
   } catch (error) {
@@ -80,10 +74,9 @@ export const deactivateCustomer = async (customerId) => {
   }
 };
 
-// Function to send OTP to the customer's email
 export const sendOTP = async (email) => {
   try {
-    const response = await api.post(`/otp`, { email }); // POST request to send OTP
+    const response = await api.post(`/otp`, { email });
     console.log("OTP sent successfully:", response.data);
     return response.data;
   } catch (error) {
@@ -95,10 +88,9 @@ export const sendOTP = async (email) => {
   }
 };
 
-// Function to verify OTP for customer login/verification
 export const verifyOTP = async (email, otp) => {
   try {
-    const response = await api.post(`/verify-otp`, { email, otp }); // POST request to verify OTP
+    const response = await api.post(`/verify-otp`, { email, otp });
     console.log("OTP verified successfully:", response.data);
     return response.data;
   } catch (error) {
