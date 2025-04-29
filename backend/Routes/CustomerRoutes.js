@@ -11,9 +11,9 @@ const router = express.Router();
 
 router.post("/", createCustomer);
 
-router.get("/all", getAllCustomers);
+router.get("/", getAllCustomers);
 
-router.get("/customer/:id", getCustomerById);
+router.get("/:id", getCustomerById); // correct route
 
 router.put("/update/:id", updateCustomer);
 

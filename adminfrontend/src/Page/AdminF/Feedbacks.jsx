@@ -85,12 +85,12 @@ function Feedbacks() {
         setFilteredFeedbacks(sortedData);
 
         const customerIds = [
-          ...new Set(data.map((fb) => fb.customerId).filter(Boolean)),
-        ];
+          ...new Set(data.map((fb) => fb.customerId?.toString()).filter(Boolean)),
+        ];        
 
         const customers = await Promise.all(
           customerIds.map((id) => fetchCustomerById(id).catch(() => null))
-        );
+        );        
 
         const customerMapObj = {};
         customers.forEach((c) => {
