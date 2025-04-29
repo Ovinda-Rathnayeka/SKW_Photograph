@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import Swal from "sweetalert2";
 import { fetchAllPayments, updatePaymentStatus } from "../../API/PaymentAPI";
+import * as XLSX from "xlsx"; // Import the xlsx library
 
 function PaymentPage() {
   const [payments, setPayments] = useState([]);
@@ -50,6 +51,31 @@ function PaymentPage() {
     setSelectedImage(null);
   };
 
+  // Function to download payment details as an Excel file
+  const downloadExcel = () => {
+    const ws = XLSX.utils.json_to_sheet(
+      payments.map((payment) => ({
+        "Payment ID": payment._id,
+        Amount: `$${payment.amount}`,
+        "Amount Paid": `${
+          payment.paymentType === "half"
+            ? payment.halfPaymentAmount
+            : payment.amount
+        }`,
+        "Remaining Balance": `${
+          payment.paymentType === "half" ? payment.toPayAmount : 0
+        }`,
+        "Payment Type": payment.paymentType,
+        Status: payment.paymentStatus,
+        Method: payment.paymentMethod,
+        "Transaction ID": payment.transactionId,
+      }))
+    );
+    const wb = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(wb, ws, "Payments");
+    XLSX.writeFile(wb, "Payments_Summary.xlsx");
+  };
+
   if (loading) {
     return (
       <div className="text-center text-lg text-slate-600">
@@ -69,6 +95,16 @@ function PaymentPage() {
       <h2 className="text-3xl font-bold text-center text-slate-800 mb-8">
         Payment Overview
       </h2>
+
+      {/* Button to download Excel */}
+      <div className="text-right mb-4">
+        <button
+          onClick={downloadExcel}
+          className="px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600"
+        >
+          Download Payment Summary (Excel)
+        </button>
+      </div>
 
       <div className="overflow-x-auto rounded-lg shadow-sm border border-slate-200">
         <table className="min-w-full bg-white text-sm">
