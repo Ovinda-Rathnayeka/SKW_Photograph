@@ -6,7 +6,6 @@ import {
   FaCog,
   FaBox,
   FaEye,
-  FaComments,
   FaSignOutAlt,
   FaBars,
 } from "react-icons/fa";
@@ -43,37 +42,19 @@ function Sidebar() {
         <SidebarItem
           icon={<FaTachometerAlt />}
           text="Dashboard"
-          link="/PDashboard"
+          link="/HRDashbaord"
           isOpen={isOpen}
         />
         <SidebarItem
           icon={<FaUser />}
-          text="Bookings"
-          link="/displaybooking"
+          text="Add Emp or Admin"
+          link="/add-employee"
           isOpen={isOpen}
         />
         <SidebarItem
           icon={<FaCog />}
-          text="Payment"
-          link="/payment"
-          isOpen={isOpen}
-        />
-        <SidebarItem
-          icon={<FaBox />}
-          text="Add Package"
-          link="/add-package"
-          isOpen={isOpen}
-        />
-        <SidebarItem
-          icon={<FaBox />}
-          text="Customization"
-          link="/customization"
-          isOpen={isOpen}
-        />
-        <SidebarItem
-          icon={<FaEye />}
-          text="View Packages"
-          link="/packagedisplay"
+          text="Employees All"
+          link="/displayHR"
           isOpen={isOpen}
         />
       </ul>

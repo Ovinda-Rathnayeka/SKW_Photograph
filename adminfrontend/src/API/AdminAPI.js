@@ -1,70 +1,100 @@
+// src/API/AdminAPI.js
 import axios from "axios";
 
-// Set up Axios instance
+// Axios instance for admin operations
 const api = axios.create({
-  baseURL: "http://localhost:5000/employee", // Replace with your backend base URL
+  baseURL: "http://localhost:5000/employee",
+  headers: { "Content-Type": "application/json" },
 });
 
+// Attach JWT token if available
+api.interceptors.request.use((config) => {
+  const token = localStorage.getItem("token");
+  if (token) {
+    config.headers.Authorization = `Bearer ${token}`;
+  }
+  return config;
+});
+
+/** Authentication */
 export const loginEmployee = async (email, password) => {
   try {
-    const response = await api.post("/login", { email, password });
-    return response.data;
-  } catch (error) {
-    throw new Error(error.response?.data?.message || "Something went wrong");
+    const { data } = await api.post("/login", { email, password });
+    // persist token and user data
+    localStorage.setItem("token", data.token);
+    localStorage.setItem("employee", JSON.stringify(data.user));
+    return data;
+  } catch (err) {
+    throw new Error(err.response?.data?.message || "Login failed");
   }
 };
 
+/** Create */
 export const createEmployee = async (employeeData) => {
   try {
-    const response = await api.post("/", employeeData);
-    return response.data;
-  } catch (error) {
-    throw new Error(
-      error.response?.data?.message || "Failed to create employee"
-    );
+    const { data } = await api.post("/", employeeData);
+    return data;
+  } catch (err) {
+    throw new Error(err.response?.data?.message || "Failed to create employee");
   }
 };
 
+/** Read all */
 export const getEmployees = async () => {
   try {
-    const response = await api.get("/");
-    return response.data;
-  } catch (error) {
-    throw new Error(
-      error.response?.data?.message || "Failed to fetch employees"
-    );
+    const { data } = await api.get("/");
+    return data;
+  } catch (err) {
+    throw new Error(err.response?.data?.message || "Failed to fetch employees");
   }
 };
 
+/** Read one */
 export const getEmployeeById = async (id) => {
   try {
-    const response = await api.get(`/${id}`);
-    return response.data;
-  } catch (error) {
-    throw new Error(
-      error.response?.data?.message || "Failed to fetch employee"
-    );
+    const { data } = await api.get(`/${id}`);
+    return data;
+  } catch (err) {
+    throw new Error(err.response?.data?.message || "Failed to fetch employee");
   }
 };
 
+/** Update (fields only, no password reset here) */
 export const updateEmployee = async (id, updatedData) => {
   try {
-    const response = await api.put(`/${id}`, updatedData);
-    return response.data;
-  } catch (error) {
-    throw new Error(
-      error.response?.data?.message || "Failed to update employee"
-    );
+    const { data } = await api.put(`/${id}`, updatedData);
+    return data;
+  } catch (err) {
+    throw new Error(err.response?.data?.message || "Failed to update employee");
   }
 };
 
+/** Delete */
 export const deleteEmployee = async (id) => {
   try {
-    const response = await api.delete(`/${id}`);
-    return response.data;
-  } catch (error) {
-    throw new Error(
-      error.response?.data?.message || "Failed to delete employee"
-    );
+    const { data } = await api.delete(`/${id}`);
+    return data;
+  } catch (err) {
+    throw new Error(err.response?.data?.message || "Failed to delete employee");
+  }
+};
+
+/** Reveal password using fixed key */
+export const revealEmployeePassword = async (id, revealKey) => {
+  try {
+    const { data } = await api.post(`/${id}/reveal-password`, { revealKey });
+    return data.password;
+  } catch (err) {
+    throw new Error(err.response?.data?.message || "Failed to reveal password");
+  }
+};
+
+/** Reset password (admin only) */
+export const resetEmployeePassword = async (id) => {
+  try {
+    const { data } = await api.post(`/${id}/reset-password`);
+    return data.newPassword;
+  } catch (err) {
+    throw new Error(err.response?.data?.message || "Failed to reset password");
   }
 };
