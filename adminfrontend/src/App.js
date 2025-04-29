@@ -35,14 +35,9 @@ function App() {
           <Route path="/RDashbaord" element={<RDashbaord />} />
           <Route path="/re" element={<ResourcesPage />} />
           <Route path="/customization" element={<CustomizationPage />} />
-<<<<<<< HEAD
-          <Route path="/feedbackDashboard" element={<FeedbackDashboard />} />
-          <Route path="/feedbackTable" element={<FeedbackTable />} />
-=======
           <Route path="/HRDashbaord" element={<HRDashbaord />} />
           <Route path="/add-employee" element={<AddEmployee />} />
           <Route path="/displayHR" element={<DisplayHR />} />
->>>>>>> main
         </Routes>
       </div>
     </Router>

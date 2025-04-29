@@ -26,38 +26,6 @@ const LoginPage = () => {
     setErrorMessage("");
     setLoading(true);
 
-<<<<<<< HEAD
-    const adminEmails = [
-      "packageadmin@skwphotography.com",
-      "resourceadmin@skwphotography.com",
-      "hradmin@gmail.com",
-      "feedback@gmail.com",
-      "admin5@example.com",
-    ];
-
-    if (!adminEmails.includes(email)) {
-      setErrorMessage("Invalid admin email.");
-      return;
-    }
-
-    if (password !== "123") {
-      setErrorMessage("Incorrect password. Please use password: 123");
-      return;
-    }
-
-    // Login success
-    localStorage.setItem("token", "dummy-token-123456"); // You can save any dummy token
-
-    // Redirect based on email
-    if (email === "packageadmin@skwphotography.com") {
-      navigate("/PDashboard");
-    } else if (email === "resourceadmin@skwphotography.com") {
-      navigate("/RDashbaord");
-    } else if (email === "hradmin@gmail.com") {
-      navigate("/admin/hr-dashboard");
-    } else if (email === "feedback@gmail.com") {
-      navigate("/feedbackDashboard");
-=======
     try {
       const { token, user } = await loginEmployee(email, password);
       localStorage.setItem("token", token);
@@ -73,7 +41,6 @@ const LoginPage = () => {
       setErrorMessage(err.message || "Login failed");
     } finally {
       setLoading(false);
->>>>>>> main
     }
   };
 
@@ -81,11 +48,11 @@ const LoginPage = () => {
     <div className="flex items-center justify-center min-h-screen bg-gray-100">
       <div className="w-full max-w-md p-8 bg-black text-white shadow-lg rounded-lg">
         <div className="flex justify-center mb-6">
-<<<<<<< HEAD
-          <img src={logo} alt="Admin Logo" className="w-50 h-50" />
-=======
-          <img src={logo} alt="Logo" className="w-24 h-24" />
->>>>>>> main
+          <img
+            src={logo}
+            alt="Logo"
+            className="max-w-[96px] max-h-[96px] object-contain"
+          />
         </div>
         <h2 className="text-2xl font-bold text-center mb-4">Sign In</h2>
 
