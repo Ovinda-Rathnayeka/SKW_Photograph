@@ -1,15 +1,12 @@
-import Cart from "../Models/CartModel.js"; // Import Cart model
+import Cart from "../Models/CartModel.js";
 
-// Add a product to the cart
 const addToCart = async (req, res) => {
-  const { productId, quantity, price, customerId } = req.body; // customerId should come from the request body
+  const { productId, quantity, price, customerId } = req.body;
 
   try {
-    // Check if the cart already contains the product
     const existingCartItem = await Cart.findOne({ customerId, productId });
 
     if (existingCartItem) {
-      // If the product already exists, update the quantity
       existingCartItem.quantity += quantity;
       await existingCartItem.save();
       return res.status(200).json({
@@ -18,7 +15,6 @@ const addToCart = async (req, res) => {
       });
     }
 
-    // Create new cart item
     const newCartItem = new Cart({
       productId,
       customerId,
@@ -38,25 +34,24 @@ const addToCart = async (req, res) => {
   }
 };
 const getCartByCustomerId = async (req, res) => {
-  const { customerId } = req.params; // Get customerId from URL params
+  const { customerId } = req.params;
 
   try {
-    // Fetch cart items and populate the productId field to get the product details
     const cartItems = await Cart.find({ customerId }).populate("productId");
 
     if (cartItems.length === 0) {
       return res.status(404).json({ message: "No products found in the cart" });
     }
 
-    res.status(200).json(cartItems); // Return populated cart items
+    res.status(200).json(cartItems);
   } catch (error) {
     console.error("Error fetching cart:", error);
     res.status(500).json({ message: "Error fetching cart", error });
   }
 };
-// Update the quantity of a cart item
+
 const updateCartItem = async (req, res) => {
-  const { cartItemId, quantity } = req.body; // Get cartItemId and quantity from the request body
+  const { cartItemId, quantity } = req.body;
   try {
     const updatedCartItem = await Cart.findByIdAndUpdate(
       cartItemId,
@@ -78,9 +73,8 @@ const updateCartItem = async (req, res) => {
   }
 };
 
-// Remove a product from the cart
 const removeFromCart = async (req, res) => {
-  const { cartItemId } = req.params; // Get cartItemId from URL params
+  const { cartItemId } = req.params;
   try {
     const deletedCartItem = await Cart.findByIdAndDelete(cartItemId);
 

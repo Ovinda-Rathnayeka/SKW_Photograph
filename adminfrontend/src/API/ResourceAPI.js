@@ -17,7 +17,6 @@ export const createResource = async (formData) => {
   }
 };
 
-// Get resource by ID
 export const getResourceById = async (id) => {
   try {
     const response = await axios.get(`${API_URL}/${id}`);
@@ -28,7 +27,6 @@ export const getResourceById = async (id) => {
   }
 };
 
-// Get all resources
 export const getAllResources = async () => {
   try {
     const response = await axios.get(API_URL);
@@ -39,7 +37,6 @@ export const getAllResources = async () => {
   }
 };
 
-// Delete resource by ID
 export const deleteResourceById = async (id) => {
   try {
     const response = await axios.delete(`${API_URL}/${id}`);
@@ -53,10 +50,14 @@ export const deleteResourceById = async (id) => {
 // Update resource stock by ID
 export const updateResourceStockAndRentalStock = async (id, stock, rentalStock) => {
   try {
+    console.log(
+      `Updating resource: ${id}, stock: ${stock}, rentalStock: ${rentalStock}`
+    );
     const response = await axios.put(`${API_URL}/${id}/stockAndRental`, {
       stock,
       rentalStock,
     });
+    console.log("Response from backend:", response.data);
     return response.data;
   } catch (error) {
     console.error("Error updating resource stock and rentalStock:", error.response || error);
@@ -64,7 +65,6 @@ export const updateResourceStockAndRentalStock = async (id, stock, rentalStock) 
   }
 };
 
-// Update resource availability by ID
 export const updateResourceAvailability = async (id, availabilityStatus) => {
   try {
     const response = await axios.put(`${API_URL}/${id}/availability`, {

@@ -1,171 +1,124 @@
+import Employee from "../Models/EmployeeModel.js";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
-import Employee from "../Models/EmployeeModel.js";
+import crypto from "crypto";
 
-// Create a new employee
-export const createEmployee = async (req, res) => {
-  const { name, nic, phone, address, email, password, jobRole } = req.body;
-
+// POST /employees/login
+export const loginEmployee = async (req, res) => {
   try {
-    const employeeExists = await Employee.findOne({
-      $or: [{ email }, { nic }],
-    });
+    const { email, password } = req.body;
+    const user = await Employee.findOne({ email });
+    if (!user) return res.status(401).json({ message: "Invalid credentials" });
 
-    if (employeeExists) {
-      return res
-        .status(400)
-        .json({ message: "Employee with this email or NIC already exists." });
+    const match = await bcrypt.compare(password, user.password);
+    if (!match) return res.status(401).json({ message: "Invalid credentials" });
+
+    const token = jwt.sign(
+      { id: user._id, role: user.jobRole },
+      process.env.JWT_SECRET,
+      { expiresIn: "2h" }
+    );
+    const { password: pw, ...userData } = user.toObject();
+    res.json({ token, user: userData });
+  } catch (err) {
+    console.error("loginEmployee error:", err);
+    res.status(500).json({ message: "Server error" });
+  }
+};
+
+// GET /employees        (HR Manager only)
+export const getAllEmployees = async (req, res) => {
+  try {
+    const list = await Employee.find().select("-password");
+    res.json(list);
+  } catch (err) {
+    console.error("getAllEmployees error:", err);
+    res.status(500).json({ message: "Server error" });
+  }
+};
+
+// GET /employees/:id    (HR Manager only)
+export const getEmployeeById = async (req, res) => {
+  try {
+    const emp = await Employee.findById(req.params.id).select("-password");
+    if (!emp) return res.status(404).json({ message: "Not found" });
+    res.json(emp);
+  } catch (err) {
+    console.error("getEmployeeById error:", err);
+    res.status(500).json({ message: "Server error" });
+  }
+};
+
+// POST /employees       (HR Manager only)
+export const createEmployee = async (req, res) => {
+  try {
+    const { name, nic, phone, address, email, password, jobRole } = req.body;
+    if (await Employee.findOne({ $or: [{ nic }, { email }] })) {
+      return res.status(400).json({ message: "NIC or email in use" });
     }
-
-    const hashedPassword = await bcrypt.hash(password, 10);
-
-    const newEmployee = new Employee({
+    const salt = await bcrypt.genSalt(10);
+    const hash = await bcrypt.hash(password, salt);
+    const emp = new Employee({
       name,
       nic,
       phone,
       address,
       email,
-      password: hashedPassword,
+      password: hash,
       jobRole,
     });
-
-    await newEmployee.save();
-
-    res.status(201).json({
-      message: "Employee created successfully",
-      employee: {
-        name: newEmployee.name,
-        nic: newEmployee.nic,
-        phone: newEmployee.phone,
-        address: newEmployee.address,
-        email: newEmployee.email,
-        jobRole: newEmployee.jobRole,
-      },
-    });
-  } catch (error) {
-    console.error("Error creating employee:", error);
-    res.status(500).json({ message: "Server error, please try again later." });
+    await emp.save();
+    const { password: pw, ...data } = emp.toObject();
+    res.status(201).json(data);
+  } catch (err) {
+    console.error("createEmployee error:", err);
+    res.status(500).json({ message: "Server error" });
   }
 };
 
-// Get all employees
-export const getEmployees = async (req, res) => {
-  try {
-    const employees = await Employee.find();
-    res.status(200).json(employees);
-  } catch (error) {
-    console.error("Error fetching employees:", error);
-    res.status(500).json({ message: "Server error, please try again later." });
-  }
-};
-
-// Get employee by ID
-export const getEmployeeById = async (req, res) => {
-  const { id } = req.params;
-
-  try {
-    const employee = await Employee.findById(id);
-
-    if (!employee) {
-      return res.status(404).json({ message: "Employee not found." });
-    }
-
-    res.status(200).json(employee);
-  } catch (error) {
-    console.error("Error fetching employee:", error);
-    res.status(500).json({ message: "Server error, please try again later." });
-  }
-};
-
-// Update an employee
+// PUT /employees/:id    (HR Manager only, cannot reset password here)
 export const updateEmployee = async (req, res) => {
-  const { id } = req.params;
-  const { name, nic, phone, address, email, jobRole } = req.body;
-
   try {
-    const updatedEmployee = await Employee.findByIdAndUpdate(
-      id,
-      {
-        name,
-        nic,
-        phone,
-        address,
-        email,
-        jobRole,
-      },
-      { new: true }
-    );
-
-    if (!updatedEmployee) {
-      return res.status(404).json({ message: "Employee not found." });
-    }
-
-    res.status(200).json({
-      message: "Employee updated successfully",
-      employee: updatedEmployee,
-    });
-  } catch (error) {
-    console.error("Error updating employee:", error);
-    res.status(500).json({ message: "Server error, please try again later." });
+    const updates = { ...req.body };
+    delete updates.password;
+    const updated = await Employee.findByIdAndUpdate(req.params.id, updates, {
+      new: true,
+      runValidators: true,
+    }).select("-password");
+    if (!updated) return res.status(404).json({ message: "Not found" });
+    res.json(updated);
+  } catch (err) {
+    console.error("updateEmployee error:", err);
+    res.status(500).json({ message: "Server error" });
   }
 };
 
-// Delete an employee
+// DELETE /employees/:id (HR Manager only)
 export const deleteEmployee = async (req, res) => {
-  const { id } = req.params;
-
   try {
-    const deletedEmployee = await Employee.findByIdAndDelete(id);
-
-    if (!deletedEmployee) {
-      return res.status(404).json({ message: "Employee not found." });
-    }
-
-    res.status(200).json({ message: "Employee deleted successfully" });
-  } catch (error) {
-    console.error("Error deleting employee:", error);
-    res.status(500).json({ message: "Server error, please try again later." });
+    const del = await Employee.findByIdAndDelete(req.params.id);
+    if (!del) return res.status(404).json({ message: "Not found" });
+    res.json({ message: "Deleted" });
+  } catch (err) {
+    console.error("deleteEmployee error:", err);
+    res.status(500).json({ message: "Server error" });
   }
 };
 
-// Login an employee
-export const loginEmployee = async (req, res) => {
-  const { email, password } = req.body;
-
+// POST /employees/:id/reset-password (HR Manager only)
+export const resetEmployeePassword = async (req, res) => {
   try {
-    // Find employee by email
-    const employee = await Employee.findOne({ email });
+    const emp = await Employee.findById(req.params.id);
+    if (!emp) return res.status(404).json({ message: "Not found" });
 
-    if (!employee) {
-      return res.status(401).json({ message: "Invalid credentials" });
-    }
+    const newPwd = crypto.randomBytes(4).toString("hex"); // 8-char
+    const salt = await bcrypt.genSalt(10);
+    emp.password = await bcrypt.hash(newPwd, salt);
+    await emp.save();
 
-    // Check if the entered password matches the hashed password in the database
-    const isMatch = await bcrypt.compare(password, employee.password);
-
-    if (!isMatch) {
-      return res.status(401).json({ message: "Invalid credentials" });
-    }
-
-    // Generate a JWT token
-    const token = jwt.sign(
-      { id: employee._id, role: employee.jobRole }, // Payload containing employee ID and role
-      process.env.JWT_SECRET, // JWT secret (make sure it's in your .env file)
-      { expiresIn: "1h" } // Token expires in 1 hour
-    );
-
-    res.status(200).json({
-      message: "Login successful",
-      token,
-      employee: {
-        name: employee.name,
-        nic: employee.nic,
-        email: employee.email,
-        jobRole: employee.jobRole,
-      },
-    });
-  } catch (error) {
-    console.error("Error during login:", error);
-    res.status(500).json({ message: "Server error, please try again later." });
+    res.json({ newPassword: newPwd });
+  } catch (err) {
+    console.error("resetEmployeePassword error:", err);
+    res.status(500).json({ message: "Server error" });
   }
 };

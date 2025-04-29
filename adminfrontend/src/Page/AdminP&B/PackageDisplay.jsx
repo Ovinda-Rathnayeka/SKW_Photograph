@@ -1,5 +1,9 @@
 import React, { useState, useEffect } from "react";
-import { getAllPackages, deletePackageById, updatePackageById } from "../../API/PackageAPI.js"; // Adjust paths if necessary
+import {
+  getAllPackages,
+  deletePackageById,
+  updatePackageById,
+} from "../../API/PackageAPI.js";
 
 function PackageDisplay() {
   const [packages, setPackages] = useState([]);
@@ -11,14 +15,14 @@ function PackageDisplay() {
     price: "",
     duration: "",
     numberOfPhotos: "",
-    photoEditing: "Basic", // Default value
+    photoEditing: "Basic",
     deliveryTime: "",
     additionalServices: "",
     description: "",
-    image: null, // Store image for preview
+    image: null,
   });
+  const [errors, setErrors] = useState({});
 
-  // Fetch all packages on component mount
   useEffect(() => {
     const fetchPackages = async () => {
       try {
@@ -31,17 +35,15 @@ function PackageDisplay() {
     fetchPackages();
   }, []);
 
-  // Handle delete package
   const handleDelete = async (id) => {
     try {
       await deletePackageById(id);
-      setPackages(packages.filter((pkg) => pkg._id !== id)); // Remove deleted package from the state
+      setPackages((prev) => prev.filter((pkg) => pkg._id !== id));
     } catch (error) {
       console.error("Error deleting package:", error);
     }
   };
 
-  // Open the popup form with the selected package data
   const handleUpdate = (pkg) => {
     setSelectedPackage(pkg);
     setUpdatedPackageData({
@@ -54,209 +56,312 @@ function PackageDisplay() {
       deliveryTime: pkg.deliveryTime,
       additionalServices: pkg.additionalServices.join(", "),
       description: pkg.description,
-      image: pkg.image, // Set the existing image for preview
+      image: pkg.image,
     });
+    setErrors({});
     setIsPopupOpen(true);
   };
 
-  // Handle change in the update form fields
   const handleChange = (e) => {
     const { name, value } = e.target;
     setUpdatedPackageData({ ...updatedPackageData, [name]: value });
+    validate({ [name]: value });
   };
 
-  // Handle image file change and preview
   const handleFileChange = (e) => {
     const file = e.target.files[0];
-    setUpdatedPackageData({ ...updatedPackageData, image: URL.createObjectURL(file) }); // Preview the image
+    if (file) {
+      setUpdatedPackageData((prev) => ({
+        ...prev,
+        image: file,
+      }));
+    }
   };
 
-  // Handle update form submission
+  const validate = (fields = updatedPackageData) => {
+    const temp = { ...errors };
+
+    if ("packageName" in fields)
+      temp.packageName = fields.packageName ? "" : "Package name is required.";
+
+    if ("category" in fields)
+      temp.category = fields.category ? "" : "Category is required.";
+
+    if ("price" in fields)
+      temp.price =
+        fields.price && parseFloat(fields.price) > 0
+          ? ""
+          : "Enter a valid price.";
+
+    if ("duration" in fields)
+      temp.duration = fields.duration ? "" : "Duration is required.";
+
+    if ("numberOfPhotos" in fields)
+      temp.numberOfPhotos =
+        fields.numberOfPhotos && parseInt(fields.numberOfPhotos) > 0
+          ? ""
+          : "Number of photos must be greater than 0.";
+
+    if ("deliveryTime" in fields)
+      temp.deliveryTime = fields.deliveryTime
+        ? ""
+        : "Delivery time is required.";
+
+    if ("description" in fields)
+      temp.description =
+        fields.description.length >= 10
+          ? ""
+          : "Description must be at least 10 characters.";
+
+    setErrors({ ...temp });
+
+    return Object.values(temp).every((x) => x === "");
+  };
+
   const handleSubmitUpdate = async (e) => {
     e.preventDefault();
-    try {
-      const updatedPackage = await updatePackageById(selectedPackage._id, updatedPackageData);
-      setPackages(
-        packages.map((pkg) =>
-          pkg._id === selectedPackage._id ? updatedPackage : pkg
-        )
-      );
-      setIsPopupOpen(false);
-    } catch (error) {
-      console.error("Error updating package:", error);
+    if (validate()) {
+      try {
+        const formData = new FormData();
+
+        if (
+          updatedPackageData.image &&
+          updatedPackageData.image instanceof File
+        ) {
+          formData.append("image", updatedPackageData.image);
+        }
+
+        for (const key in updatedPackageData) {
+          if (updatedPackageData.hasOwnProperty(key) && key !== "image") {
+            formData.append(key, updatedPackageData[key]);
+          }
+        }
+
+        const updatedPackage = await updatePackageById(
+          selectedPackage._id,
+          updatedPackageData,
+          formData
+        );
+
+        setPackages((prev) =>
+          prev.map((pkg) =>
+            pkg._id === selectedPackage._id ? updatedPackage : pkg
+          )
+        );
+
+        setIsPopupOpen(false);
+      } catch (error) {
+        console.error("Error updating package:", error);
+      }
     }
   };
 
   return (
-    <div className="max-w-4xl mx-auto p-6">
-      <h1 className="text-3xl font-bold text-center mb-6">All Packages</h1>
+    <div className="w-full px-6 py-8">
+      <h1 className="text-3xl font-bold text-center text-slate-800 mb-6">
+        📦 All Packages
+      </h1>
 
-      {/* Packages List */}
-      <table className="min-w-full table-auto border-collapse">
-        <thead>
-          <tr>
-            <th className="px-4 py-2 border-b">Package Name</th>
-            <th className="px-4 py-2 border-b">Category</th>
-            <th className="px-4 py-2 border-b">Price</th>
-            <th className="px-4 py-2 border-b">Actions</th>
-          </tr>
-        </thead>
-        <tbody>
-          {packages.map((pkg) => (
-            <tr key={pkg._id}>
-              <td className="px-4 py-2 border-b">{pkg.packageName}</td>
-              <td className="px-4 py-2 border-b">{pkg.category}</td>
-              <td className="px-4 py-2 border-b">{pkg.price}</td>
-              <td className="px-4 py-2 border-b">
-                <button
-                  onClick={() => handleUpdate(pkg)}
-                  className="bg-blue-500 text-white px-4 py-2 rounded-md mr-2"
-                >
-                  Update
-                </button>
-                <button
-                  onClick={() => handleDelete(pkg._id)}
-                  className="bg-red-500 text-white px-4 py-2 rounded-md"
-                >
-                  Delete
-                </button>
-              </td>
+      <div className="overflow-x-auto shadow-md border border-slate-200 rounded-lg">
+        <table className="min-w-full bg-white text-sm text-left">
+          <thead className="bg-slate-100 text-slate-700">
+            <tr>
+              <th className="px-6 py-3 border-b">Package Name</th>
+              <th className="px-6 py-3 border-b">Category</th>
+              <th className="px-6 py-3 border-b">Price ($)</th>
+              <th className="px-6 py-3 border-b text-center">Actions</th>
             </tr>
-          ))}
-        </tbody>
-      </table>
+          </thead>
+          <tbody>
+            {packages.map((pkg) => (
+              <tr
+                key={pkg._id}
+                className="hover:bg-slate-50 transition border-b"
+              >
+                <td className="px-6 py-3">{pkg.packageName}</td>
+                <td className="px-6 py-3">{pkg.category}</td>
+                <td className="px-6 py-3">{pkg.price}</td>
+                <td className="px-6 py-3 text-center space-x-2">
+                  <button
+                    onClick={() => handleUpdate(pkg)}
+                    className="px-3 py-1 text-xs bg-blue-100 text-blue-700 rounded hover:bg-blue-200"
+                  >
+                    Update
+                  </button>
+                  <button
+                    onClick={() => handleDelete(pkg._id)}
+                    className="px-3 py-1 text-xs bg-rose-100 text-rose-700 rounded hover:bg-rose-200"
+                  >
+                    Delete
+                  </button>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
 
-      {/* Popup Form for Updating Package */}
+      {/* Popup Form */}
       {isPopupOpen && (
-        <div className="fixed inset-0 bg-gray-500 bg-opacity-75 flex justify-center items-center z-50">
-          <div className="bg-white p-6 rounded-md shadow-lg w-96 max-h-[80vh] overflow-y-auto">
-            <h2 className="text-2xl font-semibold mb-4">Update Package</h2>
-            <form onSubmit={handleSubmitUpdate}>
-              {/* Package Name */}
-              <div className="mb-4">
-                <label className="block text-lg mb-2">Package Name</label>
-                <input
-                  type="text"
-                  name="packageName"
-                  value={updatedPackageData.packageName}
-                  onChange={handleChange}
-                  className="w-full p-2 border border-gray-300 rounded-md"
-                  required
-                />
-              </div>
-
-              {/* Category */}
-              <div className="mb-4">
-                <label className="block text-lg mb-2">Category</label>
-                <input
-                  type="text"
-                  name="category"
-                  value={updatedPackageData.category}
-                  onChange={handleChange}
-                  className="w-full p-2 border border-gray-300 rounded-md"
-                  required
-                />
-              </div>
-
-              {/* Price */}
-              <div className="mb-4">
-                <label className="block text-lg mb-2">Price</label>
-                <input
-                  type="number"
-                  name="price"
-                  value={updatedPackageData.price}
-                  onChange={handleChange}
-                  className="w-full p-2 border border-gray-300 rounded-md"
-                  required
-                />
-              </div>
-
-              {/* Duration */}
-              <div className="mb-4">
-                <label className="block text-lg mb-2">Duration</label>
-                <input
-                  type="text"
-                  name="duration"
-                  value={updatedPackageData.duration}
-                  onChange={handleChange}
-                  className="w-full p-2 border border-gray-300 rounded-md"
-                  required
-                />
-              </div>
-
-              {/* Number of Photos */}
-              <div className="mb-4">
-                <label className="block text-lg mb-2">Number of Photos</label>
-                <input
-                  type="number"
-                  name="numberOfPhotos"
-                  value={updatedPackageData.numberOfPhotos}
-                  onChange={handleChange}
-                  className="w-full p-2 border border-gray-300 rounded-md"
-                  required
-                />
-              </div>
-
-              {/* Additional Services */}
-              <div className="mb-4">
-                <label className="block text-lg mb-2">Additional Services</label>
-                <input
-                  type="text"
-                  name="additionalServices"
-                  value={updatedPackageData.additionalServices}
-                  onChange={handleChange}
-                  className="w-full p-2 border border-gray-300 rounded-md"
-                />
-              </div>
-
-              {/* Image Preview */}
-              {updatedPackageData.image && (
-                <div className="mb-4">
-                  <label className="block text-lg mb-2">Current Image</label>
-                  <img
-                    src={updatedPackageData.image}
-                    alt="Package Preview"
-                    className="w-full h-48 object-cover border border-gray-300 rounded-md"
-                  />
-                </div>
-              )}
-
-              {/* Upload New Image */}
-              <div className="mb-4">
-                <label className="block text-lg mb-2">Upload New Image</label>
-                <input
-                  type="file"
-                  name="image"
-                  onChange={handleFileChange}
-                  className="w-full p-2 border border-gray-300 rounded-md"
-                  accept="image/*"
-                />
-              </div>
+        <div className="fixed inset-0 z-50 bg-black bg-opacity-50 flex items-center justify-center px-4">
+          <div className="bg-white w-full max-w-lg rounded-lg shadow-xl p-6 max-h-[85vh] overflow-y-auto">
+            <h2 className="text-xl font-semibold text-slate-800 mb-4">
+              ✏️ Update Package
+            </h2>
+            <form onSubmit={handleSubmitUpdate} className="space-y-4 text-sm">
+              <FormField
+                label="Package Name"
+                name="packageName"
+                value={updatedPackageData.packageName}
+                onChange={handleChange}
+                error={errors.packageName}
+              />
+              <FormField
+                label="Category"
+                name="category"
+                value={updatedPackageData.category}
+                onChange={handleChange}
+                error={errors.category}
+              />
+              <FormField
+                label="Price"
+                name="price"
+                type="number"
+                value={updatedPackageData.price}
+                onChange={handleChange}
+                error={errors.price}
+              />
+              <FormField
+                label="Duration"
+                name="duration"
+                value={updatedPackageData.duration}
+                onChange={handleChange}
+                error={errors.duration}
+              />
+              <FormField
+                label="Number of Photos"
+                name="numberOfPhotos"
+                type="number"
+                value={updatedPackageData.numberOfPhotos}
+                onChange={handleChange}
+                error={errors.numberOfPhotos}
+              />
+              <FormField
+                label="Delivery Time"
+                name="deliveryTime"
+                value={updatedPackageData.deliveryTime}
+                onChange={handleChange}
+                error={errors.deliveryTime}
+              />
+              <FormField
+                label="Additional Services"
+                name="additionalServices"
+                value={updatedPackageData.additionalServices}
+                onChange={handleChange}
+              />
 
               {/* Description */}
-              <div className="mb-4">
-                <label className="block text-lg mb-2">Description</label>
+              <div>
+                <label className="block text-sm font-medium text-slate-700 mb-1">
+                  Description
+                </label>
                 <textarea
                   name="description"
                   value={updatedPackageData.description}
                   onChange={handleChange}
-                  className="w-full p-2 border border-gray-300 rounded-md"
+                  rows="3"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md text-sm focus:ring-2 focus:ring-blue-400"
                 ></textarea>
+                {errors.description && (
+                  <p className="text-red-500 text-xs mt-1">
+                    {errors.description}
+                  </p>
+                )}
               </div>
 
-              <div className="flex justify-end">
+              {/* Existing Image */}
+              {selectedPackage?.image &&
+                typeof selectedPackage.image === "string" && (
+                  <div>
+                    <label className="text-sm font-medium text-slate-700 mb-1 block">
+                      Existing Image
+                    </label>
+                    <img
+                      src={selectedPackage.image}
+                      alt="Current"
+                      className="w-28 h-20 object-cover rounded border border-gray-300"
+                    />
+                  </div>
+                )}
+
+              {/* Preview New Image */}
+              {updatedPackageData.image &&
+                updatedPackageData.image instanceof File && (
+                  <div>
+                    <label className="text-sm font-medium text-slate-700 mb-1 block">
+                      Preview New Image
+                    </label>
+                    <img
+                      src={URL.createObjectURL(updatedPackageData.image)}
+                      alt="Preview"
+                      className="w-28 h-20 object-cover rounded border border-gray-300"
+                    />
+                  </div>
+                )}
+
+              {/* Upload Button */}
+              <div className="flex flex-col space-y-2">
+                <label className="text-sm font-medium text-slate-700">
+                  Upload New Image
+                </label>
+                <div className="flex items-center space-x-4">
+                  <label
+                    htmlFor="image-upload"
+                    className="cursor-pointer inline-flex items-center px-3 py-2 bg-blue-100 hover:bg-blue-200 text-blue-700 rounded-md text-sm transition"
+                  >
+                    <svg
+                      className="w-4 h-4 mr-2"
+                      fill="none"
+                      stroke="currentColor"
+                      strokeWidth="2"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        d="M4 16l4-4a3 3 0 014 0l4 4M12 12V4m8 16H4"
+                      />
+                    </svg>
+                    Choose Image
+                  </label>
+                  <span className="text-xs text-slate-600 truncate max-w-[200px]">
+                    {updatedPackageData.image?.name || "No file selected"}
+                  </span>
+                </div>
+                <input
+                  id="image-upload"
+                  type="file"
+                  name="image"
+                  accept="image/*"
+                  onChange={handleFileChange}
+                  className="hidden"
+                />
+              </div>
+
+              {/* Action Buttons */}
+              <div className="flex justify-end pt-4 space-x-2">
                 <button
                   type="button"
                   onClick={() => setIsPopupOpen(false)}
-                  className="bg-gray-300 px-4 py-2 rounded-md mr-2"
+                  className="px-4 py-2 bg-gray-100 text-gray-700 rounded hover:bg-gray-200 text-sm"
                 >
                   Cancel
                 </button>
                 <button
                   type="submit"
-                  className="bg-blue-500 text-white px-4 py-2 rounded-md"
+                  className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 text-sm"
                 >
-                  Update Package
+                  Save Changes
                 </button>
               </div>
             </form>
@@ -266,5 +371,21 @@ function PackageDisplay() {
     </div>
   );
 }
+
+const FormField = ({ label, name, type = "text", value, onChange, error }) => (
+  <div>
+    <label className="block text-sm font-medium text-slate-700 mb-1">
+      {label}
+    </label>
+    <input
+      type={type}
+      name={name}
+      value={value}
+      onChange={onChange}
+      className="w-full px-3 py-2 border border-gray-300 rounded-md text-sm focus:ring-2 focus:ring-blue-400"
+    />
+    {error && <p className="text-red-500 text-xs mt-1">{error}</p>}
+  </div>
+);
 
 export default PackageDisplay;

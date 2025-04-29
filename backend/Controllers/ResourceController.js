@@ -1,7 +1,6 @@
 import Resource from "../Models/ResourceModel.js";
 import mongoose from "mongoose";
 
-// Create a new resource
 const createResource = async (req, res) => {
   try {
     const {
@@ -32,7 +31,6 @@ const createResource = async (req, res) => {
   }
 };
 
-// Get resource by ID
 const getResourceById = async (req, res) => {
   const { id } = req.params;
 
@@ -52,7 +50,6 @@ const getResourceById = async (req, res) => {
   }
 };
 
-// Get all resources
 const getAllResources = async (req, res) => {
   try {
     const resources = await Resource.find();
@@ -63,7 +60,6 @@ const getAllResources = async (req, res) => {
   }
 };
 
-// Delete resource by ID
 const deleteResourceById = async (req, res) => {
   const { id } = req.params;
 
@@ -126,7 +122,7 @@ const updateResource = async (req, res) => {
   }
 };
 
-// ✅ Stock-only update (rename this back)
+// ✅ Stock-only update
 const updateResourceStockAndRentalStock = async (req, res) => {
   const { id } = req.params;
   const { stock, rentalStock } = req.body;
@@ -166,8 +162,7 @@ const updateResourceStockAndRentalStock = async (req, res) => {
   }
 };
 
-
-// Update availability
+// ✅ Update availability
 const updateResourceAvailability = async (req, res) => {
   const { id } = req.params;
   const { availabilityStatus } = req.body;

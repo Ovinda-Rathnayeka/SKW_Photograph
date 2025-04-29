@@ -1,13 +1,13 @@
 import axios from "axios";
 
-// Base URL for the cart API
+
 const api = axios.create({
-  baseURL: "http://localhost:5000/cart", // Change this to your backend cart API URL
+  baseURL: "http://localhost:5000/cart", 
 });
 
 export const fetchCartItems = async (customerId) => {
   try {
-    const response = await api.get(`/${customerId}`); // customerId is passed in the URL
+    const response = await api.get(`/${customerId}`); 
     console.log("Cart items fetched successfully:", response.data);
     return response.data;
   } catch (error) {
@@ -19,14 +19,14 @@ export const fetchCartItems = async (customerId) => {
   }
 };
 
-// Add a product to the cart
+
 export const addToCart = async (productId, quantity, price, customerId) => {
   try {
     const response = await api.post("/", {
       productId,
       quantity,
       price,
-      customerId, // Include customerId in the request body
+      customerId, 
     });
     console.log("Product added to cart:", response.data);
     return response.data;
@@ -39,10 +39,10 @@ export const addToCart = async (productId, quantity, price, customerId) => {
   }
 };
 
-// Update the quantity of a cart item
+
 export const updateCartItem = async (cartItemId, quantity) => {
   try {
-    // Pass the cartItemId and quantity in the body of the request
+    
     const response = await api.put(`/update`, { cartItemId, quantity });
     console.log("Cart item updated successfully:", response.data);
     return response.data;
@@ -55,10 +55,10 @@ export const updateCartItem = async (cartItemId, quantity) => {
   }
 };
 
-// Remove a product from the cart
+
 export const removeFromCart = async (cartItemId) => {
   try {
-    const response = await api.delete(`/${cartItemId}`); // cartItemId is passed in the URL
+    const response = await api.delete(`/${cartItemId}`); 
     console.log("Product removed from cart:", response.data);
     return response.data;
   } catch (error) {
