@@ -7,7 +7,7 @@ import { loginEmployee } from "../API/AdminAPI.js";
 const roleToRoute = {
   packageBookingManager: "/package-booking/dashboard",
   resourceManager: "/resource-manager/dashboard",
-  feedbackManager: "/feedback-manager/dashboard",
+  feedbackManager: "/feedbackDashboard",
   hrManager: "/HRDashbaord",
   photographers: "/photographers/dashboard",
   videographers: "/videographers/dashboard",
