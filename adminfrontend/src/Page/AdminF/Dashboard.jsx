@@ -1,3 +1,5 @@
+// feedbackManager@skwphotography.com
+
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import Navbar from "../../components/AdminF/Navbar.jsx"; 
