@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import axios from "axios";
 import Navbar from "../../components/AdminF/Navbar.jsx"; 
 import Sidebar from "../../components/AdminF/Sidebar.jsx";
+import LoadingModal from "../../components/LoadingModal.js";
 import {
   PieChart,
   Pie,
@@ -92,8 +93,8 @@ function Dashboard() {
   }));
 
   if (loading) {
-    return <div className="p-10 text-center text-lg">Loading Dashboard...</div>;
-  }
+    return <LoadingModal show={true} />;
+  }  
 
   return (
     <div className="flex">
