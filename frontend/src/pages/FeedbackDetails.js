@@ -171,10 +171,9 @@ function FeedbackList() {
         feedbackToUpdate
       );
       setFeedbacks((prev) =>
-        prev.map((f) =>
-          f._id === feedbackToUpdate._id ? { ...f, ...feedbackToUpdate } : f
-        )
+        prev.filter((f) => f._id !== feedbackToUpdate._id)
       );
+      
       Swal.fire("Updated!", "Your feedback is awaiting approval.", "success");
       setShowModal(false);
     } catch {
@@ -283,7 +282,7 @@ function FeedbackList() {
 
   return (
     <div
-      className="min-h-screen bg-cover bg-center"
+      className="min-h-screen bg-cover bg-center pt-20"
       style={{ backgroundImage: `url(${dot})` }}
     >
       <div className="max-w-7xl mx-auto p-6">
