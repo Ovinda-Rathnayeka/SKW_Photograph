@@ -286,11 +286,11 @@ function FeedbackList() {
       style={{ backgroundImage: `url(${dot})` }}
     >
       <div className="max-w-7xl mx-auto p-6">
-        <h1 className="text-3xl text-white font-bold mb-6">All Feedback</h1>
+        <h1 className="text-3xl text-white font-bold mb-6">All Feedbacks</h1>
         {userId && (
           <Link to="/add-feedback">
             <button className="bg-blue-500 text-white px-4 py-2 rounded mb-6 hover:bg-blue-700">
-              Add Feedback
+              Add New Feedback
             </button>
           </Link>
         )}
