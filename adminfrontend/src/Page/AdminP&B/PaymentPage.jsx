@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import Swal from "sweetalert2";
 import { fetchAllPayments, updatePaymentStatus } from "../../API/PaymentAPI";
-import * as XLSX from "xlsx"; // Import the xlsx library
+import * as XLSX from "xlsx"; 
 
 function PaymentPage() {
   const [payments, setPayments] = useState([]);
