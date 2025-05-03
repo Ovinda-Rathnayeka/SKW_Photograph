@@ -8,7 +8,7 @@ import PDashboard from "./Page/AdminP&B/Dashboard.jsx";
 import PaymentPage from "./Page/AdminP&B/PaymentPage.jsx";
 import DisplayBooking from "./Page/AdminP&B/DisplayBooking.jsx";
 
-import RentalAdd from "./Page/AdminR&T/RentalAdd.jsx";
+
 import RDashbaord from "./Page/AdminR&T/Dashboard.jsx";
 import ResourcesPage from "./Page/AdminR&T/ResourcesPage.jsx";
 import CustomizationPage from "./Page/AdminP&B/CustomizationPage.jsx";
@@ -31,7 +31,6 @@ function App() {
           <Route path="/packagedisplay" element={<PackageDisplay />} />
           <Route path="/payment" element={<PaymentPage />} />
           <Route path="/displaybooking" element={<DisplayBooking />} />
-          <Route path="/rental/:id" element={<RentalAdd />} />
           <Route path="/RDashbaord" element={<RDashbaord />} />
           <Route path="/re" element={<ResourcesPage />} />
           <Route path="/customization" element={<CustomizationPage />} />

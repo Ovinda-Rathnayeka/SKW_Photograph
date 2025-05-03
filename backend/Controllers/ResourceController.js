@@ -1,7 +1,7 @@
 import Resource from "../Models/ResourceModel.js";
 import mongoose from "mongoose";
 
-
+// Create a new resource
 const createResource = async (req, res) => {
   try {
     const {
@@ -32,7 +32,7 @@ const createResource = async (req, res) => {
   }
 };
 
-
+// Get resource by ID
 const getResourceById = async (req, res) => {
   const { id } = req.params;
 
@@ -52,7 +52,7 @@ const getResourceById = async (req, res) => {
   }
 };
 
-
+// Get all resources
 const getAllResources = async (req, res) => {
   try {
     const resources = await Resource.find();
@@ -63,7 +63,7 @@ const getAllResources = async (req, res) => {
   }
 };
 
-
+// Delete resource by ID
 const deleteResourceById = async (req, res) => {
   const { id } = req.params;
 
@@ -83,12 +83,8 @@ const deleteResourceById = async (req, res) => {
   }
 };
 
-
-const updateResourceStockAndRentalStock = async (req, res) => {
-
 // ✅ Full update of all resource fields
 const updateResource = async (req, res) => {
-
   const { id } = req.params;
   const {
     name,
@@ -135,13 +131,10 @@ const updateResourceStockAndRentalStock = async (req, res) => {
   const { id } = req.params;
   const { stock, rentalStock } = req.body;
 
-  
-
   if (!mongoose.Types.ObjectId.isValid(id)) {
     return res.status(400).json({ message: "Invalid resource ID format" });
   }
 
- 
   if (
     typeof stock !== "number" ||
     stock < 0 ||
@@ -163,7 +156,6 @@ const updateResourceStockAndRentalStock = async (req, res) => {
     if (!updatedResource) {
       return res.status(404).json({ message: "Resource not found" });
     }
-
 
     res.status(200).json(updatedResource);
   } catch (error) {

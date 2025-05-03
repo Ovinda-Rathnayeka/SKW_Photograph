@@ -1,4 +1,4 @@
-// src/pages/BookingHistory.jsx
+
 import React, { useState, useEffect, useRef } from "react";
 import { fetchUserDetails } from "../Api/AuthAPI.js";
 import { fetchAllBookings, deleteBooking } from "../Api/BookingAPI.js";
