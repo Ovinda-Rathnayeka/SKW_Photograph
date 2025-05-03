@@ -47,10 +47,16 @@ const Navbar = ({ isLoggedIn, onLogout }) => {
               Packages
             </Link>
             <a
-              href="#store"
+              href="/product"
               className="text-[#8f8888] font-bold hover:text-[#747c7c]"
             >
               Store
+            </a>
+            <a
+              href="/cart"
+              className="text-[#8f8888] font-bold hover:text-[#747c7c]"
+            >
+              Cart
             </a>
             <a
               href="/rental"

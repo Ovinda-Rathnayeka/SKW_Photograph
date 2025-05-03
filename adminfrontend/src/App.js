@@ -20,11 +20,26 @@ import DisplayHR from "./Page/AdminHR/DisplayHR.jsx";
 import FeedbackDashboard from "./Page/AdminF/Dashboard.jsx";
 import FeedbackTable from "./Page/AdminF/Feedbacks.jsx";
 
+import ProductDashboard from "./Page/AdminP&M/Productashboard.jsx"; 
+import AdminProductPage from "./Page/AdminP&M/AdminProductPage.jsx";
+import ProductTablePage from "./Page/AdminP&M/ProductTablePage.jsx"; 
+import Analytics from "./Page/AdminP&M/Analytics.jsx";
+import AdminOrderManagement from "./Page/AdminP&M/AdminOrderManagement.jsx";
+
+
 function App() {
   return (
     <Router>
       <div>
         <Routes>
+          {/* Admin and Product Dashboards */}
+          <Route path="/productdashboard" element={<ProductDashboard />} />
+          <Route path="/adminproductpage" element={<AdminProductPage />} />
+          <Route path="/adminproducttable" element={<ProductTablePage />} /> {/*  New Route */}
+          <Route path="/analytics" element={<Analytics />} />
+          <Route path="/adminordermanage" element={<AdminOrderManagement />} />
+
+          {/* ----------- */}
           <Route path="/" element={<LoginPage />} />
           <Route path="/PDashboard" element={<PDashboard />} />
           <Route path="/add-package" element={<PackageAdd />} />

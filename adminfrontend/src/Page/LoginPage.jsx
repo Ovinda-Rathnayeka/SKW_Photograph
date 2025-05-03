@@ -9,6 +9,7 @@ const roleToRoute = {
   resourceManager: "/RDashbaord",
   feedbackManager: "/feedbackDashboard",
   hrManager: "/HRDashbaord",
+  PrManager: "/productdashboard",
   photographers: "/photographers/dashboard",
   videographers: "/videographers/dashboard",
   helpers: "/helpers/dashboard",
