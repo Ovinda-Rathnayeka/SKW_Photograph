@@ -576,11 +576,6 @@ const HomePage = () => {
             viewport={{ once: true }}
           >
             <h3 className="text-lg font-semibold mb-2">Contact Us</h3>
-            <p className="text-gray-300 text-sm">Sahan Ovrids</p>
-            <p className="text-gray-300 text-sm">+07123456789</p>
-            <p className="text-gray-300 text-sm">sahanovrids@gmail.com</p>
-
-           
             <form className="space-y-3">
               <motion.input
                 type="text"
@@ -674,7 +669,7 @@ const HomePage = () => {
             </motion.h3>
             <p className="text-gray-300 text-sm">971/C, Malabe, Sri Lanka</p>
             <p className="text-gray-300 text-sm">+94 712 123 123</p>
-            <p className="text-gray-300 text-sm">photography@gmail.com</p>
+            <p className="text-gray-300 text-sm">skw.photography.lk@gmail.com</p>
             <p className="text-gray-300 text-sm mt-2">
               Opening Hours: <br /> Mon-Sat: 8:00 AM - 6:00 PM
             </p>

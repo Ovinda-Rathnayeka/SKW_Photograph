@@ -9,6 +9,8 @@ import PaymentPage from "./pages/PaymentPage.jsx";
 import SignupPage from "./pages/SignupPage.jsx";
 import Feedbacks from "./pages/FeedbackDetails.js";
 import AddFeedback from "./pages/AddFeedback.js";
+import Product from "./pages/ProductDisplay.jsx";
+import Cart from "./pages/CartDisplay.js";
 import UpdateFeedback from "./pages/UpdateFeedback.js";
 <<<<<<< HEAD
 
@@ -18,7 +20,7 @@ import Cart from "./pages/CartDisplay.js";
 import DisplayRental from "./pages/DisplayRental.jsx";
 >>>>>>> 7d12eb9e0b32ab7cd105bf9da73ab1fa28988c42
 import Profile from "./pages/ProfilePage.jsx";
-import BookingHistory from "./pages/BookignHistory.jsx";
+import BookingHistory from "./pages/BookingPage.jsx";
 
 import Product from "./pages/ProductDisplay.jsx";
 import Cart from "./pages/CartDisplay.js";
@@ -49,17 +51,13 @@ function App() {
         <Route path="/" element={<HomePage />} />
         <Route path="/Home" element={<HomePage />} />
         <Route path="/packages" element={<PackagePage />} />
-        <Route
-          path="/login"
-          element={<LoginPage setIsLoggedIn={setIsLoggedIn} />}
-        />
-        <Route
-          path="/signup"
-          element={<SignupPage setIsLoggedIn={setIsLoggedIn} />}
-        />
+        <Route path="/login" element={<LoginPage setIsLoggedIn={setIsLoggedIn} />} />
+        <Route path="/signup" element={<SignupPage setIsLoggedIn={setIsLoggedIn} />} />
         <Route path="/payment" element={<PaymentPage />} />
         <Route path="/feedbacks" element={<Feedbacks />} />
         <Route path="/add-feedback" element={<AddFeedback />} />
+        <Route path="/product" element={<Product />} />
+        <Route path="/cart" element={<Cart />} />
         <Route path="/feedbacks/:id" element={<UpdateFeedback />} />
 <<<<<<< HEAD
 

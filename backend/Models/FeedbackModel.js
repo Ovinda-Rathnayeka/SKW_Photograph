@@ -18,6 +18,30 @@ const feedbackSchema = new mongoose.Schema({
     max: 5,
     required: true,
   },
+  serviceQuality: {
+    type: Number,
+    min: 1,
+    max: 5,
+    required: true,
+  },
+  responseTime: {
+    type: Number,
+    min: 1,
+    max: 5,
+    required: true,
+  },
+  valueForMoney: {
+    type: Number,
+    min: 1,
+    max: 5,
+    required: true,
+  },
+  overallExperience: {
+    type: Number,
+    min: 1,
+    max: 5,
+    required: true,
+  },
   title: {
     type: String,
     required: true,
@@ -31,6 +55,10 @@ const feedbackSchema = new mongoose.Schema({
       type: String,
     },
   ],
+  isApproved: {
+    type: Boolean,
+    default: false,
+  },
   createdAt: {
     type: Date,
     default: Date.now,
@@ -41,5 +69,4 @@ const feedbackSchema = new mongoose.Schema({
 });
 
 const FeedbackModel = mongoose.model("Feedback", feedbackSchema);
-// Creating a model for the feedback schema and exporting it
 export default FeedbackModel;

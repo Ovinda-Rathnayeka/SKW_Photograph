@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import {
   FaTimes,
@@ -8,10 +8,25 @@ import {
   FaComments,
   FaSignOutAlt,
 } from "react-icons/fa";
-import { logout } from "../Api/AuthAPI";
+import { logout, fetchUserDetails } from "../Api/AuthAPI";
 import Swal from "sweetalert2";
 
 const Sidebar = ({ isOpen, onClose }) => {
+  const [userName, setUserName] = useState("");
+
+  useEffect(() => {
+    const getUser = async () => {
+      try {
+        const user = await fetchUserDetails();
+        setUserName(user.name); // Assumes user object has a "name" property
+      } catch (error) {
+        console.error("Failed to fetch user details", error);
+      }
+    };
+
+    getUser();
+  }, []);
+
   const handleLogout = async () => {
     try {
       const result = await Swal.fire({
@@ -71,8 +86,8 @@ const Sidebar = ({ isOpen, onClose }) => {
           </button>
         </div>
         <div className="text-white mb-8">
-          <h2 className="font-bold text-2xl">User Profile</h2>
-          <p className="text-sm text-gray-400">Welcome, User!</p>
+          <h2 className="font-bold text-2xl">Hi {userName || "User"}!</h2>
+          <p className="text-sm text-gray-400">Welcome</p>
         </div>
         <ul className="space-y-6">
           <li>

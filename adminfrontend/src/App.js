@@ -17,31 +17,30 @@ import HRDashbaord from "./Page/AdminHR/Dashbaord.jsx";
 import AddEmployee from "./Page/AdminHR/AddEmployee.jsx";
 import DisplayHR from "./Page/AdminHR/DisplayHR.jsx";
 
+import FeedbackDashboard from "./Page/AdminF/Dashboard.jsx";
+import FeedbackTable from "./Page/AdminF/Feedbacks.jsx";
+
 function App() {
   return (
     <Router>
-      <div className="flex h-screen bg-gray-100">
-        {/* Main Content Area */}
-        <div className="flex flex-col flex-1">
-          {/* Page Content */}
-          <div className="flex-1 overflow-auto p-6">
-            <Routes>
-              <Route path="/" element={<LoginPage />} />
-              <Route path="/PDashboard" element={<PDashboard />} />
-              <Route path="/add-package" element={<PackageAdd />} />
-              <Route path="/packagedisplay" element={<PackageDisplay />} />
-              <Route path="/payment" element={<PaymentPage />} />
-              <Route path="/displaybooking" element={<DisplayBooking />} />
-              <Route path="/rental/:id" element={<RentalAdd />} />
-              <Route path="/RDashbaord" element={<RDashbaord />} />
-              <Route path="/re" element={<ResourcesPage />} />
-              <Route path="/customization" element={<CustomizationPage />} />
-              <Route path="/HRDashbaord" element={<HRDashbaord />} />
-              <Route path="/add-employee" element={<AddEmployee />} />
-              <Route path="/displayHR" element={<DisplayHR />} />
-            </Routes>
-          </div>
-        </div>
+      <div>
+        <Routes>
+          <Route path="/" element={<LoginPage />} />
+          <Route path="/PDashboard" element={<PDashboard />} />
+          <Route path="/add-package" element={<PackageAdd />} />
+          <Route path="/packagedisplay" element={<PackageDisplay />} />
+          <Route path="/payment" element={<PaymentPage />} />
+          <Route path="/displaybooking" element={<DisplayBooking />} />
+          <Route path="/rental/:id" element={<RentalAdd />} />
+          <Route path="/RDashbaord" element={<RDashbaord />} />
+          <Route path="/re" element={<ResourcesPage />} />
+          <Route path="/customization" element={<CustomizationPage />} />
+          <Route path="/HRDashbaord" element={<HRDashbaord />} />
+          <Route path="/add-employee" element={<AddEmployee />} />
+          <Route path="/displayHR" element={<DisplayHR />} />
+          <Route path="/feedbackDashboard" element={<FeedbackDashboard />} />
+          <Route path="/feedbackTable" element={<FeedbackTable />} />
+        </Routes>
       </div>
     </Router>
   );
