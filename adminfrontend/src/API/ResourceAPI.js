@@ -2,6 +2,7 @@ import axios from "axios";
 
 const API_URL = "http://localhost:5000/resource";
 
+// Create a new resource
 export const createResource = async (formData) => {
   try {
     const response = await axios.post(API_URL, formData, {
@@ -16,6 +17,7 @@ export const createResource = async (formData) => {
   }
 };
 
+// Get resource by ID
 export const getResourceById = async (id) => {
   try {
     const response = await axios.get(`${API_URL}/${id}`);
@@ -26,6 +28,7 @@ export const getResourceById = async (id) => {
   }
 };
 
+// Get all resources
 export const getAllResources = async () => {
   try {
     const response = await axios.get(API_URL);
@@ -36,6 +39,7 @@ export const getAllResources = async () => {
   }
 };
 
+// Delete resource by ID
 export const deleteResourceById = async (id) => {
   try {
     const response = await axios.delete(`${API_URL}/${id}`);
@@ -46,33 +50,22 @@ export const deleteResourceById = async (id) => {
   }
 };
 
-export const updateResourceStockAndRentalStock = async (
-  id,
-  stock,
-  rentalStock
-) => {
+// Update resource stock by ID (stock + rentalStock)
+export const updateResourceStockAndRentalStock = async (id, stock, rentalStock) => {
   try {
-    console.log(
-      `Updating resource: ${id}, stock: ${stock}, rentalStock: ${rentalStock}`
-    );
-
     const response = await axios.put(`${API_URL}/${id}/stockAndRental`, {
       stock,
       rentalStock,
     });
-
     console.log("Response from backend:", response.data);
-
     return response.data;
   } catch (error) {
-    console.error(
-      "Error updating resource stock and rentalStock:",
-      error.response || error
-    );
+    console.error("Error updating resource stock and rentalStock:", error.response || error);
     throw error;
   }
 };
 
+// Update availability status
 export const updateResourceAvailability = async (id, availabilityStatus) => {
   try {
     const response = await axios.put(`${API_URL}/${id}/availability`, {
@@ -81,6 +74,34 @@ export const updateResourceAvailability = async (id, availabilityStatus) => {
     return response.data;
   } catch (error) {
     console.error("Error updating resource availability:", error);
+    throw error;
+  }
+};
+
+// Reduce stock quantity of a resource
+export const deleteResourceStock = async (id, quantity) => {
+  try {
+    const response = await axios.put(`${API_URL}/${id}/reduce-stock`, {
+      quantity,
+    });
+    return response.data;
+  } catch (error) {
+    console.error("Error reducing resource stock:", error);
+    throw error;
+  }
+};
+
+// Full update of resource
+export const updateResource = async (id, resourceData) => {
+  try {
+    const response = await axios.put(`${API_URL}/${id}/update`, resourceData, {
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
+    return response.data;
+  } catch (error) {
+    console.error("Error updating full resource:", error);
     throw error;
   }
 };
