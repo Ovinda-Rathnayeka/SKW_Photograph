@@ -16,6 +16,7 @@ import DisplayRental from "./pages/DisplayRental.jsx";
 import Profile from "./pages/ProfilePage.jsx";
 import BookingHistory from "./pages/BookignHistory.jsx";
 import Displayrental from "./pages/DisplayRental.jsx";
+import RentalCart from "./pages/RentalCart.jsx";
 
 function App() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
@@ -42,8 +43,14 @@ function App() {
         <Route path="/" element={<HomePage />} />
         <Route path="/home" element={<HomePage />} />
         <Route path="/packages" element={<PackagePage />} />
-        <Route path="/login" element={<LoginPage setIsLoggedIn={setIsLoggedIn} />} />
-        <Route path="/signup" element={<SignupPage setIsLoggedIn={setIsLoggedIn} />} />
+        <Route
+          path="/login"
+          element={<LoginPage setIsLoggedIn={setIsLoggedIn} />}
+        />
+        <Route
+          path="/signup"
+          element={<SignupPage setIsLoggedIn={setIsLoggedIn} />}
+        />
         <Route path="/payment" element={<PaymentPage />} />
         <Route path="/feedbacks" element={<Feedbacks />} />
         <Route path="/add-feedback" element={<AddFeedback />} />
@@ -53,7 +60,8 @@ function App() {
         <Route path="/rental" element={<DisplayRental />} />
         <Route path="/profile" element={<Profile />} />
         <Route path="/booking-history" element={<BookingHistory />} />
-        <Route path="/rental" element={<DisplayRental/>}/>
+        <Route path="/rental" element={<DisplayRental />} />
+        <Route path="/rental-cart" element={<RentalCart />} />
       </Routes>
     </Router>
   );
