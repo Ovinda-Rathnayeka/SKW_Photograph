@@ -15,12 +15,9 @@ import UpdateFeedback from "./pages/UpdateFeedback.js";
 import DisplayRental from "./pages/DisplayRental.jsx";
 import Profile from "./pages/ProfilePage.jsx";
 import BookingHistory from "./pages/BookignHistory.jsx";
-<<<<<<< HEAD
-import Feedback from "./pages/feedback.js";
-=======
 import Displayrental from "./pages/DisplayRental.jsx";
 import CartPaymentPage from "./pages/CartPaymentPage.jsx";
->>>>>>> origin/main
+import Feedback from "./pages/feedback.js";
 
 function App() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
