@@ -53,10 +53,10 @@ const Navbar = ({ isLoggedIn, onLogout }) => {
               Store
             </a>
             <a
-              href="#contact"
+              href="/rental"
               className="text-[#8f8888] font-bold hover:text-[#747c7c]"
             >
-              Contact Us
+              Rental
             </a>
             <Link
               to="/feedbacks"
