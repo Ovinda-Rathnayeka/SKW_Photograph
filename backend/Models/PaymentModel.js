@@ -4,41 +4,41 @@ const paymentSchema = new mongoose.Schema({
   bookingId: {
     type: mongoose.Schema.Types.ObjectId,
     ref: "Booking",
-    required: true,
+    default: null,
   },
   customerId: {
     type: mongoose.Schema.Types.ObjectId,
     ref: "Customer",
-    required: true,
   },
   packageId: {
     type: mongoose.Schema.Types.ObjectId,
     ref: "PhotoPackage",
-    required: true,
+    default: null,
   },
-  amount: {
-    type: Number,
-    required: true,
-  },
+  cartItems: [
+    {
+      productId: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "Product",
+      },
+      quantity: Number,
+      price: Number,
+    },
+  ],
+  amount: Number,
   halfPaymentAmount: {
     type: Number,
     default: 0, // Default to 0 if it's a full payment
   },
-  toPayAmount: {
-    type: Number,
-    required: true,
-  },
+  toPayAmount: Number,
   paymentMethod: {
     type: String,
-    required: true,
   },
   proofImageUrl: {
     type: String,
-    required: true,
   },
   transactionId: {
     type: String,
-    required: true,
   },
   paymentStatus: {
     type: String,
@@ -48,9 +48,18 @@ const paymentSchema = new mongoose.Schema({
   paymentType: {
     type: String,
     enum: ["full", "half"],
-    required: true,
   },
-});
+  totalAmount: {
+    type: Number,
+  },
+  address: {
+    type: String,
+  },
+  isCartPayment: {
+    type: Boolean,
+    default: false,
+  },
+}, { timestamps: true });
 
 const Payment = mongoose.model("Payment", paymentSchema);
 export default Payment;

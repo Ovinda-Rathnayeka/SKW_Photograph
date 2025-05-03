@@ -15,7 +15,12 @@ import UpdateFeedback from "./pages/UpdateFeedback.js";
 import DisplayRental from "./pages/DisplayRental.jsx";
 import Profile from "./pages/ProfilePage.jsx";
 import BookingHistory from "./pages/BookignHistory.jsx";
+<<<<<<< HEAD
 import Feedback from "./pages/feedback.js";
+=======
+import Displayrental from "./pages/DisplayRental.jsx";
+import CartPaymentPage from "./pages/CartPaymentPage.jsx";
+>>>>>>> origin/main
 
 function App() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
@@ -50,6 +55,7 @@ function App() {
         <Route path="/feedbacks/:id" element={<UpdateFeedback />} />
         <Route path="/product" element={<Product />} />
         <Route path="/cart" element={<Cart />} />
+        <Route path="/checkout" element={<CartPaymentPage />} />
         <Route path="/rental" element={<DisplayRental />} />
         <Route path="/profile" element={<Profile />} />
         <Route path="/booking-history" element={<BookingHistory />} />

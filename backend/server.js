@@ -17,6 +17,7 @@ import Resource from "./Routes/ResourceRoutes.js";
 import CustomizePackage from "./Routes/CustomizePackageRoute.js";
 import Employee from "./Routes/EmployeeRoutes.js";
 import RentalCart from "./Routes/RentalCartRotes.js";
+import CartPaymentRoutes from "./Routes/CartPaymentRoutes.js";
 
 const app = express();
 dotenv.config();
@@ -43,6 +44,7 @@ app.use("/resource", Resource);
 app.use("/customization", CustomizePackage);
 app.use("/employee", Employee);
 app.use("/rentalcart", RentalCart);
+app.use("/api/cart-payment", CartPaymentRoutes);
 
 mongoose
   .connect(process.env.MONGODB_URI)
