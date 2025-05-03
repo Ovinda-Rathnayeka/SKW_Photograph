@@ -15,11 +15,7 @@ import UpdateFeedback from "./pages/UpdateFeedback.js";
 import DisplayRental from "./pages/DisplayRental.jsx";
 import Profile from "./pages/ProfilePage.jsx";
 import BookingHistory from "./pages/BookignHistory.jsx";
-<<<<<<< HEAD
 import Feedback from "./pages/feedback.js";
-=======
-import Displayrental from "./pages/DisplayRental.jsx";
->>>>>>> origin/main
 
 function App() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
@@ -57,11 +53,7 @@ function App() {
         <Route path="/rental" element={<DisplayRental />} />
         <Route path="/profile" element={<Profile />} />
         <Route path="/booking-history" element={<BookingHistory />} />
-<<<<<<< HEAD
         <Route path="/feedback" element={<Feedback />} />
-=======
-        <Route path="/rental" element={<DisplayRental/>}/>
->>>>>>> origin/main
       </Routes>
     </Router>
   );
