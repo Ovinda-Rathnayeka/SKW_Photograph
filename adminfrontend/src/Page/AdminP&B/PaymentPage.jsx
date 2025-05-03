@@ -1,74 +1,49 @@
 import React, { useEffect, useState } from "react";
-import {
-  fetchAllPayments,
-  updatePaymentStatus,
-  getPaymentWithDetails,
-} from "../../API/PaymentAPI";
+import Swal from "sweetalert2";
+import { fetchAllPayments, updatePaymentStatus } from "../../API/PaymentAPI";
+import * as XLSX from "xlsx"; 
 
 function PaymentPage() {
   const [payments, setPayments] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [showModal, setShowModal] = useState(false);
   const [showImageModal, setShowImageModal] = useState(false);
-  const [paymentDetails, setPaymentDetails] = useState(null);
   const [selectedImage, setSelectedImage] = useState(null);
 
   useEffect(() => {
     const loadAllPayments = async () => {
       try {
         const allPayments = await fetchAllPayments();
-        setPayments(allPayments);
+        setPayments(allPayments.filter((p) => p.bookingId));
       } catch (err) {
         setError(err.message);
       } finally {
         setLoading(false);
       }
     };
-
     loadAllPayments();
   }, []);
 
   const handleStatusUpdate = async (paymentId, status) => {
     try {
-      const updatedPayment = await updatePaymentStatus(paymentId, status);
-      setPayments((prevPayments) =>
-        prevPayments.map((payment) =>
-          payment._id === paymentId ? updatedPayment : payment
-        )
+      const updated = await updatePaymentStatus(paymentId, status);
+      setPayments((prev) =>
+        prev.map((p) => (p._id === paymentId ? updated : p))
       );
-      alert(`Payment status updated to ${status}`);
+      Swal.fire({
+        title: "Status Updated",
+        text: `Payment status updated to ${status}`,
+        icon: status === "Completed" ? "success" : "error",
+        confirmButtonText: "OK",
+      });
     } catch (err) {
+      Swal.fire({
+        title: "Error",
+        text: err.message,
+        icon: "error",
+      });
       setError(err.message);
     }
-  };
-
-  const handleViewDetails = async (paymentId) => {
-    try {
-      const details = await getPaymentWithDetails(paymentId);
-      console.log("Fetched payment details:", details); 
-
-      
-      if (
-        details &&
-        details.payment &&
-        details.bookingDetails &&
-        details.customerDetails &&
-        details.packageDetails
-      ) {
-        setPaymentDetails(details);
-        setShowModal(true);
-      } else {
-        console.warn("Incomplete payment details received.");
-      }
-    } catch (err) {
-      console.error("Error fetching payment details:", err.message);
-    }
-  };
-
-  const closeModal = () => {
-    setShowModal(false);
-    setPaymentDetails(null);
   };
 
   const closeImageModal = () => {
@@ -76,16 +51,44 @@ function PaymentPage() {
     setSelectedImage(null);
   };
 
-  if (loading)
+  // Function to download payment details as an Excel file
+  const downloadExcel = () => {
+    const ws = XLSX.utils.json_to_sheet(
+      payments.map((payment) => ({
+        "Payment ID": payment._id,
+        Amount: `$${payment.amount}`,
+        "Amount Paid": `${
+          payment.paymentType === "half"
+            ? payment.halfPaymentAmount
+            : payment.amount
+        }`,
+        "Remaining Balance": `${
+          payment.paymentType === "half" ? payment.toPayAmount : 0
+        }`,
+        "Payment Type": payment.paymentType,
+        Status: payment.paymentStatus,
+        Method: payment.paymentMethod,
+        "Transaction ID": payment.transactionId,
+      }))
+    );
+    const wb = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(wb, ws, "Payments");
+    XLSX.writeFile(wb, "Payments_Summary.xlsx");
+  };
+
+  if (loading) {
     return (
       <div className="text-center text-lg text-slate-600">
         Loading payment details...
       </div>
     );
-  if (error)
+  }
+
+  if (error) {
     return (
       <div className="text-center text-lg text-red-600">Error: {error}</div>
     );
+  }
 
   return (
     <div className="max-w-7xl mx-auto p-6">
@@ -93,12 +96,23 @@ function PaymentPage() {
         Payment Overview
       </h2>
 
+      {/* Button to download Excel */}
+      <div className="text-right mb-4">
+        <button
+          onClick={downloadExcel}
+          className="px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600"
+        >
+          Download Payment Summary (Excel)
+        </button>
+      </div>
+
       <div className="overflow-x-auto rounded-lg shadow-sm border border-slate-200">
         <table className="min-w-full bg-white text-sm">
           <thead className="bg-slate-100 text-slate-700">
             <tr>
               {[
                 "Payment ID",
+                "Amount",
                 "Amount Paid",
                 "Remaining Balance",
                 "Payment Type",
@@ -107,125 +121,89 @@ function PaymentPage() {
                 "Transaction ID",
                 "Proof",
                 "Actions",
-              ].map((heading) => (
-                <th key={heading} className="px-4 py-3 border-b text-left">
-                  {heading}
+              ].map((h) => (
+                <th key={h} className="px-4 py-3 border-b text-left">
+                  {h}
                 </th>
               ))}
             </tr>
           </thead>
           <tbody>
-            {payments.map((payment) => {
-              const remainingBalance =
-                payment.paymentType === "half"
-                  ? payment.toPayAmount - payment.halfPaymentAmount
-                  : 0;
-
-              return (
-                <tr
-                  key={payment._id}
-                  className="hover:bg-slate-50 border-b transition"
+            {payments.length > 0 ? (
+              payments.map((payment) => {
+                const originalAmount = payment.amount;
+                const paid =
+                  payment.paymentType === "half"
+                    ? payment.halfPaymentAmount
+                    : payment.amount;
+                const remaining =
+                  payment.paymentType === "half" ? payment.toPayAmount : 0;
+                return (
+                  <tr
+                    key={payment._id}
+                    className="hover:bg-slate-50 border-b transition"
+                  >
+                    <td className="px-4 py-2">{payment._id}</td>
+                    <td className="px-4 py-2">${originalAmount}</td>
+                    <td className="px-4 py-2">${paid}</td>
+                    <td className="px-4 py-2">${remaining}</td>
+                    <td className="px-4 py-2 capitalize">
+                      {payment.paymentType}
+                    </td>
+                    <td className="px-4 py-2 text-center font-medium">
+                      {payment.paymentStatus}
+                    </td>
+                    <td className="px-4 py-2">{payment.paymentMethod}</td>
+                    <td className="px-4 py-2">{payment.transactionId}</td>
+                    <td className="px-4 py-2">
+                      <button
+                        className="text-sky-500 hover:text-sky-700 underline underline-offset-2"
+                        onClick={() => {
+                          setSelectedImage(payment.proofImageUrl);
+                          setShowImageModal(true);
+                        }}
+                      >
+                        View Proof
+                      </button>
+                    </td>
+                    <td className="px-4 py-2 flex flex-wrap gap-2">
+                      <button
+                        onClick={() =>
+                          handleStatusUpdate(payment._id, "Completed")
+                        }
+                        disabled={payment.paymentStatus === "Completed"}
+                        className="px-3 py-1.5 bg-emerald-100 text-emerald-700 text-xs rounded-md border border-emerald-300 hover:bg-emerald-200 disabled:opacity-40"
+                      >
+                        Complete
+                      </button>
+                      <button
+                        onClick={() =>
+                          handleStatusUpdate(payment._id, "Failed")
+                        }
+                        disabled={payment.paymentStatus === "Failed"}
+                        className="px-3 py-1.5 bg-rose-100 text-rose-700 text-xs rounded-md border border-rose-300 hover:bg-rose-200 disabled:opacity-40"
+                      >
+                        Fail
+                      </button>
+                    </td>
+                  </tr>
+                );
+              })
+            ) : (
+              <tr>
+                <td
+                  colSpan={10}
+                  className="px-4 py-6 text-center text-slate-500"
                 >
-                  <td className="px-4 py-2">{payment._id}</td>
-                  <td className="px-4 py-2">
-                    $
-                    {payment.paymentType === "half"
-                      ? payment.halfPaymentAmount
-                      : payment.amount}
-                  </td>
-                  <td className="px-4 py-2">
-                    {payment.paymentType === "half"
-                      ? `$${remainingBalance}`
-                      : "N/A"}
-                  </td>
-                  <td className="px-4 py-2 capitalize">
-                    {payment.paymentType}
-                  </td>
-                  <td className="px-4 py-2 text-center font-medium">
-                    {payment.paymentStatus}
-                  </td>
-                  <td className="px-4 py-2">{payment.paymentMethod}</td>
-                  <td className="px-4 py-2">{payment.transactionId}</td>
-                  <td className="px-4 py-2">
-                    <button
-                      className="text-sky-500 hover:text-sky-700 underline underline-offset-2"
-                      onClick={() => {
-                        setSelectedImage(payment.proofImageUrl);
-                        setShowImageModal(true);
-                      }}
-                    >
-                      View Proof
-                    </button>
-                  </td>
-                  <td className="px-4 py-2 flex flex-wrap gap-2">
-                    <button
-                      onClick={() =>
-                        handleStatusUpdate(payment._id, "Completed")
-                      }
-                      disabled={payment.paymentStatus === "Completed"}
-                      className="px-3 py-1.5 bg-emerald-100 text-emerald-700 text-xs rounded-md border border-emerald-300 hover:bg-emerald-200 disabled:opacity-40"
-                    >
-                      Complete
-                    </button>
-                    <button
-                      onClick={() => handleStatusUpdate(payment._id, "Failed")}
-                      disabled={payment.paymentStatus === "Failed"}
-                      className="px-3 py-1.5 bg-rose-100 text-rose-700 text-xs rounded-md border border-rose-300 hover:bg-rose-200 disabled:opacity-40"
-                    >
-                      Fail
-                    </button>
-                    <button
-                      onClick={() => handleViewDetails(payment._id)}
-                      className="px-3 py-1.5 bg-indigo-100 text-indigo-700 text-xs rounded-md border border-indigo-300 hover:bg-indigo-200"
-                    >
-                      Details
-                    </button>
-                  </td>
-                </tr>
-              );
-            })}
+                  No payments found for any booking.
+                </td>
+              </tr>
+            )}
           </tbody>
         </table>
       </div>
 
-     
-      {showModal && paymentDetails && paymentDetails.payment && (
-        <div className="fixed inset-0 z-50 bg-black bg-opacity-40 flex items-center justify-center p-4">
-          <div className="bg-white rounded-lg shadow-md w-full max-w-md p-6">
-            <div className="flex justify-between items-center mb-4">
-              <h3 className="text-lg font-semibold text-slate-700">
-                Payment Details
-              </h3>
-              <button
-                onClick={closeModal}
-                className="text-rose-500 hover:text-rose-700 font-bold text-lg"
-              >
-                ×
-              </button>
-            </div>
-            <div className="space-y-1 text-slate-600 text-sm">
-              <p><strong>ID:</strong> {paymentDetails.payment._id}</p>
-              <p><strong>Amount:</strong> ${paymentDetails.payment.amount}</p>
-              <p><strong>Balance:</strong> ${paymentDetails.payment.paymentType === "half" ? paymentDetails.payment.toPayAmount - paymentDetails.payment.halfPaymentAmount : 0}</p>
-              <p><strong>Booking ID:</strong> {paymentDetails.bookingDetails._id}</p>
-              <p><strong>Customer:</strong> {paymentDetails.customerDetails.name}</p>
-              <p><strong>Phone:</strong> {paymentDetails.customerDetails.phone}</p>
-              <p><strong>NIC:</strong> {paymentDetails.customerDetails.nic}</p>
-              <p><strong>Package:</strong> {paymentDetails.packageDetails.packageName}</p>
-              <p><strong>Booking Date:</strong> {paymentDetails.bookingDetails.bookingDate}</p>
-              <p><strong>Method:</strong> {paymentDetails.payment.paymentMethod}</p>
-            </div>
-            <button
-              className="mt-5 w-full px-4 py-2 text-white bg-slate-600 rounded-md hover:bg-slate-700"
-              onClick={closeModal}
-            >
-              Close
-            </button>
-          </div>
-        </div>
-      )}
-
-      
+      {/* IMAGE MODAL */}
       {showImageModal && selectedImage && (
         <div className="fixed inset-0 z-50 bg-black bg-opacity-40 flex items-center justify-center p-4">
           <div className="bg-white rounded-lg shadow-md max-w-2xl w-full p-6">
