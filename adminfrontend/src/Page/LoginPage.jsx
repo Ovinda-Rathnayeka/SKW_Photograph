@@ -7,7 +7,7 @@ import { loginEmployee } from "../API/AdminAPI.js";
 const roleToRoute = {
   packageBookingManager: "/PDashboard",
   resourceManager: "/resource-manager/dashboard",
-  feedbackManager: "/feedback-manager/dashboard",
+  feedbackManager: "/feedbackDashboard",
   hrManager: "/HRDashbaord",
   photographers: "/photographers/dashboard",
   videographers: "/videographers/dashboard",
@@ -48,7 +48,11 @@ const LoginPage = () => {
     <div className="flex items-center justify-center min-h-screen bg-gray-100">
       <div className="w-full max-w-md p-8 bg-black text-white shadow-lg rounded-lg">
         <div className="flex justify-center mb-6">
-          <img src={logo} alt="Logo" className="w-24 h-24" />
+          <img
+            src={logo}
+            alt="Logo"
+            className="max-w-[96px] max-h-[96px] object-contain"
+          />
         </div>
         <h2 className="text-2xl font-bold text-center mb-4">Sign In</h2>
 

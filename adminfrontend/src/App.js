@@ -18,6 +18,9 @@ import HRDashbaord from "./Page/AdminHR/Dashbaord.jsx";
 import AddEmployee from "./Page/AdminHR/AddEmployee.jsx";
 import DisplayHR from "./Page/AdminHR/DisplayHR.jsx";
 
+import FeedbackDashboard from "./Page/AdminF/Dashboard.jsx";
+import FeedbackTable from "./Page/AdminF/Feedbacks.jsx";
+
 function App() {
   return (
     <Router>
@@ -36,6 +39,8 @@ function App() {
           <Route path="/HRDashbaord" element={<HRDashbaord />} />
           <Route path="/add-employee" element={<AddEmployee />} />
           <Route path="/displayHR" element={<DisplayHR />} />
+          <Route path="/feedbackDashboard" element={<FeedbackDashboard />} />
+          <Route path="/feedbackTable" element={<FeedbackTable />} />
         </Routes>
       </div>
     </Router>
