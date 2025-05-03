@@ -5,7 +5,7 @@ import logo from "../components/images/logo.png";
 import { loginEmployee } from "../API/AdminAPI.js";
 
 const roleToRoute = {
-  packageBookingManager: "/package-booking/dashboard",
+  packageBookingManager: "/PDashboard",
   resourceManager: "/resource-manager/dashboard",
   feedbackManager: "/feedbackDashboard",
   hrManager: "/HRDashbaord",

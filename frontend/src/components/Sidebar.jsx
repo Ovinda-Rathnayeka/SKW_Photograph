@@ -114,7 +114,7 @@ const Sidebar = ({ isOpen, onClose }) => {
               onClick={handleLinkClick}
               className="text-white flex items-center gap-3"
             >
-              <FaCalendarAlt className="text-lg" /> Bookings
+              <FaCalendarAlt className="text-lg" /> Payment
             </Link>
           </li>
           <li>
