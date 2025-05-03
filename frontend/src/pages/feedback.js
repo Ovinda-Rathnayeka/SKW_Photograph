@@ -35,70 +35,46 @@ function Feedback() {
 
   const viewFeedback = (fb) => {
     const html = `
-      <div style="
-        background-color: #1f2937;
-        color: #e5e7eb;
-        padding: 20px;
-        border-radius: 10px;
-        font-family: 'Segoe UI', sans-serif;
-        font-size: 14px;
-        line-height: 1.7;
-        text-align: left;
-      ">
-  
+      <div style="background-color: #1f2937; color: #e5e7eb; padding: 20px; border-radius: 10px; font-family: 'Segoe UI', sans-serif; font-size: 14px; line-height: 1.7; text-align: left;">
         <div style="margin-bottom: 16px;">
           <h2 style="font-size: 20px; color: #f97316; margin: 0;">📝 ${fb.title}</h2>
           <p style="margin: 4px 0 0; color: #9ca3af;">${fb.category}</p>
         </div>
-  
         <div style="margin-bottom: 20px;">
           <strong style="color: #f97316;">💬 Comment:</strong>
           <p style="margin: 4px 0 0;">${fb.comment}</p>
         </div>
-  
-        <div style="
-          display: grid;
-          grid-template-columns: repeat(2, minmax(0, 1fr));
-          gap: 10px;
-          margin-bottom: 20px;
-        ">
+        <div style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; margin-bottom: 20px;">
           <div><strong>⭐ Overall:</strong> ${fb.rating}</div>
           <div><strong>⚙️ Service:</strong> ${fb.serviceQuality}</div>
           <div><strong>⏱️ Response:</strong> ${fb.responseTime}</div>
           <div><strong>💸 Value:</strong> ${fb.valueForMoney}</div>
           <div><strong>🌟 Experience:</strong> ${fb.overallExperience}</div>
         </div>
-  
         ${
           fb.images?.length
             ? `
-          <div>
-            <strong style="color: #f97316;">🖼️ Uploaded Images:</strong>
-            <div style="margin-top: 10px; display: flex; flex-wrap: wrap; gap: 10px;">
-              ${fb.images
-                .map(
-                  (img) => `
-                  <img 
-                    src="${img}" 
-                    style="
-                      width: 80px; 
-                      height: 80px; 
-                      object-fit: cover; 
-                      border-radius: 8px; 
-                      border: 1px solid #374151;
-                    "
-                  />
-                `
-                )
-                .join("")}
+            <div>
+              <strong style="color: #f97316;">🖼️ Uploaded Images:</strong>
+              <div style="margin-top: 10px; display: flex; flex-wrap: wrap; gap: 10px;">
+                ${fb.images
+                  .map(
+                    (img) => `
+                    <img 
+                      src="${img}" 
+                      style="width: 80px; height: 80px; object-fit: cover; border-radius: 8px; border: 1px solid #374151;"
+                    />
+                  `
+                  )
+                  .join("")}
+              </div>
             </div>
-          </div>
-          `
+            `
             : `<p style="margin-top: 16px; color: #9ca3af;">No images uploaded.</p>`
         }
       </div>
     `;
-  
+
     Swal.fire({
       title: "",
       html,
@@ -113,7 +89,29 @@ function Feedback() {
       },
     });
   };
-  
+
+  const deleteFeedback = async (id) => {
+    Swal.fire({
+      title: "Delete this feedback?",
+      text: "This action cannot be undone.",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#d33",
+      cancelButtonColor: "#6b7280",
+      confirmButtonText: "Delete",
+    }).then(async (result) => {
+      if (result.isConfirmed) {
+        try {
+          await axios.delete(`http://localhost:5000/feedbacks/${id}`);
+          setFeedbacks((prev) => prev.filter((f) => f._id !== id));
+          Swal.fire("Deleted!", "Your feedback has been removed.", "success");
+        } catch (err) {
+          console.error(err);
+          Swal.fire("Error", "Failed to delete feedback.", "error");
+        }
+      }
+    });
+  };
 
   if (error)
     return <div className="text-red-500 text-center mt-8">{error}</div>;
@@ -143,7 +141,7 @@ function Feedback() {
                   <th className="px-6 py-3">Category</th>
                   <th className="px-6 py-3">Rating</th>
                   <th className="px-6 py-3">Comment</th>
-                  <th className="px-6 py-3">Action</th>
+                  <th className="px-6 py-3">Actions</th>
                 </tr>
               </thead>
               <tbody className="text-gray-800 font-medium">
@@ -158,12 +156,18 @@ function Feedback() {
                     <td className="px-6 py-4 truncate max-w-xs">
                       {fb.comment}
                     </td>
-                    <td className="px-6 py-4">
+                    <td className="px-6 py-4 flex items-center justify-center gap-2">
                       <button
                         onClick={() => viewFeedback(fb)}
                         className="bg-orange-500 text-white px-4 py-1 rounded-lg shadow hover:bg-orange-600 transition"
                       >
                         View
+                      </button>
+                      <button
+                        onClick={() => deleteFeedback(fb._id)}
+                        className="bg-red-500 text-white px-4 py-1 rounded-lg shadow hover:bg-red-600 transition"
+                      >
+                        Delete
                       </button>
                     </td>
                   </tr>
