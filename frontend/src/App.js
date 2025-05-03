@@ -12,9 +12,14 @@ import AddFeedback from "./pages/AddFeedback.js";
 import Product from "./pages/ProductDisplay.jsx";
 import Cart from "./pages/CartDisplay.js";
 import UpdateFeedback from "./pages/UpdateFeedback.js";
+import DisplayRental from "./pages/DisplayRental.jsx";
 import Profile from "./pages/ProfilePage.jsx";
 import BookingHistory from "./pages/BookignHistory.jsx";
+<<<<<<< HEAD
 import Feedback from "./pages/feedback.js";
+=======
+import Displayrental from "./pages/DisplayRental.jsx";
+>>>>>>> origin/main
 
 function App() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
@@ -39,19 +44,24 @@ function App() {
       <Navbar isLoggedIn={isLoggedIn} onLogout={handleLogout} />
       <Routes>
         <Route path="/" element={<HomePage />} />
-        <Route path="/Home" element={<HomePage />} />
+        <Route path="/home" element={<HomePage />} />
         <Route path="/packages" element={<PackagePage />} />
         <Route path="/login" element={<LoginPage setIsLoggedIn={setIsLoggedIn} />} />
         <Route path="/signup" element={<SignupPage setIsLoggedIn={setIsLoggedIn} />} />
         <Route path="/payment" element={<PaymentPage />} />
         <Route path="/feedbacks" element={<Feedbacks />} />
         <Route path="/add-feedback" element={<AddFeedback />} />
+        <Route path="/feedbacks/:id" element={<UpdateFeedback />} />
         <Route path="/product" element={<Product />} />
         <Route path="/cart" element={<Cart />} />
-        <Route path="/feedbacks/:id" element={<UpdateFeedback />} />
+        <Route path="/rental" element={<DisplayRental />} />
         <Route path="/profile" element={<Profile />} />
         <Route path="/booking-history" element={<BookingHistory />} />
+<<<<<<< HEAD
         <Route path="/feedback" element={<Feedback />} />
+=======
+        <Route path="/rental" element={<DisplayRental/>}/>
+>>>>>>> origin/main
       </Routes>
     </Router>
   );
