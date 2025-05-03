@@ -153,19 +153,19 @@ function AddFeedback() {
 
   return (
     <div
-      className="min-h-screen bg-cover bg-center flex items-center justify-center px-4 py-10"
+      className="min-h-screen bg-cover bg-center flex items-center justify-center px-4 py-10 pt-28"
       style={{ backgroundImage: `url(${dot})` }}
     >
-      <div className="w-full max-w-3xl bg-white/80 backdrop-blur-md shadow-2xl rounded-2xl p-8">
-        <h1 className="text-4xl font-bold text-center text-blue-800 mb-8">
+      <div className="w-full max-w-4xl bg-white/80 backdrop-blur-md shadow-2xl rounded-2xl p-8">
+        <h1 className="text-4xl font-bold text-center text-orange-500 mb-8 col-span-2">
           Add Feedback
         </h1>
-
-        {error && <div className="text-red-600 mb-4 text-center">{error}</div>}
-
-        <form onSubmit={handleSubmit}>
-          {/* Email */}
-          <div className="mb-4">
+  
+        {error && <div className="text-red-600 mb-4 text-center col-span-2">{error}</div>}
+  
+        <form onSubmit={handleSubmit} className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          {/* Customer Email (Full width) */}
+          <div className="col-span-2">
             <label className="block mb-2">Customer Email</label>
             <input
               type="email"
@@ -174,9 +174,9 @@ function AddFeedback() {
               className="w-full p-2 border border-gray-300 rounded-md bg-gray-100 text-gray-500"
             />
           </div>
-
+  
           {/* Category */}
-          <div className="mb-4">
+          <div>
             <label className="block mb-2">Category</label>
             <select
               name="category"
@@ -194,9 +194,9 @@ function AddFeedback() {
               <p className="text-red-500 text-sm">{validationErrors.category}</p>
             )}
           </div>
-
+  
           {/* Title */}
-          <div className="mb-4">
+          <div>
             <label className="block mb-2">Title</label>
             <input
               type="text"
@@ -209,9 +209,9 @@ function AddFeedback() {
               <p className="text-red-500 text-sm">{validationErrors.title}</p>
             )}
           </div>
-
-          {/* Comment */}
-          <div className="mb-4">
+  
+          {/* Comment (Full width) */}
+          <div className="col-span-2">
             <label className="block mb-2">Comment</label>
             <textarea
               name="comment"
@@ -223,38 +223,41 @@ function AddFeedback() {
               <p className="text-red-500 text-sm">{validationErrors.comment}</p>
             )}
           </div>
-
+  
           {/* Ratings */}
-          {[
-            { key: "rating", label: "Overall Rating" },
-            { key: "serviceQuality", label: "Service Quality" },
-            { key: "responseTime", label: "Response Time" },
-            { key: "valueForMoney", label: "Value for Money" },
-            { key: "overallExperience", label: "Overall Experience" },
-          ].map(({ key, label }) => (
-            <div key={key} className="mb-4">
-              <label className="block mb-2">{label}</label>
-              <select
-                name={key}
-                value={feedbackData[key]}
-                onChange={handleChange}
-                className="w-full p-2 border border-gray-300 rounded-md"
-              >
-                <option value="">Select</option>
-                {[5, 4, 3, 2, 1].map((num) => (
-                  <option key={num} value={num}>
-                    {num}
-                  </option>
-                ))}
-              </select>
-              {validationErrors[key] && (
-                <p className="text-red-500 text-sm">{validationErrors[key]}</p>
-              )}
-            </div>
-          ))}
+          <div className="col-span-2 grid grid-cols-1 md:grid-cols-5 gap-4">
+  {[
+    { key: "rating", label: "Overall" },
+    { key: "serviceQuality", label: "Service" },
+    { key: "responseTime", label: "Response" },
+    { key: "valueForMoney", label: "Value" },
+    { key: "overallExperience", label: "Experience" },
+  ].map(({ key, label }) => (
+    <div key={key}>
+      <label className="block text-sm mb-1">{label}</label>
+      <select
+        name={key}
+        value={feedbackData[key]}
+        onChange={handleChange}
+        className="w-full p-2 border border-gray-300 rounded-md"
+      >
+        <option value="">Select</option>
+        {[5, 4, 3, 2, 1].map((num) => (
+          <option key={num} value={num}>
+            {num}
+          </option>
+        ))}
+      </select>
+      {validationErrors[key] && (
+        <p className="text-red-500 text-xs mt-1">{validationErrors[key]}</p>
+      )}
+    </div>
+  ))}
+</div>
 
-          {/* Image Upload */}
-          <div className="mb-4">
+  
+          {/* Image Upload (Full width) */}
+          <div className="col-span-2">
             <label className="block mb-2">Upload Images</label>
             <input
               type="file"
@@ -266,19 +269,22 @@ function AddFeedback() {
               <p className="text-red-500 text-sm">{validationErrors.images}</p>
             )}
           </div>
-
-          {/* Submit */}
-          <button
-            type="submit"
-            className="bg-blue-500 text-white py-2 px-4 rounded hover:bg-blue-700 disabled:opacity-50"
-            disabled={!isFormValid() || loading}
-          >
-            {loading ? "Adding Feedback..." : "Add Feedback"}
-          </button>
+  
+          {/* Submit Button (Full width) */}
+          <div className="col-span-2 flex justify-center">
+            <button
+              type="submit"
+              className="mt-5 px-6 py-3 bg-orange-500 text-white font-semibold rounded-lg shadow-lg hover:bg-orange-600 transition-all duration-300 transform hover:scale-105 disabled:opacity-50"
+              disabled={!isFormValid() || loading}
+            >
+              {loading ? "Adding Feedback..." : "Add Feedback"}
+            </button>
+          </div>
         </form>
       </div>
     </div>
   );
+  
 }
 
 export default AddFeedback;
