@@ -18,7 +18,6 @@ function Sidebar() {
 
       <ul className="space-y-3 flex-1">
         <SidebarItem icon={<FaTachometerAlt />} text="Dashboard" link="/" />
-        <SidebarItem icon={<FaUser />} text="Rental Add" link="/rental" />
         <SidebarItem icon={<FaCog />} text="recources" link="/re" />
         <SidebarItem icon={<FaBox />} text="Add Package" link="/add-package" />
         <SidebarItem
