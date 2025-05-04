@@ -1,12 +1,13 @@
 // src/pages/LoginPage.jsx
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { useAuth } from "../context/AuthContext";
 import logo from "../components/images/logo.png";
 import { loginEmployee } from "../API/AdminAPI.js";
 
 const roleToRoute = {
-  packageBookingManager: "/package-booking/dashboard",
-  resourceManager: "/resource-manager/dashboard",
+  packageBookingManager: "/PDashboard",
+  resourceManager: "/RDashbaord",
   feedbackManager: "/feedback-manager/dashboard",
   hrManager: "/HRDashbaord",
   photographers: "/photographers/dashboard",
@@ -20,6 +21,7 @@ const LoginPage = () => {
   const [errorMessage, setErrorMessage] = useState("");
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
+  const { login } = useAuth();
 
   const handleLogin = async (e) => {
     e.preventDefault();
@@ -27,10 +29,12 @@ const LoginPage = () => {
     setLoading(true);
 
     try {
-      const { token, user } = await loginEmployee(email, password);
-      localStorage.setItem("token", token);
-      localStorage.setItem("employee", JSON.stringify(user));
-
+      const response = await loginEmployee(email, password);
+      const { token, user } = response;
+      
+      // Use AuthContext login function
+      login(user);
+      
       const route = roleToRoute[user.jobRole];
       if (!route) {
         setErrorMessage("You do not have access to any dashboard.");

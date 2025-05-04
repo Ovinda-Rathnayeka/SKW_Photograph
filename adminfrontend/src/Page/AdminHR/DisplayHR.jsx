@@ -4,12 +4,14 @@ import {
   getEmployees,
   resetEmployeePassword,
   updateEmployee,
+  deleteEmployee,
 } from "../../API/AdminAPI.js";
 import Swal from "sweetalert2";
 import {
   ArrowPathIcon,
   PencilIcon,
   XMarkIcon,
+  TrashIcon,
 } from "@heroicons/react/24/outline";
 
 const DisplayHR = () => {
@@ -47,7 +49,29 @@ const DisplayHR = () => {
 
     try {
       const newPwd = await resetEmployeePassword(id);
-      Swal.fire("Password Reset", `New password: ${newPwd}`, "success");
+      Swal.fire("Password Reset",` New password: ${newPwd}`, "success");
+    } catch (err) {
+      Swal.fire("Error", err.message, "error");
+    }
+  };
+
+  const handleDeleteEmployee = async (id, name) => {
+    const { isConfirmed } = await Swal.fire({
+      title: "Delete employee?",
+      text: `Are you sure you want to delete ${name}? This action cannot be undone.`,
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonText: "Delete",
+      confirmButtonColor: "#d33",
+      cancelButtonText: "Cancel"
+    });
+    
+    if (!isConfirmed) return;
+
+    try {
+      await deleteEmployee(id);
+      Swal.fire("Deleted!", `${name} has been removed successfully.`, "success");
+      loadEmployees(); // Refresh the list
     } catch (err) {
       Swal.fire("Error", err.message, "error");
     }
@@ -112,18 +136,27 @@ const DisplayHR = () => {
                 <td className="px-4 py-3 text-sm text-gray-800">
                   {new Date(emp.createdAt).toLocaleDateString()}
                 </td>
-                <td className="px-4 py-3 text-sm space-x-2">
+                <td className="px-4 py-3 text-sm space-x-2 flex">
                   <button
                     onClick={() => handleResetPassword(emp._id)}
                     className="p-2 rounded-full hover:bg-gray-100 transition"
+                    title="Reset Password"
                   >
                     <ArrowPathIcon className="h-5 w-5 text-gray-600" />
                   </button>
                   <button
                     onClick={() => openEditModal(emp)}
                     className="p-2 rounded-full hover:bg-gray-100 transition"
+                    title="Edit Employee"
                   >
                     <PencilIcon className="h-5 w-5 text-gray-600" />
+                  </button>
+                  <button
+                    onClick={() => handleDeleteEmployee(emp._id, emp.name)}
+                    className="p-2 rounded-full hover:bg-gray-100 transition"
+                    title="Delete Employee"
+                  >
+                    <TrashIcon className="h-5 w-5 text-red-500" />
                   </button>
                 </td>
               </tr>

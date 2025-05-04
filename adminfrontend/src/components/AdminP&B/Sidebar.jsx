@@ -1,5 +1,6 @@
 import React, { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import { useAuth } from "../../context/AuthContext";
 import {
   FaTachometerAlt,
   FaUser,
@@ -13,6 +14,13 @@ import logo from "../images/logo.png";
 
 function Sidebar() {
   const [isOpen, setIsOpen] = useState(true);
+  const { logout } = useAuth();
+  const navigate = useNavigate();
+  
+  const handleLogout = () => {
+    logout();
+    navigate('/');
+  };
 
   return (
     <div
@@ -79,13 +87,15 @@ function Sidebar() {
 
       {/* Logout */}
       <div className="px-2 mt-auto pb-6">
-        <SidebarItem
-          icon={<FaSignOutAlt />}
-          text="Logout"
-          link="/"
-          isLogout
-          isOpen={isOpen}
-        />
+        <li>
+          <button
+            onClick={handleLogout}
+            className={`flex items-center gap-4 px-3 py-3 rounded-md transition-all duration-200 w-full text-left hover:bg-red-600 text-red-400`}
+          >
+            <span className="text-xl"><FaSignOutAlt /></span>
+            {isOpen && <span className="text-sm font-medium">Logout</span>}
+          </button>
+        </li>
       </div>
     </div>
   );

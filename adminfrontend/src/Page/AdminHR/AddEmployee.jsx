@@ -27,6 +27,21 @@ const AddEmployee = () => {
     email: "",
     password: "",
   });
+  //validation errors state
+  const [errors, setErrors] = useState({
+    nic: "",
+    phone: "",
+  });
+
+  const validateNIC = (nic) => {
+    const nicRegex = /^\d{12}$/;
+    return nicRegex.test(nic);
+  };
+
+  const validatePhone = (phone) => {
+    const phoneRegex = /^\d{10}$/;
+    return phoneRegex.test(phone);
+  };
 
   // auto‐populate email when manager role selected
   useEffect(() => {
@@ -54,6 +69,29 @@ const AddEmployee = () => {
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
+
+    // Validation logic
+    if (name === 'nic') {
+      if (!validateNIC(value)) {
+        setErrors(prev => ({
+          ...prev,
+          nic: "NIC must contain exactly 12 digits"
+        }));
+      } else {
+        setErrors(prev => ({ ...prev, nic: "" }));
+      }
+    }
+
+    if (name === 'phone') {
+      if (!validatePhone(value)) {
+        setErrors(prev => ({
+          ...prev,
+          phone: "Phone number must contain exactly 10 digits"
+        }));
+      } else {
+        setErrors(prev => ({ ...prev, phone: "" }));
+      }
+    }
   };
 
   const handleRoleChange = (e) => {
@@ -62,6 +100,14 @@ const AddEmployee = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    if (errors.nic || errors.phone) {
+      Swal.fire({
+        icon: "error",
+        title: "Validation Error",
+        text: "Please fix the errors before submitting",
+      });
+      return;
+    }
     try {
       await createEmployee(formData);
       Swal.fire({
@@ -139,9 +185,12 @@ const AddEmployee = () => {
             value={formData.nic}
             onChange={handleChange}
             required
-            className="px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-400 transition"
+            className={`px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-400 transition ${
+              errors.nic ? 'border-red-500' : 'border-gray-300'
+            }`}
             placeholder="NIC Number"
           />
+          {errors.nic && <p className="text-red-500 text-sm mt-1">{errors.nic}</p>}
         </div>
 
         {/* Phone */}
@@ -152,9 +201,12 @@ const AddEmployee = () => {
             value={formData.phone}
             onChange={handleChange}
             required
-            className="px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-400 transition"
+            className={`px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-400 transition ${
+              errors.phone ? 'border-red-500' : 'border-gray-300'
+            }`}
             placeholder="Mobile Number"
           />
+          {errors.phone && <p className="text-red-500 text-sm mt-1">{errors.phone}</p>}
         </div>
 
         {/* Address */}

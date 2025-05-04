@@ -1,5 +1,6 @@
 import React from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import { useAuth } from "../../context/AuthContext";
 import {
   FaTachometerAlt,
   FaUser,
@@ -9,7 +10,16 @@ import {
   FaSignOutAlt,
 } from "react-icons/fa";
 import logo from "../images/logo.png";
+
 function Sidebar() {
+  const { logout } = useAuth();
+  const navigate = useNavigate();
+  
+  const handleLogout = () => {
+    logout();
+    navigate('/');
+  };
+  
   return (
     <div className="w-64 h-screen bg-gray-900 text-white flex flex-col p-5">
       <div className="flex items-center justify-center mb-6">
@@ -29,12 +39,13 @@ function Sidebar() {
       </ul>
 
       <div className="mt-auto">
-        <SidebarItem
-          icon={<FaSignOutAlt />}
-          text="Logout"
-          link="/logout"
-          isLogout
-        />
+        <li
+          className="p-3 rounded-md flex items-center transition-all duration-200 cursor-pointer hover:bg-red-600"
+          onClick={handleLogout}
+        >
+          <span className="mr-3 text-lg"><FaSignOutAlt /></span>
+          <span className="flex-1">Logout</span>
+        </li>
       </div>
     </div>
   );
