@@ -289,7 +289,7 @@ function FeedbackList() {
         <h1 className="text-3xl text-white font-bold mb-6">All Feedbacks</h1>
         {userId && (
           <Link to="/add-feedback">
-            <button className="bg-blue-500 text-white px-4 py-2 rounded mb-6 hover:bg-blue-700">
+            <button className="mt-5 px-6 py-3 bg-orange-500 text-white font-semibold rounded-lg shadow-lg hover:bg-orange-600 transition-all duration-300 transform hover:scale-105">
               Add New Feedback
             </button>
           </Link>
@@ -315,8 +315,8 @@ function FeedbackList() {
         )}
 
         {showModal && feedbackToUpdate && (
-          <div className="fixed inset-0 bg-gray-600 bg-opacity-60 flex items-center justify-center z-50">
-            <div className="bg-white p-8 rounded-lg w-[600px]">
+          <div className="fixed inset-0 bg-gray-800 bg-opacity-70 flex items-center justify-center z-50">
+          <div className="bg-white p-6 w-full max-w-2xl max-h-[90vh] overflow-y-auto shadow-2xl">        
               <h2 className="text-xl font-semibold mb-6 text-center">
                 Update Feedback
               </h2>

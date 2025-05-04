@@ -34,12 +34,6 @@ const Navbar = ({ isLoggedIn, onLogout }) => {
             >
               About Us
             </a>
-            <a
-              href="#video"
-              className="text-[#8f8888] font-bold hover:text-[#747c7c]"
-            >
-              Video Gallery
-            </a>
             <Link
               to="/packages"
               className="text-[#8f8888] font-bold hover:text-[#747c7c]"

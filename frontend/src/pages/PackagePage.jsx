@@ -118,7 +118,7 @@ const PackagePage = () => {
           }}
         >
           {/* Header */}
-          <div className="text-center py-8">
+          <div className="text-center py-8 pt-20">
             <h2 className="text-3xl font-bold text-red-500 tracking-wide">
               Packages
             </h2>

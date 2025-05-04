@@ -8,6 +8,7 @@ const managerRoles = [
   { label: "Resource Manager", value: "resourceManager" },
   { label: "Feedback Manager", value: "feedbackManager" },
   { label: "HR Manager", value: "hrManager" },
+  { label: "Product Manager", value: "PrManager" },
 ];
 
 const employeeRoles = [

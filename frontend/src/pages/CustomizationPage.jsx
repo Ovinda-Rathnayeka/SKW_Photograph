@@ -219,7 +219,7 @@ const CreatePackage = () => {
         backgroundAttachment: "fixed",
       }}
     >
-      <div className="min-h-screen bg-black bg-opacity-70 backdrop-blur-sm flex items-center justify-center px-4">
+      <div className="min-h-screen bg-black bg-opacity-70 backdrop-blur-sm flex items-center justify-center px-4 pt-20">
         <div className="max-w-4xl w-full">
           <div className="p-6 text-white">
             <h2 className="text-2xl font-bold mb-6 text-center text-yellow-400">

@@ -18,6 +18,8 @@ import BookingHistory from "./pages/BookignHistory.jsx";
 import Displayrental from "./pages/DisplayRental.jsx";
 import RentalCart from "./pages/RentalCart.jsx";
 import CartPaymentPage from "./pages/CartPaymentPage.jsx";
+import Feedback from "./pages/feedback.js";
+import CustomizationPage from "./pages/CustomizationPage.jsx";
 
 function App() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
@@ -62,6 +64,8 @@ function App() {
         <Route path="/rental" element={<DisplayRental />} />
         <Route path="/profile" element={<Profile />} />
         <Route path="/booking-history" element={<BookingHistory />} />
+        <Route path="/feedback" element={<Feedback />} />
+        <Route path="/customization" element={<CustomizationPage />} />
         <Route path="/rental" element={<DisplayRental />} />
         <Route path="/rental-cart" element={<RentalCart />} />
       </Routes>

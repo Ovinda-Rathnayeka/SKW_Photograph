@@ -44,6 +44,7 @@ const employeeSchema = new mongoose.Schema(
         "resourceManager",
         "feedbackManager",
         "hrManager",
+        "PrManager",
         "photographers",
         "videographers",
         "helpers",
