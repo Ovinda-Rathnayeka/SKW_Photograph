@@ -148,7 +148,7 @@ function CartDisplay() {
                   <td className="py-3 px-4">
                     <button
                       onClick={() => handleRemoveFromCart(item._id)}
-                      className="bg-red-500 text-white py-1 px-3 rounded-md hover:bg-red-600"
+                      className="bg-[#FF4000] text-white py-1 px-3 rounded-md hover:bg-[#cc3300]"
                     >
                       Remove
                     </button>
@@ -177,7 +177,7 @@ function CartDisplay() {
       <div className="text-center mt-6">
         <button
           onClick={() => navigate("/checkout")}
-          className="bg-green-500 text-white py-2 px-4 rounded-md hover:bg-green-600"
+          className="bg-[#FF4000] text-white py-2 px-4 rounded-md hover:bg-[#cc3300]"
         >
           Proceed to Checkout
         </button>
@@ -186,7 +186,7 @@ function CartDisplay() {
       <div className="text-center mt-6">
         <button
           onClick={() => navigate("/")}
-          className="bg-blue-500 text-white py-2 px-4 rounded-md hover:bg-blue-600"
+          className="bg-[#FF4000] text-white py-2 px-4 rounded-md hover:bg-[#cc3300]"
         >
           Back to Home
         </button>
