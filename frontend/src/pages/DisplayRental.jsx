@@ -16,11 +16,7 @@ const Displayrental = () => {
   const [userId, setUserId] = useState(null);
   const [quantityError, setQuantityError] = useState(false);
 
-<<<<<<< HEAD
-  const userId = "6602aa6e77c72d5d9c431234"; 
-=======
   const navigate = useNavigate();
->>>>>>> origin/main
 
   useEffect(() => {
     const getUser = async () => {
