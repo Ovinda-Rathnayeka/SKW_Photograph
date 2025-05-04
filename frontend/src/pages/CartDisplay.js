@@ -80,7 +80,7 @@ function CartDisplay() {
     }
   };
 
-  // Calculate the total price of the cart
+  
   const calculateTotalPrice = () => {
     return cartItems.reduce(
       (total, item) => total + item.price * item.quantity,
@@ -125,7 +125,7 @@ function CartDisplay() {
                   <td className="py-3 px-4">
                     <div className="flex items-center">
                       <img
-                        src={item.productId?.image || "/default-image.jpg"} // Fallback image if productId.image is undefined
+                        src={item.productId?.image || "/default-image.jpg"} 
                         alt={item.productId?.name || "Product Image"}
                         className="w-16 h-16 object-cover rounded-md mr-4"
                       />
@@ -155,7 +155,7 @@ function CartDisplay() {
                   </td>
                 </tr>
               ))}
-              {/* Total Cart Value Row */}
+             
               <tr className="bg-gray-900 font-bold">
                 <td colSpan="3" className="py-3 px-4 text-right">
                   Total Cart Value:
@@ -168,12 +168,12 @@ function CartDisplay() {
         </div>
       )}
 
-      {/* Total Price */}
+      
       <div className="text-right mt-4 text-xl font-bold text-white">
         Total Price: ${calculateTotalPrice()}
       </div>
 
-      {/* Checkout Button */}
+      
       <div className="text-center mt-6">
         <button
           onClick={() => navigate("/checkout")}

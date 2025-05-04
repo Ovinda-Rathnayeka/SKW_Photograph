@@ -16,7 +16,7 @@ const Displayrental = () => {
   const [address, setAddress] = useState('');
   const [quantityError, setQuantityError] = useState(false);
 
-  const userId = "6602aa6e77c72d5d9c431234"; // 🔧 TEMP: Hardcoded userId
+  const userId = "6602aa6e77c72d5d9c431234"; 
 
   useEffect(() => {
     axios.get('http://localhost:5000/rental')

@@ -127,7 +127,7 @@ function ProductDisplay() {
                 .filter((product) => product.category?.toLowerCase() === 'camera')
                 .map((camera) => (
                   <div key={camera._id} className="product-card">
-                    <img src={camera.image} alt={camera.name} className="product-image" />
+                    <img src={camera.image} alt={camera.name} className="w-full h-64 object-contain mb-2" />
                     <h4>{camera.name}</h4>
                     <p>${camera.price}</p>
                     <p>{camera.description}</p>
@@ -162,7 +162,7 @@ function ProductDisplay() {
                 })
                 .map((light) => (
                   <div key={light._id} className="product-card">
-                    <img src={light.image} alt={light.name} className="product-image" />
+                    <img src={light.image} alt={light.name} className="w-full h-64 object-contain mb-2" />
                     <h4>{light.name}</h4>
                     <p>${light.price}</p>
                     <p>{light.description}</p>

@@ -15,7 +15,7 @@ body {
     box-shadow: 0 12px 24px rgba(0, 0, 0, 0.08);
   }
   
-  /* Inputs with floating effect */
+  
   .input,
   .select,
   .textarea,
@@ -36,7 +36,7 @@ body {
     box-shadow: 0 6px 18px rgba(59, 130, 246, 0.25);
   }
   
-  /* Buttons with neon glow */
+
   .btn {
     border: none;
     font-weight: bold;
@@ -79,7 +79,7 @@ body {
     box-shadow: 0 0 20px rgba(255, 107, 107, 0.7);
   }
   
-  /* Table design */
+
   .table {
     border-collapse: separate;
     border-spacing: 0 0.5rem;
@@ -109,7 +109,6 @@ body {
     background-color: #f3f8ff;
   }
   
-  /* Modal effect */
   .fixed.inset-0 {
     background: rgba(0, 0, 0, 0.6);
     backdrop-filter: blur(3px);
@@ -119,13 +118,11 @@ body {
     box-shadow: 0 15px 30px rgba(0, 0, 0, 0.1);
   }
   
-  /* Images inside table */
   .table img {
     border-radius: 0.5rem;
     border: 2px solid #c7d2fe;
   }
   
-  /* Titles and headers */
   h1, h2 {
     background: linear-gradient(to right, #4f46e5, #7c3aed);
     -webkit-background-clip: text;
@@ -133,7 +130,6 @@ body {
     font-weight: 800;
   }
   
-  /* Add subtle animations */
   button,
   input,
   select,
