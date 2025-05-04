@@ -143,9 +143,7 @@ function ResourcesPage() {
               <th className="px-4 py-2">Rental</th>
               <th className="px-4 py-2">Remaining Stock</th>
               <th className="px-4 py-2">Availability</th>
-              <th className="px-4 py-2">Actions</th>
-              <th className="px-4 py-2">Actions</th>
-              <th className="px-4 py-2">Actions</th>
+              <th className="px-4 py-2"><center>Action</center></th>
             </tr>
           </thead>
           <tbody>
