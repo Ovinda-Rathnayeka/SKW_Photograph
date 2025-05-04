@@ -38,11 +38,27 @@ function Sidebar() {
 
       {/* Sidebar Links */}
       <ul className="space-y-3 flex-1">
-        <SidebarItem icon={<FaTachometerAlt />} text="Dashboard" link="/productdashboard" />
-        <SidebarItem icon={<FaUser />} text="Manage Orders" link="/adminordermanage" />
-        <SidebarItem icon={<FaCog />} text="Add Products" link="/adminproductpage" />
+        <SidebarItem
+          icon={<FaTachometerAlt />}
+          text="Dashboard"
+          link="/productdashboard"
+        />
+        <SidebarItem
+          icon={<FaUser />}
+          text="Manage Orders"
+          link="/adminordermanage"
+        />
+        <SidebarItem
+          icon={<FaCog />}
+          text="Add Products"
+          link="/adminproductpage"
+        />
         <SidebarItem icon={<FaBox />} text="Analytics" link="/Analytics" />
-        <SidebarItem icon={<FaBox />} text="Product Table" link="/adminproducttable" />
+        <SidebarItem
+          icon={<FaBox />}
+          text="Product Table"
+          link="/adminproducttable"
+        />
       </ul>
 
       {/* Logout */}
@@ -50,7 +66,7 @@ function Sidebar() {
         <SidebarItem
           icon={<FaSignOutAlt />}
           text="Logout"
-          link="/logout"
+          link="/"
           isLogout
           isOpen={isOpen}
         />
@@ -72,7 +88,8 @@ const SidebarItem = ({ icon, text, link, isLogout }) => (
       `}
     >
       <span className="text-xl">{icon}</span>
-      <span className="text-sm font-medium">{text}</span> {/* ✅ Always show name */}
+      <span className="text-sm font-medium">{text}</span>{" "}
+      {/* ✅ Always show name */}
     </Link>
   </li>
 );

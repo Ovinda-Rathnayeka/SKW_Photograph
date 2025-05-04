@@ -1,6 +1,5 @@
 import RentalCart from "../Models/RentalCartModel.js";
 
-// Add item to rental cart
 const addToRentalCart = async (req, res) => {
   const { rentalId, userId, quantity, price, startDate, rentalDays } = req.body;
 
@@ -16,7 +15,6 @@ const addToRentalCart = async (req, res) => {
       return res.status(400).json({ message: "All fields are required." });
     }
 
-    // Calculate end date based on startDate + rentalDays
     const start = new Date(startDate);
     const end = new Date(start);
     end.setDate(start.getDate() + rentalDays);
@@ -48,7 +46,6 @@ const addToRentalCart = async (req, res) => {
   }
 };
 
-// Get all rental cart items for a user
 const getRentalCartByUserId = async (req, res) => {
   const { userId } = req.params;
 
@@ -69,7 +66,6 @@ const getRentalCartByUserId = async (req, res) => {
   }
 };
 
-// Update rental cart item
 const updateRentalCartItem = async (req, res) => {
   const { rentalCartItemId, quantity, startDate, rentalDays } = req.body;
 
@@ -107,7 +103,6 @@ const updateRentalCartItem = async (req, res) => {
   }
 };
 
-// Remove rental cart item
 const removeFromRentalCart = async (req, res) => {
   const { rentalCartItemId } = req.params;
 

@@ -1,13 +1,13 @@
-import Payment from "../Models/PaymentModel.js"; // ✅ Changed
+import Payment from "../Models/PaymentModel.js";
 import Cart from "../Models/CartModel.js";
 import Customer from "../Models/CustomerModel.js";
 import cloudinary from "../Middleware/CloudinaryConfig.js";
 import nodemailer from "nodemailer";
-import Product from "../Models/ProductModel.js"; // ✅ Already imported
+import Product from "../Models/ProductModel.js";
 
-const generateTransactionId = () => `TRCART${Math.floor(Math.random() * 1000000)}`;
+const generateTransactionId = () =>
+  `TRCART${Math.floor(Math.random() * 1000000)}`;
 
-// Create cart payment
 export const createCartPayment = async (req, res) => {
   const { customerId, address, totalAmount, paymentMethod } = req.body;
 
@@ -25,7 +25,7 @@ export const createCartPayment = async (req, res) => {
       proofImageUrl = uploaded.secure_url;
     }
 
-    const cartData = cartItems.map(item => ({
+    const cartData = cartItems.map((item) => ({
       productId: item.productId,
       quantity: item.quantity,
       price: item.price,
@@ -40,7 +40,7 @@ export const createCartPayment = async (req, res) => {
       proofImageUrl,
       transactionId: generateTransactionId(),
       paymentStatus: "Pending",
-      isCartPayment: true, // ✅ Important to identify cart payments
+      isCartPayment: true,
     });
 
     await newPayment.save();
@@ -53,10 +53,9 @@ export const createCartPayment = async (req, res) => {
   }
 };
 
-// Get all cart payments
 export const getAllCartPayments = async (req, res) => {
   try {
-    const payments = await Payment.find({ isCartPayment: true }) // ✅ Only cart payments
+    const payments = await Payment.find({ isCartPayment: true })
       .populate("customerId")
       .populate("cartItems.productId");
 
@@ -66,7 +65,6 @@ export const getAllCartPayments = async (req, res) => {
   }
 };
 
-// Update payment status (Accept or Deny) + Send email
 export const updateCartPaymentStatus = async (req, res) => {
   const { id } = req.params;
   const { status } = req.body;
@@ -82,13 +80,14 @@ export const updateCartPaymentStatus = async (req, res) => {
       id,
       { paymentStatus: status === "Accepted" ? "Completed" : "Failed" },
       { new: true }
-    ).populate("customerId").populate("cartItems.productId");
+    )
+      .populate("customerId")
+      .populate("cartItems.productId");
 
     if (!updated) {
       return res.status(404).json({ message: "Order not found" });
     }
 
-    // ✅ Decrease product quantity only when accepted
     if (status === "Accepted") {
       for (const item of updated.cartItems) {
         const product = await Product.findById(item.productId);
@@ -118,9 +117,13 @@ export const updateCartPaymentStatus = async (req, res) => {
       <div style="background-color:#000000;padding:30px 20px;font-family:'Segoe UI',sans-serif;color:#ffffff;">
         <div style="max-width:600px;margin:0 auto;background-color:#1a1a1a;border-radius:12px;padding:30px;border:1px solid #ffa500;">
           <h2 style="color:#ffa500;text-align:center;">Order ${status}</h2>
-          <p style="font-size:16px;">Hi <strong>${customer.name || "Customer"}</strong>,</p>
+          <p style="font-size:16px;">Hi <strong>${
+            customer.name || "Customer"
+          }</strong>,</p>
           <p style="font-size:15px;line-height:1.6;">
-            Your order with <strong style="color:#ffa500;">Transaction ID: ${updated.transactionId}</strong> has been 
+            Your order with <strong style="color:#ffa500;">Transaction ID: ${
+              updated.transactionId
+            }</strong> has been 
             <strong style="color:#ffa500;">${status}</strong>.
           </p>
           <p style="font-size:15px;line-height:1.6;">
@@ -142,7 +145,9 @@ export const updateCartPaymentStatus = async (req, res) => {
       html: htmlContent,
     });
 
-    res.json({ message: `Order ${status.toLowerCase()} and email sent successfully.` });
+    res.json({
+      message: `Order ${status.toLowerCase()} and email sent successfully.`,
+    });
   } catch (error) {
     console.error("Error updating order status:", error);
     res.status(500).json({ message: "Failed to update order status", error });

@@ -10,7 +10,7 @@ const generateTransactionId = () => {
 
 const isValidObjectId = (id) => mongoose.Types.ObjectId.isValid(id);
 
-// Rental Cart Payment
+
 const createRentalPayment = async (req, res) => {
   const { customerId, paymentMethod, cartItems } = req.body;
 
@@ -93,7 +93,7 @@ const deleteRentalPayment = async (req, res) => {
   }
 };
 
-// Get All Payments
+
 const getAllPayments = async (req, res) => {
   try {
     const payments = await Payment.find()
@@ -108,7 +108,7 @@ const getAllPayments = async (req, res) => {
   }
 };
 
-// Get Payment by User ID
+
 const getPaymentByUserId = async (req, res) => {
   const { userId } = req.params;
 
@@ -129,7 +129,7 @@ const getPaymentByUserId = async (req, res) => {
   }
 };
 
-// Get Payment by ID
+
 const getPaymentById = async (req, res) => {
   const { id } = req.params;
   if (!isValidObjectId(id)) {

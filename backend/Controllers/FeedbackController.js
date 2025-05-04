@@ -5,7 +5,6 @@ import cloudinary from "../Middleware/CloudinaryConfig.js";
 
 const isValidObjectId = (id) => mongoose.Types.ObjectId.isValid(id);
 
-// Create feedback
 const createFeedback = async (req, res) => {
   try {
     const imageUrls = [];
@@ -58,7 +57,6 @@ const createFeedback = async (req, res) => {
   }
 };
 
-// Get all feedbacks
 const getAllFeedback = async (req, res) => {
   try {
     const feedbackList = await Feedback.find();
@@ -69,7 +67,6 @@ const getAllFeedback = async (req, res) => {
   }
 };
 
-// Get feedback by ID
 const getFeedbackById = async (req, res) => {
   const { id } = req.params;
 
@@ -89,7 +86,6 @@ const getFeedbackById = async (req, res) => {
   }
 };
 
-// Update feedback
 const updateFeedbackById = async (req, res) => {
   const { id } = req.params;
 
@@ -151,7 +147,6 @@ const updateFeedbackById = async (req, res) => {
   }
 };
 
-// Delete feedback
 const deleteFeedbackById = async (req, res) => {
   const { id } = req.params;
 
@@ -171,7 +166,6 @@ const deleteFeedbackById = async (req, res) => {
   }
 };
 
-// Approve feedback
 const approveFeedbackById = async (req, res) => {
   const { id } = req.params;
 

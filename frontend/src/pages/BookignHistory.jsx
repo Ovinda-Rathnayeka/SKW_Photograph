@@ -22,47 +22,136 @@ function BookingHistory() {
         const u = await fetchUserDetails();
         setUser(u);
 
+        // Check if user data is valid
+        if (!u || !u._id) {
+          console.error("User data is invalid or missing ID");
+          setError("Could not load user data. Please try logging in again.");
+          return;
+        }
+
         const allBookings = await fetchAllBookings();
+        console.log("All bookings:", allBookings);
+
+        // Filter bookings safely
         const myBookings = allBookings.filter((bk) => {
-          if (!bk.customerId) return false;
-          const cidVal = bk.customerId._id ?? bk.customerId;
-          return cidVal.toString() === u._id.toString();
+          // Skip invalid bookings
+          if (!bk || !bk.customerId) {
+            console.log("Booking with missing customerId:", bk);
+            return false;
+          }
+
+          // Handle different customerId formats safely
+          let customerIdString;
+          try {
+            // Handle cases where customerId could be an object with _id or just the ID string/object
+            if (bk.customerId._id) {
+              customerIdString = bk.customerId._id.toString();
+            } else {
+              customerIdString = bk.customerId.toString();
+            }
+
+            return customerIdString === u._id.toString();
+          } catch (err) {
+            console.error("Error comparing customer IDs:", err, bk);
+            return false;
+          }
         });
 
         const allPayments = await getAllPayments();
         const bookingIds = myBookings.map((bk) => bk._id.toString());
+
+        // Filter payments safely
         const myPayments = allPayments.filter((p) => {
-          const bidVal = p.bookingId?._id ?? p.bookingId;
-          const cidVal2 = p.customerId?._id ?? p.customerId;
+          if (!p) return false;
+
+          let bookingIdString = null;
+          let customerIdString = null;
+
+          // Safely extract booking ID
+          try {
+            if (p.bookingId) {
+              if (p.bookingId._id) {
+                bookingIdString = p.bookingId._id.toString();
+              } else {
+                bookingIdString = p.bookingId.toString();
+              }
+            }
+          } catch (err) {
+            console.error("Error extracting booking ID from payment:", err, p);
+          }
+
+          // Safely extract customer ID
+          try {
+            if (p.customerId) {
+              if (p.customerId._id) {
+                customerIdString = p.customerId._id.toString();
+              } else {
+                customerIdString = p.customerId.toString();
+              }
+            }
+          } catch (err) {
+            console.error("Error extracting customer ID from payment:", err, p);
+          }
+
           return (
-            (bidVal != null && bookingIds.includes(bidVal.toString())) ||
-            (cidVal2 != null && cidVal2.toString() === u._id.toString())
+            (bookingIdString && bookingIds.includes(bookingIdString)) ||
+            (customerIdString && customerIdString === u._id.toString())
           );
         });
 
+        // Create payment map
         const payMap = {};
         myPayments.forEach((p) => {
-          const bid = p.bookingId?._id
-            ? p.bookingId._id.toString()
-            : p.bookingId.toString();
-          payMap[bid] = p;
+          try {
+            if (p.bookingId) {
+              const bid = p.bookingId._id
+                ? p.bookingId._id.toString()
+                : p.bookingId.toString();
+              payMap[bid] = p;
+            }
+          } catch (err) {
+            console.error("Error mapping payment to booking ID:", err, p);
+          }
         });
 
+        // Process bookings and fetch package info
         const enriched = await Promise.all(
           myBookings.map(async (bk) => {
-            const pkgId = bk.packageId?._id ? bk.packageId._id : bk.packageId;
-            const pkg = await fetchPhotoPackageById(pkgId);
-            const payment = payMap[bk._id.toString()] || {};
-            return { booking: bk, package: pkg, payment };
+            try {
+              // Safely get package ID
+              let pkgId = null;
+              if (bk.packageId) {
+                pkgId = bk.packageId._id ? bk.packageId._id : bk.packageId;
+              }
+
+              // Fetch package info if we have a valid ID
+              let pkg = null;
+              if (pkgId) {
+                try {
+                  pkg = await fetchPhotoPackageById(pkgId);
+                } catch (packageErr) {
+                  console.error("Error fetching package:", packageErr);
+                }
+              }
+
+              // Get associated payment
+              const payment = payMap[bk._id.toString()] || {};
+
+              return { booking: bk, package: pkg, payment };
+            } catch (err) {
+              console.error("Error processing booking:", err, bk);
+              return { booking: bk, package: null, payment: {} };
+            }
           })
         );
 
         setRecords(enriched);
       } catch (err) {
-        console.error(err);
+        console.error("Error in loadData:", err);
         setError("Error loading booking or payment data");
       }
     };
+
     loadData();
   }, []);
 
@@ -79,36 +168,63 @@ function BookingHistory() {
           await deleteBooking(bookingId);
           setRecords((prev) => prev.filter((r) => r.booking._id !== bookingId));
           Swal.fire("Deleted!", "Booking removed.", "success");
-        } catch {
+        } catch (err) {
+          console.error("Error deleting booking:", err);
           Swal.fire("Error!", "Could not delete booking.", "error");
         }
       }
     });
   };
 
-  const showHalf = records.some((r) => r.payment.paymentType === "half");
+  const showHalf = records.some(
+    (r) => r.payment && r.payment.paymentType === "half"
+  );
 
   const filtered = records.filter((r) => {
-    const { booking, package: pkg, payment } = r;
-    const ds = new Date(booking.bookingDate).toLocaleDateString();
-    return (
-      ds.includes(search) ||
-      booking.status.toLowerCase().includes(search.toLowerCase()) ||
-      (payment.paymentStatus || "")
-        .toLowerCase()
-        .includes(search.toLowerCase()) ||
-      pkg?.packageName.toLowerCase().includes(search.toLowerCase())
-    );
+    try {
+      const { booking, package: pkg, payment } = r;
+
+      // Safely format date
+      let dateStr = "Unknown date";
+      try {
+        if (booking.bookingDate) {
+          dateStr = new Date(booking.bookingDate).toLocaleDateString();
+        }
+      } catch (err) {
+        console.error("Error formatting date:", err);
+      }
+
+      // Safe access to searchable fields
+      const status = booking.status || "";
+      const paymentStatus =
+        payment && payment.paymentStatus ? payment.paymentStatus : "";
+      const packageName = pkg && pkg.packageName ? pkg.packageName : "";
+
+      return (
+        dateStr.includes(search) ||
+        status.toLowerCase().includes(search.toLowerCase()) ||
+        paymentStatus.toLowerCase().includes(search.toLowerCase()) ||
+        packageName.toLowerCase().includes(search.toLowerCase())
+      );
+    } catch (err) {
+      console.error("Error filtering record:", err, r);
+      return false;
+    }
   });
 
   const downloadPDF = async () => {
-    const canvas = await html2canvas(pdfRef.current, { scale: 2 });
-    const imgData = canvas.toDataURL("image/png");
-    const pdf = new jsPDF("p", "pt", "a4");
-    const w = pdf.internal.pageSize.getWidth();
-    const h = (canvas.height * w) / canvas.width;
-    pdf.addImage(imgData, "PNG", 0, 0, w, h);
-    pdf.save("booking_summary.pdf");
+    try {
+      const canvas = await html2canvas(pdfRef.current, { scale: 2 });
+      const imgData = canvas.toDataURL("image/png");
+      const pdf = new jsPDF("p", "pt", "a4");
+      const w = pdf.internal.pageSize.getWidth();
+      const h = (canvas.height * w) / canvas.width;
+      pdf.addImage(imgData, "PNG", 0, 0, w, h);
+      pdf.save("booking_summary.pdf");
+    } catch (err) {
+      console.error("Error generating PDF:", err);
+      Swal.fire("Error!", "Could not generate PDF.", "error");
+    }
   };
 
   if (error)
@@ -135,85 +251,123 @@ function BookingHistory() {
           </button>
         </div>
 
-        {/* On-screen table (centered) */}
-        <div className="rounded-lg">
-          <table className="w-full text-sm text-center bg-white/80 shadow-md rounded-lg overflow-hidden">
-            <thead className="bg-[#1f2937] text-white uppercase text-xs">
-              <tr>
-                <th className="px-6 py-3">Package</th>
-                <th className="px-6 py-3">Date</th>
-                <th className="px-6 py-3">Time</th>
-                <th className="px-6 py-3">Status</th>
-                <th className="px-6 py-3">Total</th>
-                <th className="px-6 py-3">Paid</th>
-                {showHalf && <th className="px-6 py-3">Half</th>}
-                <th className="px-6 py-3">Remaining</th>
-                <th className="px-6 py-3">Pay Status</th>
-                <th className="px-6 py-3">Method</th>
-                <th className="px-6 py-3">Txn ID</th>
-                <th className="px-6 py-3">Proof</th>
-                <th className="px-6 py-3">Actions</th>
-              </tr>
-            </thead>
-            <tbody className="text-gray-800 font-medium">
-              {filtered.map((r) => (
-                <tr
-                  key={r.booking._id}
-                  className="border-b hover:bg-orange-50 transition duration-200"
-                >
-                  <td className="px-6 py-4">{r.package?.packageName || "-"}</td>
-                  <td className="px-6 py-4">
-                    {new Date(r.booking.bookingDate).toLocaleDateString()}
-                  </td>
-                  <td className="px-6 py-4">{r.booking.bookingTime || "-"}</td>
-                  <td className="px-6 py-4">{r.booking.status}</td>
-                  <td className="px-6 py-4">₨{r.booking.totalPrice}</td>
-                  <td className="px-6 py-4">₨{r.payment.amount || 0}</td>
-                  {showHalf && (
-                    <td className="px-6 py-4">
-                      {r.payment.paymentType === "half"
-                        ? `₨${r.payment.halfPaymentAmount}`
-                        : "-"}
-                    </td>
-                  )}
-                  <td className="px-6 py-4">₨{r.payment.toPayAmount || 0}</td>
-                  <td className="px-6 py-4">
-                    {r.payment.paymentStatus || "-"}
-                  </td>
-                  <td className="px-6 py-4">
-                    {r.payment.paymentMethod || "-"}
-                  </td>
-                  <td className="px-6 py-4">
-                    {r.payment.transactionId || "-"}
-                  </td>
-                  <td className="px-6 py-4">
-                    {r.payment.proofImageUrl ? (
-                      <a
-                        href={r.payment.proofImageUrl}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="text-blue-500 hover:underline"
-                      >
-                        View Proof
-                      </a>
-                    ) : (
-                      "-"
-                    )}
-                  </td>
-                  <td className="px-6 py-4">
-                    <button
-                      onClick={() => handleDelete(r.booking._id)}
-                      className="text-red-500 hover:text-red-700"
-                    >
-                      Delete
-                    </button>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
+        {/* Search input */}
+        <div className="mb-4">
+          <input
+            type="text"
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+            placeholder="Search by date, status, or package name..."
+            className="w-full p-2 border border-gray-300 rounded-lg"
+          />
         </div>
 
+        {records.length === 0 ? (
+          <div className="text-center py-8 text-gray-600">
+            No bookings found. Book a photo session to see it here.
+          </div>
+        ) : (
+          /* On-screen table */
+          <div className="rounded-lg overflow-x-auto">
+            <table className="w-full text-sm text-center bg-white/80 shadow-md rounded-lg overflow-hidden">
+              <thead className="bg-[#1f2937] text-white uppercase text-xs">
+                <tr>
+                  <th className="px-6 py-3">Package</th>
+                  <th className="px-6 py-3">Date</th>
+                  <th className="px-6 py-3">Time</th>
+                  <th className="px-6 py-3">Status</th>
+                  <th className="px-6 py-3">Total</th>
+                  <th className="px-6 py-3">Paid</th>
+                  {showHalf && <th className="px-6 py-3">Half</th>}
+                  <th className="px-6 py-3">Remaining</th>
+                  <th className="px-6 py-3">Pay Status</th>
+                  <th className="px-6 py-3">Method</th>
+                  <th className="px-6 py-3">Txn ID</th>
+                  <th className="px-6 py-3">Proof</th>
+                  <th className="px-6 py-3">Actions</th>
+                </tr>
+              </thead>
+              <tbody className="text-gray-800 font-medium">
+                {filtered.map((r) => {
+                  // Safely format date
+                  let formattedDate = "Unknown date";
+                  try {
+                    if (r.booking.bookingDate) {
+                      formattedDate = new Date(
+                        r.booking.bookingDate
+                      ).toLocaleDateString();
+                    }
+                  } catch (err) {
+                    console.error("Error formatting date in table:", err);
+                  }
+
+                  return (
+                    <tr
+                      key={r.booking._id}
+                      className="border-b hover:bg-orange-50 transition duration-200"
+                    >
+                      <td className="px-6 py-4">
+                        {r.package?.packageName || "-"}
+                      </td>
+                      <td className="px-6 py-4">{formattedDate}</td>
+                      <td className="px-6 py-4">
+                        {r.booking.bookingTime || "-"}
+                      </td>
+                      <td className="px-6 py-4">{r.booking.status || "-"}</td>
+                      <td className="px-6 py-4">
+                        ₨{r.booking.totalPrice || 0}
+                      </td>
+                      <td className="px-6 py-4">₨{r.payment?.amount || 0}</td>
+                      {showHalf && (
+                        <td className="px-6 py-4">
+                          {r.payment?.paymentType === "half"
+                            ? `₨${r.payment.halfPaymentAmount || 0}`
+                            : "-"}
+                        </td>
+                      )}
+                      <td className="px-6 py-4">
+                        ₨{r.payment?.toPayAmount || 0}
+                      </td>
+                      <td className="px-6 py-4">
+                        {r.payment?.paymentStatus || "-"}
+                      </td>
+                      <td className="px-6 py-4">
+                        {r.payment?.paymentMethod || "-"}
+                      </td>
+                      <td className="px-6 py-4">
+                        {r.payment?.transactionId || "-"}
+                      </td>
+                      <td className="px-6 py-4">
+                        {r.payment?.proofImageUrl ? (
+                          <a
+                            href={r.payment.proofImageUrl}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="text-blue-500 hover:underline"
+                          >
+                            View Proof
+                          </a>
+                        ) : (
+                          "-"
+                        )}
+                      </td>
+                      <td className="px-6 py-4">
+                        <button
+                          onClick={() => handleDelete(r.booking._id)}
+                          className="text-red-500 hover:text-red-700"
+                        >
+                          Delete
+                        </button>
+                      </td>
+                    </tr>
+                  );
+                })}
+              </tbody>
+            </table>
+          </div>
+        )}
+
+        {/* Hidden PDF Reference */}
         <div
           ref={pdfRef}
           style={{
@@ -272,66 +426,80 @@ function BookingHistory() {
               Customer Details
             </h2>
             <p>
-              <strong>Name:</strong> {user?.name}
+              <strong>Name:</strong> {user?.name || "—"}
             </p>
             <p>
-              <strong>Email:</strong> {user?.email}
+              <strong>Email:</strong> {user?.email || "—"}
             </p>
             <p>
               <strong>Phone:</strong> {user?.phone || "—"}
             </p>
           </div>
 
-          {records.map((r, i) => (
-            <div
-              key={i}
-              style={{ padding: "20px 0", borderBottom: "1px solid #e5e7eb" }}
-            >
-              <h3
-                style={{
-                  marginBottom: "8px",
-                  fontSize: "16px",
-                  fontWeight: "600",
-                }}
+          {records.map((r, i) => {
+            // Safely format date for PDF
+            let pdfFormattedDate = "Unknown date";
+            try {
+              if (r.booking.bookingDate) {
+                pdfFormattedDate = new Date(
+                  r.booking.bookingDate
+                ).toLocaleDateString();
+              }
+            } catch (err) {
+              console.error("Error formatting date in PDF:", err);
+            }
+
+            return (
+              <div
+                key={i}
+                style={{ padding: "20px 0", borderBottom: "1px solid #e5e7eb" }}
               >
-                Package: {r.package?.packageName || "-"}
-              </h3>
-              <p>
-                <strong>Date:</strong>{" "}
-                {new Date(r.booking.bookingDate).toLocaleDateString()}
-              </p>
-              <p>
-                <strong>Time:</strong> {r.booking.bookingTime || "—"}
-              </p>
-              <p>
-                <strong>Status:</strong> {r.booking.status}
-              </p>
-              <p>
-                <strong>Total Amount:</strong> ₨{r.booking.totalPrice}
-              </p>
-              <p>
-                <strong>Paid Amount:</strong> ₨{r.payment.amount || 0}
-              </p>
-              {r.payment.paymentType === "half" && (
+                <h3
+                  style={{
+                    marginBottom: "8px",
+                    fontSize: "16px",
+                    fontWeight: "600",
+                  }}
+                >
+                  Package: {r.package?.packageName || "-"}
+                </h3>
                 <p>
-                  <strong>Half Payment:</strong> ₨{r.payment.halfPaymentAmount}
+                  <strong>Date:</strong> {pdfFormattedDate}
                 </p>
-              )}
-              <p>
-                <strong>Remaining:</strong> ₨{r.payment.toPayAmount || 0}
-              </p>
-              <p>
-                <strong>Payment Status:</strong>{" "}
-                {r.payment.paymentStatus || "-"}
-              </p>
-              <p>
-                <strong>Method:</strong> {r.payment.paymentMethod || "-"}
-              </p>
-              <p>
-                <strong>Txn ID:</strong> {r.payment.transactionId || "-"}
-              </p>
-            </div>
-          ))}
+                <p>
+                  <strong>Time:</strong> {r.booking.bookingTime || "—"}
+                </p>
+                <p>
+                  <strong>Status:</strong> {r.booking.status || "—"}
+                </p>
+                <p>
+                  <strong>Total Amount:</strong> ₨{r.booking.totalPrice || 0}
+                </p>
+                <p>
+                  <strong>Paid Amount:</strong> ₨{r.payment?.amount || 0}
+                </p>
+                {r.payment?.paymentType === "half" && (
+                  <p>
+                    <strong>Half Payment:</strong> ₨
+                    {r.payment.halfPaymentAmount || 0}
+                  </p>
+                )}
+                <p>
+                  <strong>Remaining:</strong> ₨{r.payment?.toPayAmount || 0}
+                </p>
+                <p>
+                  <strong>Payment Status:</strong>{" "}
+                  {r.payment?.paymentStatus || "-"}
+                </p>
+                <p>
+                  <strong>Method:</strong> {r.payment?.paymentMethod || "-"}
+                </p>
+                <p>
+                  <strong>Txn ID:</strong> {r.payment?.transactionId || "-"}
+                </p>
+              </div>
+            );
+          })}
 
           <div
             style={{
@@ -341,7 +509,8 @@ function BookingHistory() {
               paddingTop: "20px",
             }}
           >
-            www.skwphotography.com | © {new Date().getFullYear()} SKW Photography
+            www.skwphotography.com | © {new Date().getFullYear()} SKW
+            Photography
           </div>
         </div>
       </div>

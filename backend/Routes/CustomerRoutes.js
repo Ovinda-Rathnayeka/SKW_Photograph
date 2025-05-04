@@ -13,7 +13,7 @@ router.post("/", createCustomer);
 
 router.get("/", getAllCustomers);
 
-router.get("/:id", getCustomerById); // correct route
+router.get("/:id", getCustomerById);
 
 router.put("/update/:id", updateCustomer);
 

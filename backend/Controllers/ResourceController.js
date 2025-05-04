@@ -1,7 +1,6 @@
 import Resource from "../Models/ResourceModel.js";
 import mongoose from "mongoose";
 
-// Create a new resource
 const createResource = async (req, res) => {
   try {
     const {
@@ -32,7 +31,6 @@ const createResource = async (req, res) => {
   }
 };
 
-// Get resource by ID
 const getResourceById = async (req, res) => {
   const { id } = req.params;
 
@@ -52,7 +50,6 @@ const getResourceById = async (req, res) => {
   }
 };
 
-// Get all resources
 const getAllResources = async (req, res) => {
   try {
     const resources = await Resource.find();
@@ -63,7 +60,6 @@ const getAllResources = async (req, res) => {
   }
 };
 
-// Delete resource by ID
 const deleteResourceById = async (req, res) => {
   const { id } = req.params;
 
@@ -83,7 +79,6 @@ const deleteResourceById = async (req, res) => {
   }
 };
 
-// ✅ Full update of all resource fields
 const updateResource = async (req, res) => {
   const { id } = req.params;
   const {
@@ -126,7 +121,6 @@ const updateResource = async (req, res) => {
   }
 };
 
-// ✅ Stock-only update (rename this back)
 const updateResourceStockAndRentalStock = async (req, res) => {
   const { id } = req.params;
   const { stock, rentalStock } = req.body;
@@ -166,8 +160,6 @@ const updateResourceStockAndRentalStock = async (req, res) => {
   }
 };
 
-
-// Update availability
 const updateResourceAvailability = async (req, res) => {
   const { id } = req.params;
   const { availabilityStatus } = req.body;
@@ -197,7 +189,6 @@ const updateResourceAvailability = async (req, res) => {
   }
 };
 
-// ✅ NEW: Reduce resource stock only
 const reduceResourceStock = async (req, res) => {
   const { id } = req.params;
   const { quantity } = req.body;
@@ -217,7 +208,9 @@ const reduceResourceStock = async (req, res) => {
     }
 
     if (quantity > resource.stock) {
-      return res.status(400).json({ message: "Quantity exceeds available stock" });
+      return res
+        .status(400)
+        .json({ message: "Quantity exceeds available stock" });
     }
 
     resource.stock -= quantity;
@@ -239,8 +232,8 @@ export default {
   getResourceById,
   getAllResources,
   deleteResourceById,
-  updateResource, // full resource update
-  updateResourceStockAndRentalStock, // stock-only update
+  updateResource,
+  updateResourceStockAndRentalStock,
   updateResourceAvailability,
   reduceResourceStock,
 };

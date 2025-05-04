@@ -51,7 +51,11 @@ export const deleteResourceById = async (id) => {
 };
 
 // Update resource stock by ID (stock + rentalStock)
-export const updateResourceStockAndRentalStock = async (id, stock, rentalStock) => {
+export const updateResourceStockAndRentalStock = async (
+  id,
+  stock,
+  rentalStock
+) => {
   try {
     const response = await axios.put(`${API_URL}/${id}/stockAndRental`, {
       stock,
@@ -60,7 +64,10 @@ export const updateResourceStockAndRentalStock = async (id, stock, rentalStock) 
     console.log("Response from backend:", response.data);
     return response.data;
   } catch (error) {
-    console.error("Error updating resource stock and rentalStock:", error.response || error);
+    console.error(
+      "Error updating resource stock and rentalStock:",
+      error.response || error
+    );
     throw error;
   }
 };

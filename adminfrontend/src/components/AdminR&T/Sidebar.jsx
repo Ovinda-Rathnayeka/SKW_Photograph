@@ -24,20 +24,10 @@ function Sidebar() {
           text="Add Resources to Taks"
           link="/assign-resources"
         />
-        <SidebarItem
-          icon={<FaEye />}
-          text="View Packages"
-          link="/packagedisplay"
-        />
       </ul>
 
       <div className="mt-auto">
-        <SidebarItem
-          icon={<FaSignOutAlt />}
-          text="Logout"
-          link="/logout"
-          isLogout
-        />
+        <SidebarItem icon={<FaSignOutAlt />} text="Logout" link="/" isLogout />
       </div>
     </div>
   );

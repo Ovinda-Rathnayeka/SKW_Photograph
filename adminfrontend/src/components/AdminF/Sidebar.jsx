@@ -59,7 +59,7 @@ function Sidebar() {
         <SidebarItem
           icon={<FaSignOutAlt />}
           text="Logout"
-          link="/logout"
+          link="/"
           isLogout
           isOpen={isOpen}
         />

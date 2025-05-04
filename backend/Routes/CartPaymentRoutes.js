@@ -10,6 +10,6 @@ const router = express.Router();
 
 router.post("/", upload.single("proofImage"), createCartPayment);
 router.get("/", getAllCartPayments);
-router.patch("/:id/status", updateCartPaymentStatus); // Handles Accept/Deny
+router.patch("/:id/status", updateCartPaymentStatus);
 
 export default router;
