@@ -121,7 +121,7 @@ function BookingHistory() {
       className="min-h-screen bg-cover bg-center px-4 py-20 pt-28"
       style={{ backgroundImage: `url(${dot})` }}
     >
-      <div className="max-w-7xl mx-auto bg-white/20 backdrop-blur-xl border border-white/30 shadow-2xl rounded-2xl p-8">
+      <div className="max-w-8xl mx-auto bg-white/20 backdrop-blur-xl border border-white/30 shadow-2xl rounded-2xl p-8">
         {/* Header + PDF button */}
         <div className="flex justify-between items-center mb-6">
           <h2 className="text-4xl font-bold text-orange-500 drop-shadow">
