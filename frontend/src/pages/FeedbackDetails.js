@@ -315,8 +315,8 @@ function FeedbackList() {
         )}
 
         {showModal && feedbackToUpdate && (
-          <div className="fixed inset-0 bg-gray-600 bg-opacity-60 flex items-center justify-center z-50">
-            <div className="bg-white p-8 rounded-lg w-[600px]">
+          <div className="fixed inset-0 bg-gray-800 bg-opacity-70 flex items-center justify-center z-50">
+          <div className="bg-white p-6 w-full max-w-2xl max-h-[90vh] overflow-y-auto shadow-2xl">        
               <h2 className="text-xl font-semibold mb-6 text-center">
                 Update Feedback
               </h2>
