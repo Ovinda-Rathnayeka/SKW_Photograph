@@ -64,13 +64,10 @@ function App() {
         <Route path="/rental" element={<DisplayRental />} />
         <Route path="/profile" element={<Profile />} />
         <Route path="/booking-history" element={<BookingHistory />} />
-<<<<<<< HEAD
         <Route path="/feedback" element={<Feedback />} />
         <Route path="/customization" element={<CustomizationPage />} />
-=======
         <Route path="/rental" element={<DisplayRental />} />
         <Route path="/rental-cart" element={<RentalCart />} />
->>>>>>> origin/main
       </Routes>
     </Router>
   );
