@@ -1,16 +1,15 @@
 import mongoose from "mongoose";
 
-// Rental Cart Schema
 const rentalCartSchema = new mongoose.Schema(
   {
     rentalId: {
       type: mongoose.Schema.Types.ObjectId,
-      ref: "RentalItem", // Reference to RentalItem model
+      ref: "RentalProduct",
       required: true,
     },
     userId: {
       type: mongoose.Schema.Types.ObjectId,
-      ref: "Customer", // Reference to Customer model
+      ref: "Customer",
       required: true,
     },
     quantity: {
@@ -25,7 +24,6 @@ const rentalCartSchema = new mongoose.Schema(
     startDate: {
       type: Date,
       required: true,
-    
     },
     rentalDays: {
       type: Number,

@@ -57,6 +57,12 @@ function Sidebar() {
           link="/displayHR"
           isOpen={isOpen}
         />
+        <SidebarItem
+          icon={<FaCog />}
+          text="Assign Task"
+          link="/assign-task"
+          isOpen={isOpen}
+        />
       </ul>
 
       {/* Logout */}

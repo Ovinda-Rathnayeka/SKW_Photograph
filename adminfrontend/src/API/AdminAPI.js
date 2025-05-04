@@ -1,27 +1,16 @@
-// src/API/AdminAPI.js
 import axios from "axios";
 
 // Axios instance for admin operations
 const api = axios.create({
-  baseURL: "http://localhost:5000/employee",
+  baseURL: "http://localhost:5000/employee", // URL for your employee routes
   headers: { "Content-Type": "application/json" },
-});
-
-// Attach JWT token if available
-api.interceptors.request.use((config) => {
-  const token = localStorage.getItem("token");
-  if (token) {
-    config.headers.Authorization = `Bearer ${token}`;
-  }
-  return config;
 });
 
 /** Authentication */
 export const loginEmployee = async (email, password) => {
   try {
     const { data } = await api.post("/login", { email, password });
-    // persist token and user data
-    localStorage.setItem("token", data.token);
+    // Since there is no JWT anymore, we no longer need to store it
     localStorage.setItem("employee", JSON.stringify(data.user));
     return data;
   } catch (err) {

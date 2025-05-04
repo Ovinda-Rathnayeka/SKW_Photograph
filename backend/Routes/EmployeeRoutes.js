@@ -1,21 +1,17 @@
 import express from "express";
-import { employeeAuth, hrManagerOnly } from "../middleware/EmployeeAuth.js";
 import * as ctrl from "../controllers/EmployeeController.js";
 
 const router = express.Router();
 
-// public
+// Public routes
 router.post("/login", ctrl.loginEmployee);
 
-// protected: require valid JWT
-router.use(employeeAuth);
-
-// HR Manager only routes
-router.get("/", hrManagerOnly, ctrl.getAllEmployees);
-router.get("/:id", hrManagerOnly, ctrl.getEmployeeById);
-router.post("/", hrManagerOnly, ctrl.createEmployee);
-router.put("/:id", hrManagerOnly, ctrl.updateEmployee);
-router.delete("/:id", hrManagerOnly, ctrl.deleteEmployee);
-router.post("/:id/reset-password", hrManagerOnly, ctrl.resetEmployeePassword);
+// Routes accessible by anyone (no authentication required)
+router.get("/", ctrl.getAllEmployees); // List all employees
+router.get("/:id", ctrl.getEmployeeById); // Get employee by ID
+router.post("/", ctrl.createEmployee); // Create a new employee
+router.put("/:id", ctrl.updateEmployee); // Update employee info
+router.delete("/:id", ctrl.deleteEmployee); // Delete employee
+router.post("/:id/reset-password", ctrl.resetEmployeePassword); // Reset employee password
 
 export default router;
