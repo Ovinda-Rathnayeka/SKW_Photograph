@@ -5,7 +5,6 @@ import cloudinary from "../Middleware/CloudinaryConfig.js";
 
 const isValidObjectId = (id) => mongoose.Types.ObjectId.isValid(id);
 
-
 const createProduct = async (req, res) => {
   try {
     let imageUrl = "";
@@ -19,14 +18,13 @@ const createProduct = async (req, res) => {
       imageUrl = cloudinaryResult.secure_url;
     }
 
-    // Explicitly create product object
     const newProduct = new Product({
       name: req.body.name,
       category: req.body.category,
       price: req.body.price,
       quantity: req.body.quantity,
       description: req.body.description,
-      image: imageUrl, // ✅ Save Cloudinary image URL
+      image: imageUrl,
     });
 
     const savedProduct = await newProduct.save();
@@ -37,7 +35,6 @@ const createProduct = async (req, res) => {
     res.status(500).json({ message: "Error creating product", error });
   }
 };
-
 
 export const getAllProducts = async (req, res) => {
   try {
@@ -62,7 +59,6 @@ export const getAllProducts = async (req, res) => {
   }
 };
 
-
 const getProductById = async (req, res) => {
   const { id } = req.params;
 
@@ -82,7 +78,6 @@ const getProductById = async (req, res) => {
   }
 };
 
-
 const updateProductById = async (req, res) => {
   const { id } = req.params;
 
@@ -99,7 +94,7 @@ const updateProductById = async (req, res) => {
         allowed_formats: ["jpg", "jpeg", "png"],
       });
 
-      updateData.image = cloudinaryResult.secure_url; // ✅ Set image URL
+      updateData.image = cloudinaryResult.secure_url;
     }
 
     const updatedProduct = await Product.findByIdAndUpdate(id, updateData, {
@@ -116,8 +111,6 @@ const updateProductById = async (req, res) => {
     res.status(500).json({ message: "Error updating product", error });
   }
 };
-
-
 
 const deleteProductById = async (req, res) => {
   const { id } = req.params;

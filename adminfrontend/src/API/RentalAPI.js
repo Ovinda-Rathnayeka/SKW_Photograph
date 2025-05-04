@@ -59,3 +59,13 @@ export const deleteRentalProductById = async (id) => {
     throw error;
   }
 };
+
+export const getAllRentalCarts = async () => {
+  try {
+    const res = await axios.get("http://localhost:5000/rental"); // <- Fix path here
+    return res.data.rentalCarts || res.data || [];
+  } catch (err) {
+    console.error("Error fetching rental carts:", err);
+    return [];
+  }
+};

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import {
   getAllResources,
   createResource,
@@ -17,6 +17,7 @@ function ResourcesPage() {
   const [showRentalModal, setShowRentalModal] = useState(false);
   const [showUpdateModal, setShowUpdateModal] = useState(false);
   const [resourceToUpdate, setResourceToUpdate] = useState(null);
+  const tableRef = useRef(null);
 
   const [resourceData, setResourceData] = useState({
     name: "",
@@ -118,21 +119,26 @@ function ResourcesPage() {
     <div className="container mx-auto p-6">
       <h2 className="text-2xl font-semibold text-center mb-6">Resources</h2>
 
-      <button
-        onClick={() => setShowModal(true)}
-        className="px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 mb-4"
-      >
-        Add Resource
-      </button>
-      <button
-        onClick={() => setShowModal(true)}
-        className="px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 mb-4"
-      >
-        Assign Resources
-      </button>
+      <div className="flex gap-4 mb-4">
+        <button
+          onClick={() => setShowModal(true)}
+          className="px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600"
+        >
+          Add Resource
+        </button>
 
+        <button
+          onClick={() => setShowModal(true)}
+          className="px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600"
+        >
+          Assign Resources
+        </button>
+      </div>
 
-      <div className="overflow-x-auto bg-white shadow-md rounded-lg">
+      <div
+        className="overflow-x-auto bg-white shadow-md rounded-lg"
+        ref={tableRef}
+      >
         <table className="min-w-full text-left text-gray-800">
           <thead>
             <tr className="border-b">
@@ -143,9 +149,9 @@ function ResourcesPage() {
               <th className="px-4 py-2">Rental</th>
               <th className="px-4 py-2">Remaining Stock</th>
               <th className="px-4 py-2">Availability</th>
-              <th className="px-4 py-2">Actions</th>
-              <th className="px-4 py-2">Actions</th>
-              <th className="px-4 py-2">Actions</th>
+              <th className="px-4 py-2">
+                <center>Action</center>
+              </th>
             </tr>
           </thead>
           <tbody>
@@ -302,7 +308,6 @@ function ResourcesPage() {
                   name="category"
                   value={resourceData.category}
                   onChange={handleChange}
-                  disab
                   className="w-full p-2 border rounded-md"
                   required
                 >

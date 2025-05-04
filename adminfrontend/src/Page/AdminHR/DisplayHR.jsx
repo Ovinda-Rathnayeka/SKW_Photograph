@@ -1,15 +1,16 @@
-// src/pages/DisplayHR.jsx
 import React, { useState, useEffect } from "react";
 import {
   getEmployees,
   resetEmployeePassword,
   updateEmployee,
+  deleteEmployee, // Importing the delete function
 } from "../../API/AdminAPI.js";
 import Swal from "sweetalert2";
 import {
   ArrowPathIcon,
   PencilIcon,
   XMarkIcon,
+  TrashIcon, // Import trash icon for delete button
 } from "@heroicons/react/24/outline";
 
 const DisplayHR = () => {
@@ -84,6 +85,26 @@ const DisplayHR = () => {
     }
   };
 
+  // Delete Employee Function
+  const handleDeleteEmployee = async (id) => {
+    const { isConfirmed } = await Swal.fire({
+      title: "Are you sure?",
+      text: "This will delete the employee record permanently.",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonText: "Delete",
+    });
+    if (!isConfirmed) return;
+
+    try {
+      await deleteEmployee(id);
+      Swal.fire("Deleted!", "Employee has been deleted.", "success");
+      loadEmployees(); // Reload the employee list after deletion
+    } catch (err) {
+      Swal.fire("Error", err.message, "error");
+    }
+  };
+
   return (
     <div className="max-w-6xl mx-auto mt-8 p-6 bg-white rounded-xl shadow-lg">
       <h2 className="text-3xl font-semibold mb-6">User Accounts</h2>
@@ -124,6 +145,13 @@ const DisplayHR = () => {
                     className="p-2 rounded-full hover:bg-gray-100 transition"
                   >
                     <PencilIcon className="h-5 w-5 text-gray-600" />
+                  </button>
+                  {/* Delete Button */}
+                  <button
+                    onClick={() => handleDeleteEmployee(emp._id)}
+                    className="p-2 rounded-full hover:bg-red-100 transition"
+                  >
+                    <TrashIcon className="h-5 w-5 text-red-600" />
                   </button>
                 </td>
               </tr>

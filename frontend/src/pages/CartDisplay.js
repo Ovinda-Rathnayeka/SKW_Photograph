@@ -47,28 +47,27 @@ function CartDisplay() {
     };
 
     loadCartItems();
-  }, [customerId]); // Fetch cart items when customerId changes
+  }, [customerId]);
 
   // Handle removing an item from the cart
   const handleRemoveFromCart = async (cartItemId) => {
     try {
-      const result = await removeFromCart(cartItemId); // Call the removeFromCart API
-      setCartItems(cartItems.filter((item) => item._id !== cartItemId)); // Update cart items after removal
+      const result = await removeFromCart(cartItemId);
+      setCartItems(cartItems.filter((item) => item._id !== cartItemId));
       alert("Product removed from cart");
     } catch (error) {
       console.error("Error removing product from cart:", error);
     }
   };
 
-  // Handle updating the quantity of a cart item
   const handleUpdateQuantity = async (cartItemId, newQuantity) => {
     if (newQuantity <= 0) {
       alert("Quantity must be greater than 0");
       return;
     }
     try {
-      const updatedItem = await updateCartItem(cartItemId, newQuantity); // Call the updateCartItem API
-      // Update the cartItems state with the updated item
+      const updatedItem = await updateCartItem(cartItemId, newQuantity);
+
       setCartItems((prevItems) =>
         prevItems.map((item) =>
           item._id === cartItemId ? { ...item, quantity: newQuantity } : item
@@ -80,7 +79,6 @@ function CartDisplay() {
     }
   };
 
-  // Calculate the total price of the cart
   const calculateTotalPrice = () => {
     return cartItems.reduce(
       (total, item) => total + item.price * item.quantity,
@@ -125,7 +123,7 @@ function CartDisplay() {
                   <td className="py-3 px-4">
                     <div className="flex items-center">
                       <img
-                        src={item.productId?.image || "/default-image.jpg"} // Fallback image if productId.image is undefined
+                        src={item.productId?.image || "/default-image.jpg"}
                         alt={item.productId?.name || "Product Image"}
                         className="w-16 h-16 object-cover rounded-md mr-4"
                       />
@@ -148,19 +146,21 @@ function CartDisplay() {
                   <td className="py-3 px-4">
                     <button
                       onClick={() => handleRemoveFromCart(item._id)}
-                      className="bg-red-500 text-white py-1 px-3 rounded-md hover:bg-red-600"
+                      className="bg-[#FF4000] text-white py-1 px-3 rounded-md hover:bg-[#cc3300]"
                     >
                       Remove
                     </button>
                   </td>
                 </tr>
               ))}
-              {/* Total Cart Value Row */}
+
               <tr className="bg-gray-900 font-bold">
                 <td colSpan="3" className="py-3 px-4 text-right">
                   Total Cart Value:
                 </td>
-                <td className="py-3 px-4">${calculateTotalPrice().toFixed(2)}</td>
+                <td className="py-3 px-4">
+                  ${calculateTotalPrice().toFixed(2)}
+                </td>
                 <td></td>
               </tr>
             </tbody>
@@ -168,16 +168,14 @@ function CartDisplay() {
         </div>
       )}
 
-      {/* Total Price */}
       <div className="text-right mt-4 text-xl font-bold text-white">
         Total Price: ${calculateTotalPrice()}
       </div>
 
-      {/* Checkout Button */}
       <div className="text-center mt-6">
         <button
           onClick={() => navigate("/checkout")}
-          className="bg-green-500 text-white py-2 px-4 rounded-md hover:bg-green-600"
+          className="bg-[#FF4000] text-white py-2 px-4 rounded-md hover:bg-[#cc3300]"
         >
           Proceed to Checkout
         </button>
@@ -186,7 +184,7 @@ function CartDisplay() {
       <div className="text-center mt-6">
         <button
           onClick={() => navigate("/")}
-          className="bg-blue-500 text-white py-2 px-4 rounded-md hover:bg-blue-600"
+          className="bg-[#FF4000] text-white py-2 px-4 rounded-md hover:bg-[#cc3300]"
         >
           Back to Home
         </button>
