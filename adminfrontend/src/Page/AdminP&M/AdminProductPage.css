@@ -1,11 +1,11 @@
-/* Page background with soft gradient */
+
 body {
     background: linear-gradient(to right, #edf0f5, #fdfbfb);
     font-family: 'Poppins', sans-serif;
     color: #2d2d2d;
   }
   
-  /* Card-style form and table container */
+  
   form,
   .table {
     background: rgba(255, 255, 255, 0.85);
