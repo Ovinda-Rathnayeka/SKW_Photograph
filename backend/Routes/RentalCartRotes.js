@@ -7,12 +7,15 @@ const router = express.Router();
 router.post("/", RentalCartController.addToRentalCart);
 
 // Get rental cart by userId
-router.get("/:userId", RentalCartController.getRentalCartByUserId);
+router.get("/user/:userId", RentalCartController.getRentalCartByUserId);
 
 // Update rental cart item
 router.put("/update", RentalCartController.updateRentalCartItem);
 
 // Remove rental item
-router.delete("/:rentalCartItemId", RentalCartController.removeFromRentalCart);
+router.delete(
+  "/delete/:rentalCartItemId",
+  RentalCartController.removeFromRentalCart
+);
 
 export default router;

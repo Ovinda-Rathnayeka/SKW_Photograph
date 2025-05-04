@@ -2,17 +2,17 @@ import RentalCart from "../Models/RentalCartModel.js";
 
 // Add item to rental cart
 const addToRentalCart = async (req, res) => {
-  const {
-    rentalId,
-    userId,
-    quantity,
-    price,
-    startDate,
-    rentalDays,
-  } = req.body;
+  const { rentalId, userId, quantity, price, startDate, rentalDays } = req.body;
 
   try {
-    if (!rentalId || !userId || !quantity || !price || !startDate || !rentalDays) {
+    if (
+      !rentalId ||
+      !userId ||
+      !quantity ||
+      !price ||
+      !startDate ||
+      !rentalDays
+    ) {
       return res.status(400).json({ message: "All fields are required." });
     }
 
