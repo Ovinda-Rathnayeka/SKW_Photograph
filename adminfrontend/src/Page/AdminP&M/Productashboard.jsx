@@ -1,6 +1,7 @@
 import React from "react";
 import Navbar from "../../components/AdminP&M/Navbar.jsx";
 import Sidebar from "../../components/AdminP&M/Sidebar.jsx";
+import { useNavigate } from "react-router-dom";
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from "recharts";
 
 const statsData = [
@@ -10,6 +11,10 @@ const statsData = [
 ];
 
 function ProductDashboard() {
+  const navigate = useNavigate();
+  const handleButtonClick = () => {
+    navigate("/adminproductpage");
+  };
   return (
     <div className="flex min-h-screen bg-gray-100">
       <Sidebar />
@@ -18,7 +23,7 @@ function ProductDashboard() {
         <main className="flex-1 p-6">
           <div className="flex justify-between items-center mb-6">
             <h1 className="text-3xl font-bold text-gray-800">Admin Dashboard</h1>
-            <button className="px-4 py-2 bg-gradient-to-r from-blue-600 to-indigo-600 text-white rounded-lg shadow hover:opacity-90 transition">
+            <button onClick={handleButtonClick} className="px-4 py-2 bg-gradient-to-r from-blue-600 to-indigo-600 text-white rounded-lg shadow hover:opacity-90 transition">
               + Add New Product
             </button>
           </div>
