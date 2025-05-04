@@ -102,7 +102,7 @@ function CartDisplay() {
   }
 
   return (
-    <div className="container mx-auto p-4">
+    <div className="container mx-auto p-4 pt-20">
       <h2 className="text-3xl font-bold text-center mb-8">Your Cart</h2>
 
       {cartItems.length === 0 ? (
