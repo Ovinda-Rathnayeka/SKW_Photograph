@@ -19,6 +19,7 @@ import Employee from "./Routes/EmployeeRoutes.js";
 import RentalCart from "./Routes/RentalCartRotes.js";
 import RentalPayment from "./Routes/RentalPaymentRoutes.js";
 import CartPaymentRoutes from "./Routes/CartPaymentRoutes.js";
+import AssignTask from "./Routes/AssignTaskRoutes.js";
 
 const app = express();
 dotenv.config();
@@ -47,6 +48,7 @@ app.use("/employee", Employee);
 app.use("/rentalcart", RentalCart);
 app.use("/rentalpayment", RentalPayment);
 app.use("/api/cart-payment", CartPaymentRoutes);
+app.use("/assign-task", AssignTask);
 
 mongoose
   .connect(process.env.MONGODB_URI)

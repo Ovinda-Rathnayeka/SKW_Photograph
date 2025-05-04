@@ -3,6 +3,8 @@ import Navbar from "../../components/AdminP&M/Navbar.jsx";
 import Sidebar from "../../components/AdminP&M/Sidebar.jsx";
 import axios from "axios";
 import "./AdminProductPage.css";
+import * as XLSX from "xlsx";
+import { saveAs } from "file-saver";
 
 function AdminOrderManagement() {
   const [orders, setOrders] = useState([]);
@@ -10,12 +12,18 @@ function AdminOrderManagement() {
 
   const fetchAllOrders = async () => {
     try {
-      const response = await axios.get("http://localhost:5000/api/cart-payment", {
-        withCredentials: true,
-      });
+      const response = await axios.get(
+        "http://localhost:5000/api/cart-payment",
+        {
+          withCredentials: true,
+        }
+      );
       setOrders(response.data);
     } catch (error) {
-      console.error("Failed to fetch orders:", error.response?.data || error.message);
+      console.error(
+        "Failed to fetch orders:",
+        error.response?.data || error.message
+      );
     } finally {
       setLoading(false);
     }
@@ -39,13 +47,49 @@ function AdminOrderManagement() {
         )
       );
     } catch (error) {
-      console.error("Failed to update order status:", error.response?.data || error.message);
+      console.error(
+        "Failed to update order status:",
+        error.response?.data || error.message
+      );
       alert("Failed to update order status.");
     }
   };
 
-  const pendingOrders = orders.filter(order => order.paymentStatus === "Pending");
-  const processedOrders = orders.filter(order => order.paymentStatus !== "Pending");
+  const pendingOrders = orders.filter(
+    (order) => order.paymentStatus === "Pending"
+  );
+  const processedOrders = orders.filter(
+    (order) => order.paymentStatus !== "Pending"
+  );
+
+  const handleExportToExcel = () => {
+    const allOrders = [...pendingOrders, ...processedOrders];
+
+    const exportData = allOrders.map((order) => ({
+      Customer: order.customerId?.name || "Unknown",
+      Email: order.customerId?.email || "-",
+      Address: order.address,
+      Total:
+        order.totalAmount !== undefined ? order.totalAmount.toFixed(2) : "N/A",
+      Items: order.cartItems
+        .map((item) => item.productId?.name || "Product")
+        .join(", "),
+      Quantities: order.cartItems.map((item) => item.quantity).join(", "),
+      Status: order.paymentStatus,
+      Proof: order.proofImageUrl || "N/A",
+    }));
+
+    const worksheet = XLSX.utils.json_to_sheet(exportData);
+    const workbook = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(workbook, worksheet, "Orders");
+
+    const excelBuffer = XLSX.write(workbook, {
+      bookType: "xlsx",
+      type: "array",
+    });
+    const data = new Blob([excelBuffer], { type: "application/octet-stream" });
+    saveAs(data, "Orders_Report.xlsx");
+  };
 
   const renderTable = (title, orderList) => (
     <div className="mb-10">
@@ -71,11 +115,16 @@ function AdminOrderManagement() {
             <tbody>
               {orderList.map((order) => (
                 <tr key={order._id} className="border-b">
-                  <td className="px-4 py-2">{order.customerId?.name || "Unknown"}</td>
-                  <td className="px-4 py-2">{order.customerId?.email || "-"}</td>
+                  <td className="px-4 py-2">
+                    {order.customerId?.name || "Unknown"}
+                  </td>
+                  <td className="px-4 py-2">
+                    {order.customerId?.email || "-"}
+                  </td>
                   <td className="px-4 py-2">{order.address}</td>
                   <td className="px-4 py-2">
-                    {order.totalAmount !== undefined && order.totalAmount !== null
+                    {order.totalAmount !== undefined &&
+                    order.totalAmount !== null
                       ? `$${order.totalAmount.toFixed(2)}`
                       : "N/A"}
                   </td>
@@ -124,13 +173,17 @@ function AdminOrderManagement() {
                     {order.paymentStatus === "Pending" ? (
                       <div className="flex gap-2">
                         <button
-                          onClick={() => handleUpdateStatus(order._id.toString(), "Accepted")}
+                          onClick={() =>
+                            handleUpdateStatus(order._id.toString(), "Accepted")
+                          }
                           className="bg-green-500 text-white px-3 py-1 rounded hover:bg-green-600"
                         >
                           Accept
                         </button>
                         <button
-                          onClick={() => handleUpdateStatus(order._id.toString(), "Denied")}
+                          onClick={() =>
+                            handleUpdateStatus(order._id.toString(), "Denied")
+                          }
                           className="bg-red-500 text-white px-3 py-1 rounded hover:bg-red-600"
                         >
                           Deny
@@ -157,7 +210,8 @@ function AdminOrderManagement() {
     </div>
   );
 
-  if (loading) return <div className="text-center mt-10">Loading orders...</div>;
+  if (loading)
+    return <div className="text-center mt-10">Loading orders...</div>;
 
   return (
     <div className="flex">
@@ -165,7 +219,17 @@ function AdminOrderManagement() {
       <div className="flex flex-col flex-grow">
         <Navbar />
         <div className="p-6 max-w-7xl mx-auto">
-          <h1 className="text-3xl font-bold mb-6 text-center">Order Management</h1>
+          <h1 className="text-3xl font-bold mb-6 text-center">
+            Order Management
+          </h1>
+          <div className="text-right mb-6">
+            <button
+              onClick={handleExportToExcel}
+              className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700"
+            >
+              Export Orders to Excel
+            </button>
+          </div>
           {renderTable("Pending Orders", pendingOrders)}
           {renderTable("Processed Orders", processedOrders)}
         </div>

@@ -1,9 +1,8 @@
 import Employee from "../Models/EmployeeModel.js";
 import bcrypt from "bcryptjs";
-import jwt from "jsonwebtoken";
 import crypto from "crypto";
 
-// POST /employees/login
+// POST /employees/login (No JWT token, just login logic without token)
 export const loginEmployee = async (req, res) => {
   try {
     const { email, password } = req.body;
@@ -13,20 +12,16 @@ export const loginEmployee = async (req, res) => {
     const match = await bcrypt.compare(password, user.password);
     if (!match) return res.status(401).json({ message: "Invalid credentials" });
 
-    const token = jwt.sign(
-      { id: user._id, role: user.jobRole },
-      process.env.JWT_SECRET,
-      { expiresIn: "2h" }
-    );
+    // Since no JWT is being used, simply return the employee data (no token)
     const { password: pw, ...userData } = user.toObject();
-    res.json({ token, user: userData });
+    res.json({ user: userData });
   } catch (err) {
     console.error("loginEmployee error:", err);
     res.status(500).json({ message: "Server error" });
   }
 };
 
-// GET /employees        (HR Manager only)
+// GET /employees (No authentication required)
 export const getAllEmployees = async (req, res) => {
   try {
     const list = await Employee.find().select("-password");
@@ -37,7 +32,7 @@ export const getAllEmployees = async (req, res) => {
   }
 };
 
-// GET /employees/:id    (HR Manager only)
+// GET /employees/:id (No authentication required)
 export const getEmployeeById = async (req, res) => {
   try {
     const emp = await Employee.findById(req.params.id).select("-password");
@@ -49,7 +44,7 @@ export const getEmployeeById = async (req, res) => {
   }
 };
 
-// POST /employees       (HR Manager only)
+// POST /employees (No authentication required)
 export const createEmployee = async (req, res) => {
   try {
     const { name, nic, phone, address, email, password, jobRole } = req.body;
@@ -76,7 +71,7 @@ export const createEmployee = async (req, res) => {
   }
 };
 
-// PUT /employees/:id    (HR Manager only, cannot reset password here)
+// PUT /employees/:id (No authentication required)
 export const updateEmployee = async (req, res) => {
   try {
     const updates = { ...req.body };
@@ -93,7 +88,7 @@ export const updateEmployee = async (req, res) => {
   }
 };
 
-// DELETE /employees/:id (HR Manager only)
+// DELETE /employees/:id (No authentication required)
 export const deleteEmployee = async (req, res) => {
   try {
     const del = await Employee.findByIdAndDelete(req.params.id);
@@ -105,7 +100,7 @@ export const deleteEmployee = async (req, res) => {
   }
 };
 
-// POST /employees/:id/reset-password (HR Manager only)
+// POST /employees/:id/reset-password (No authentication required)
 export const resetEmployeePassword = async (req, res) => {
   try {
     const emp = await Employee.findById(req.params.id);
